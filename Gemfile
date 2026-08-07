@@ -29,6 +29,9 @@ gem 'hikidoc'
 gem 'kaminari'
 gem 'pg'
 
+# 不正リクエストの遮断・レートリミット
+gem 'rack-attack'
+
 # Web server
 gem 'puma'
 

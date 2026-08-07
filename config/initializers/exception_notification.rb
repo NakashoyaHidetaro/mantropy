@@ -5,6 +5,9 @@ module ExceptionNotifier
     def initialize(options); end
 
     def call(exception, options = {})
+      # 不正な Accept ヘッダによる攻撃(クライアントには 406 が返る)なので握りつぶす
+      return if exception.is_a?(ActionDispatch::Http::MimeNegotiation::InvalidType)
+
       env = options[:env]
       request_url = env ? "#{env['REQUEST_METHOD']} #{env['REQUEST_URI'] || env['PATH_INFO']}" : '不明'
       channel = '#2_mantropy'
