@@ -1,12 +1,4 @@
 module ApplicationHelper
-  def width
-    800
-  end
-
-  def align
-    'left'
-  end
-
   def title
     "#{@title} #{'！！！！開発環境モード！！！！' if Rails.env.development?}" # rubocop:disable Rails/HelperInstanceVariable
   end

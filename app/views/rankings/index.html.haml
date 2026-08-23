@@ -1,14 +1,14 @@
-%h2.text-center.mt-4 漫画ランキング一覧
+%h2.h3.my-4 漫画ランキング一覧
 
-.list-group.mt-2
-  - @rankings.each do |ranking|
-    - if link_to !ranking.is_registerable? || current_user.present?
-      = link_to ranking_series_path(ranking.name), class: 'list-group-item list-group-item-action' do
-        %i.bi.bi-globe2
-        = ranking.name
-    - else
-      %li.list-group-item
-        %bi.bi-lock
-        = ranking.name
-        （登録作業中）
-          
+.card.shadow-sm.mb-4
+  .list-group.list-group-flush
+    - @rankings.each do |ranking|
+      - if link_to !ranking.is_registerable? || current_user.present?
+        = link_to ranking_series_path(ranking.name), class: 'list-group-item list-group-item-action d-flex align-items-center gap-2' do
+          %i.bi.bi-globe2.text-primary
+          = ranking.name
+      - else
+        .list-group-item.d-flex.align-items-center.gap-2.text-body-secondary
+          %i.bi.bi-lock
+          = ranking.name
+          %span.badge.text-bg-secondary.ms-auto 登録作業中

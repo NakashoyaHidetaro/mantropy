@@ -1,5 +1,5 @@
-%h1 Editing user
+%h1.h3.mt-4.mb-3 Editing user
 = render 'form'
-= link_to 'Show', user_path(@user.name)
-|
-\#{link_to 'Back', users_path}
+.d-flex.flex-wrap.gap-2.mt-3
+  = link_to 'Show', user_path(@user.name), class: 'btn btn-outline-secondary'
+  = link_to 'Back', users_path, class: 'btn btn-outline-secondary'

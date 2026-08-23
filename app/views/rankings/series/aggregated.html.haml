@@ -1,34 +1,36 @@
 - count = 0
 - if @series
-  - @series.each do |serie|
-    - if current_user && serie.ranks.where(:ranking_id => 1).map{|r| r.user_id}.include?(current_user.id)
-      %p.serie{:style => "background-color: cyan;"}
-        - r3 = serie.ranks.where(:ranking_id => 3).first
-        - r4 = serie.ranks.where(:ranking_id => 4).first
-        = "順位: #{r3&.rank}　得点（重複修正）: #{r3&.score}　重複数: #{serie.ranks.where(:ranking_id => 1).count}　糞修正順位: #{r4&.rank}　糞修正得点: #{r4&.score}"
-        %br
-        = link_to image_tag(serie_image_path(serie), :alt=> serie.name, :style => "float: left;"), serie, {:target => "_blank"} if (count += 1) <= 30
-        %p.serie_detail
-        %h2= link_to serie.name, serie, {:target => "_blank"}
-        = serie.authors.map{|a| a.name}
-        = serie.magazines.select("DISTINCT *").map{|m| m.name}
-        %br
-        - serie.ranks.where(:ranking_id => [1,2]).sort{|a, b| (a.ranking_id <=> b.ranking_id).nonzero? || a.rank <=> b.rank}.each do |r|
-          = link_to "#{r.user.name} (#{r.ranking_id == 2 ? "糞" : nil}#{r.rank}位)", user_path(r.user.name)
-        %br{:style => "clear: both;"}
-    - else
-      %p.serie
-        - r3 = serie.ranks.where(:ranking_id => 3).first
-        - r4 = serie.ranks.where(:ranking_id => 4).first
-        = "順位: #{r3&.rank}　得点（重複修正）: #{r3&.score}　重複数: #{serie.ranks.where(:ranking_id => 1).count}　糞修正順位: #{r4&.rank}　糞修正得点: #{r4&.score}"
-        %br
-        = link_to image_tag(serie_image_path(serie), :alt=> serie.name, :style => "float: left;"), serie, {:target => "_blank"} if (count += 1) <= 30
-        %p.serie_detail
-        %h2= link_to serie.name, serie, {:target => "_blank"}
-        = serie.authors.map{|a| a.name}
-        = serie.magazines.select("DISTINCT *").map{|m| m.name}
-        %br
-        - serie.ranks.where(:ranking_id => [1,2]).sort{|a, b| (a.ranking_id <=> b.ranking_id).nonzero? || a.rank <=> b.rank}.each do |r|
-          = link_to "#{r.user.name} (#{r.ranking_id == 2 ? "糞" : nil}#{r.rank}位)", user_path(r.user.name)
-        %br{:style => "clear: both;"}
+  .vstack.gap-3.my-3
+    - @series.each do |serie|
+      - is_mine = current_user && serie.ranks.where(:ranking_id => 1).map { |r| r.user_id }.include?(current_user.id)
+      - r3 = serie.ranks.where(:ranking_id => 3).first
+      - r4 = serie.ranks.where(:ranking_id => 4).first
+      .card.shadow-sm
+        - if is_mine
+          .card-header.bg-info-subtle.text-info-emphasis.fw-bold
+            %i.bi.bi-check2-circle.me-1
+            ランキングへ入れています
+        .card-body
+          .d-flex.flex-wrap.gap-2.mb-3.small
+            %span.badge.text-bg-primary 順位: #{r3&.rank}
+            %span.badge.text-bg-secondary 得点（重複修正）: #{r3&.score}
+            %span.badge.text-bg-secondary 重複数: #{serie.ranks.where(:ranking_id => 1).count}
+            %span.badge.text-bg-secondary 糞修正順位: #{r4&.rank}
+            %span.badge.text-bg-secondary 糞修正得点: #{r4&.score}
+          .d-flex.gap-3
+            - if (count += 1) <= 30
+              .flex-shrink-0
+                = link_to serie, { target: "_blank" } do
+                  = image_tag serie_image_path(serie), alt: serie.name, class: 'img-fluid rounded'
+            .flex-grow-1
+              %h5.mb-1= link_to serie.name, serie, { target: "_blank" }
+              %p.text-body-secondary.small.mb-2
+                = serie.authors.map { |a| a.name }.join('、')
+                - if serie.magazines.select("DISTINCT *").any?
+                  %span.mx-1 /
+                  = serie.magazines.select("DISTINCT *").map { |m| m.name }.join('、')
+              .d-flex.flex-wrap.gap-2
+                - serie.ranks.where(:ranking_id => [1, 2]).sort { |a, b| (a.ranking_id <=> b.ranking_id).nonzero? || a.rank <=> b.rank }.each do |r|
+                  = link_to "#{r.user.name} (#{r.ranking_id == 2 ? '糞' : nil}#{r.rank}位)", user_path(r.user.name), class: 'link-secondary small'
+
 = paginate @series

@@ -1,5 +1,5 @@
-%h1 Editing wiki
+%h1.h3.mt-4.mb-3 Editing wiki
 = render 'form'
-= link_to 'Show', @wiki
-|
-\#{link_to 'Back', member_wikis_path}
+.d-flex.flex-wrap.gap-2.mt-3
+  = link_to 'Show', @wiki, class: 'btn btn-outline-secondary'
+  = link_to 'Back', member_wikis_path, class: 'btn btn-outline-secondary'

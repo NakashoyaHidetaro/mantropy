@@ -1,51 +1,25 @@
-%div{:align => "center", :style => "background-color: black; padding: 0px; margin: 0px; border: 0px;", :width => "100%"}
-  %table#home_index_table{:border => "0", :cellpadding => "0", :cellspacing => "0", :width => "760"}
-    %tr
-      %td{:align => "center", :colspan => "2"}
-        %marquee{:border => "0", :scrollamount => "3", :scrolldelay => "48"}
-          %font{:color => "skyblue"}
-            マンガ読みたちが集うサークル、漫トロピーへよおこそ。
-            漫トロピーは漫画好きな人たちが集まって漫画の貸し借りをしたり、
-            年二回(08年度の場合)漫画についての冊子作成をしたりするサークルです。
-            詳細な活動内容は
-            %a{:href => wiki_path('about')}> 活動内容
-            をご覧ください。
-    %tr
-      %td{:align => "left", :valign => "top"}
-        = image_tag "top.gif", alt: "愛生会病院風漫トロピーロゴ"
-      %td{:align => "left", :valign => "top"}
-        %table{:border => "0", :cellpadding => "0", :cellspacing => "0", :width => "360"}
-          %tr
-            %td{:colspan => "2"}
-              = image_tag "logo.gif", width: "360", alt: "京大漫トロピー"
-          %tr
-            %td マンガ読みたちが集うサークル、漫トロピーへよおこそ。
-            %td
-              = image_tag "logo.gif", width: "180", alt: "京大漫トロピー"
-          %tr
-            %td
-              = image_tag "logo.gif", width: "180", alt: "京大漫トロピー"
-            %td 漫トロピーは漫画好きな人たちが集まって漫画の貸し借りをしたり、
-          %tr
-            %td 年二回(08年度の場合)漫画についての冊子作成をしたりするサークルです。
-            %td
-              = image_tag "logo.gif", width: "180", alt: "京大漫トロピー"
-          %tr
-            %td
-              = image_tag "logo.gif", width: "180", alt: "京大漫トロピー"
-            %td
-              詳細な活動内容は上メニューより
-              %a{:href => wiki_path('about')}> 活動内容
-              をご覧ください。
-    %tr
-      %td{:colspan => "2", :height => "8"}
-    %tr
-      %td{:align => "left", :colspan => "2", :valign => "top"}
-        = raw @content
-        %p{:style => "color: black;"}
-          キェェェェエエエエ！！！
-    %tr
-      %td{:align => "center", :background => image_url("mantro_chan.jpg"), :colspan => "2", :height => "302", :valign => "bottom"}
-        = image_tag "logo_m.gif"
-        %br
-        %font{:color => "black"} 漫トロのイメージキャラクター、「まんとろちゃん」
+.py-3
+  .row.align-items-center.g-4
+    .col-12.col-md-5.text-center
+      = image_tag "top.gif", alt: "愛生会病院風漫トロピーロゴ", class: "img-fluid"
+    .col-12.col-md-7
+      = image_tag "logo.gif", alt: "京大漫トロピー", class: "img-fluid mb-3"
+      %p.lead.mb-2 マンガ読みたちが集うサークル、漫トロピーへよおこそ。
+      %p.mb-3
+        漫トロピーは漫画好きな人たちが集まって漫画の貸し借りをしたり、
+        年二回(08年度の場合)漫画についての冊子作成をしたりするサークルです。
+      %p.mb-0
+        詳細な活動内容は上メニューより
+        = link_to '活動内容', wiki_path('about')
+        をご覧ください。
+
+.card.shadow-sm.my-4
+  .card-body
+    = raw @content
+    %p.mb-0.fw-bold キェェェェエエエエ！！！
+
+.card.shadow-sm.my-4.text-center.overflow-hidden
+  = image_tag "mantro_chan.jpg", alt: "まんとろちゃん", class: "card-img-top img-fluid"
+  .card-body
+    = image_tag "logo_m.gif", alt: "まんとろちゃん", class: "img-fluid mb-3"
+    %p.text-body-secondary.mb-0 漫トロのイメージキャラクター、「まんとろちゃん」

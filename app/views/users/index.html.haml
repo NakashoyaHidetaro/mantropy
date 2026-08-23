@@ -1,29 +1,41 @@
 - if current_user
-  %h2 ランキング提出状況
+  %h2.h4.mb-3 ランキング提出状況
+  .list-group.mb-4
+    - @users.each do |user|
+      .list-group-item.d-flex.flex-wrap.align-items-center.gap-2
+        = link_to user.name, user_path(user.name), class: 'fw-bold text-decoration-none'
+        - @registering_rankings.each do |ranking|
+          - unless complete_ranking(ranking, user)
+            %span.d-inline-flex.align-items-center.gap-1
+              %span.badge.text-bg-warning= ranking.name + '不十分'
+              %span.text-muted.small
+                提出数
+                %span.fw-bold= user.ranks.where(:ranking_id => ranking.id).count
+
+%h2.h4.mb-3 現在の漫トロを構成する者たち
+.row.row-cols-2.row-cols-md-4.g-3
   - @users.each do |user|
-    = link_to (user.name), user_path(user.name)
-    - @registering_rankings.each do |ranking|
-      - if !complete_ranking(ranking, user)
-        %b{:style => "background-color: yellow;"}= ranking.name + '不十分'
-        提出数
-        %b= user.ranks.where(:ranking_id => ranking.id).count
-    %br
-%h2 現在の漫トロを構成する者たち
-- @users.each do |user|
-  .member
-    = link_to (image_tag "nil_medium.jpg", :alt => user.name, :width=> 128, :height=> 128), user_path(user.name)
-    %br
-    = link_to (user.name), user_path(user.name)
-    %br
-    = user.publicabout && user.publicabout != "" ? "#{user.publicabout[0..7]}#{user.publicabout.length > 9 ? "…" : nil}" : "頭がァッ！　ぶわわ"
+    .col
+      .card.h-100.text-center
+        .card-body
+          = link_to user_path(user.name) do
+            = image_tag "nil_medium.jpg", :alt => user.name, :width => 128, :height => 128, :class => 'rounded-circle img-fluid mb-2'
+          %h3.h6.card-title.mb-1
+            = link_to user.name, user_path(user.name), class: 'text-decoration-none'
+          %p.card-text.text-muted.small.mb-0
+            = user.publicabout && user.publicabout != "" ? "#{user.publicabout[0..7]}#{user.publicabout.length > 9 ? "…" : nil}" : "頭がァッ！　ぶわわ"
+
 - if current_user
-  %br{:style => "clear: both;"}
-  %h2 かつて漫トロを創りし者たち
-  %div ログイン情報は生きてます。
-  - @old_users.each do |user|
-    .member
-      = link_to (image_tag "nil_medium.jpg", :alt => user.name, :width=> 128, :height=> 128), user_path(user.name)
-      %br
-      = link_to (user.name), user_path(user.name)
-      %br
-      = user.publicabout && user.publicabout != "" ? "#{user.publicabout[0..7]}#{user.publicabout.length > 9 ? "…" : nil}" : "頭がァッ！　ぶわわ"
+  %h2.h4.mt-5.mb-2 かつて漫トロを創りし者たち
+  %p.text-muted ログイン情報は生きてます。
+  .row.row-cols-2.row-cols-md-4.g-3
+    - @old_users.each do |user|
+      .col
+        .card.h-100.text-center
+          .card-body
+            = link_to user_path(user.name) do
+              = image_tag "nil_medium.jpg", :alt => user.name, :width => 128, :height => 128, :class => 'rounded-circle img-fluid mb-2'
+            %h3.h6.card-title.mb-1
+              = link_to user.name, user_path(user.name), class: 'text-decoration-none'
+            %p.card-text.text-muted.small.mb-0
+              = user.publicabout && user.publicabout != "" ? "#{user.publicabout[0..7]}#{user.publicabout.length > 9 ? "…" : nil}" : "頭がァッ！　ぶわわ"

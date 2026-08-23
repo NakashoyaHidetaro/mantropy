@@ -1,5 +1,6 @@
-%h1
+%h1.h3.mt-4.mb-3
   = @wiki.name || "新規ページ"
   の編集
 = render 'form'
-= link_to 'Back', member_wikis_path
+.mt-3
+  = link_to 'Back', member_wikis_path, class: 'btn btn-outline-secondary'

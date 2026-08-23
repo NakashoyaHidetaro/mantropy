@@ -1,14 +1,27 @@
-= link_to '検索しても出てこない雑誌に掲載された読み切りや・Web漫画などの新しい漫画シリーズを作成する', new_member_serie_path if current_user
+- if current_user
+  .my-3
+    = link_to '検索しても出てこない雑誌に掲載された読み切りや・Web漫画などの新しい漫画シリーズを作成する', new_member_serie_path, class: 'btn btn-primary btn-sm'
+
 = paginate @series
-- @series.each do |serie|
-  %p.serie
-    = link_to image_tag(serie_image_path(serie), :alt=> serie.name, :style => "float: left;"), serie, {:target => "_blank"}
-  %p.serie_detail
-  %h2= link_to serie.name, serie, {:target => "_blank"}
-  .serie_books
-    - serie.books.each do |book|
-      = book.name
-      %br
-    %br{:style => "clear: both;"}
+
+.row.row-cols-1.row-cols-md-2.g-3.my-1
+  - @series.each do |serie|
+    .col
+      .card.h-100.shadow-sm
+        .card-body.d-flex.gap-3
+          .flex-shrink-0
+            = link_to serie, { target: "_blank" } do
+              = image_tag serie_image_path(serie), alt: serie.name, class: 'img-fluid rounded'
+          .flex-grow-1
+            %h5.card-title
+              = link_to serie.name, serie, { target: "_blank" }
+            - if serie.books.any?
+              %ul.list-unstyled.small.text-body-secondary.mb-0
+                - serie.books.each do |book|
+                  %li= book.name
+
 = paginate @series
-= link_to '検索しても出てこない雑誌に掲載された読み切りや・Web漫画などの新しい漫画シリーズを作成する', new_member_serie_path if current_user
+
+- if current_user
+  .my-3
+    = link_to '検索しても出てこない雑誌に掲載された読み切りや・Web漫画などの新しい漫画シリーズを作成する', new_member_serie_path, class: 'btn btn-primary btn-sm'

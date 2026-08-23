@@ -1,19 +1,19 @@
-%div{:style => "width: 100%; background-color: #efefef; margin: 0px;"}
-  %dl.topic{:style => "margin: 0px;"}
+.card.topic
+  .card-header.d-flex.flex-wrap.align-items-center.justify-content-between.gap-2
     = tag :a, :name => i
-  -# member側のスレッドURLには内部IDが出るためゲストにはリンクを見せない
-  - if current_user
-    %div{align: 'right'}
-      = link_to "全部読む", member_topic_show_path(topic)
-      = link_to "最新50", "#{member_topic_show_path(topic)}/|50"
-  %div{:style => "padding: 0px 0px 10px 0px;"}
-    %b
-      %font{:color => "gray"}= i
-      %font{:color => "#FF0000", :size => "5"}= topic.title
-  - j = 0
-  - topic.posts.order(:id).each do |post|
-  - #break if (j += 1) > 10
-    = render :partial => "member/topics/post", :locals => {:post => post}
-  %dl
+    %div
+      - if i
+        %span.badge.text-bg-secondary.me-2= i
+      %span.h5.mb-0.text-danger= topic.title
+    -# member側のスレッドURLには内部IDが出るためゲストにはリンクを見せない
+    - if current_user
+      .btn-group.btn-group-sm
+        = link_to "全部読む", member_topic_show_path(topic), class: 'btn btn-outline-secondary'
+        = link_to "最新50", "#{member_topic_show_path(topic)}/|50", class: 'btn btn-outline-secondary'
+  .card-body
+    - j = 0
+    - topic.posts.order(:id).each do |post|
+    - #break if (j += 1) > 10
+      = render :partial => "member/topics/post", :locals => {:post => post}
     - if current_user
       = render :partial => "member/topics/new_post", :locals => {:topic => topic}

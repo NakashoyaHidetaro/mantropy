@@ -1,98 +1,139 @@
-.serie_image
-  = image_tag(serie_image_path(@serie, :large), :alt => @serie.name)
-.serie_detail
-  %h1
-    = @serie.name
-  %h2 シリーズ情報修正
-  %p.serie_authors
-    = form_for([:member, @serie]) do |f|
-      %b タイトル:
-      = f.text_field :name
-      = f.submit "変更"
-  %p.serie_authors
-    %h3 著者:
-    - if @serie.authors
-      - @serie.authors.each do |a|
-        = form_tag member_serie_author_path(@serie), :method => :patch, remote: false do
-          = a.name
-          = hidden_field_tag :mode, :remove
-          = hidden_field_tag :author_id, a.id
-          = submit_tag "取り除く", :confirm => "#{a.name} を #{@serie.name} から取り除いてよろしいですか？"
-    = form_tag member_serie_author_path(@serie), :method => :patch, remote: false do
-      = hidden_field_tag :mode, "add"
-      = text_field_tag :author_name
-      = submit_tag "追加する"
-  %p.serie_magazines
-    %h3 掲載誌:
-    %dl
-      %dt 現在の掲載誌情報
-      %dd
-        %table
-          %tr
-            %th 雑誌名
-            %th 雑誌掲載情報
-            %th 出版社
-            %th 操作
-          - @serie.magazines_series.each do |ms|
-            %tr
-              = form_tag member_serie_magazine_serie_path(@serie), :method => :patch, remote: false do
-                %td= ms.magazine && ms.magazine.name
-                %td= ms.placed
-                %td= ms.magazine && ms.magazine.publisher
-                = hidden_field_tag :mode, :remove
-                = hidden_field_tag :magazines_serie_id, ms.id
-                %td= submit_tag "取り除く", :confirm => "#{ms.magazine && ms.magazine.name}, #{ms.placed}を #{@serie.name} から取り除いてよろしいですか？"
-      %dt 掲載誌情報の追加
-      %dd
-        %dl
+.row.g-4.mt-1
+  .col-md-4
+    .serie_image
+      = image_tag(serie_image_path(@serie, :large), :alt => @serie.name, :class => 'img-fluid rounded shadow-sm')
+  .col-md-8
+    .serie_detail
+      %h1.h3
+        = @serie.name
+      %h2.h5.text-body-secondary.mb-3 シリーズ情報修正
+      .card.mb-3
+        .card-header
+          %span.fw-bold タイトル
+        .card-body
+          = form_for([:member, @serie]) do |f|
+            .row.g-2.align-items-center
+              .col-sm
+                = f.text_field :name, class: 'form-control'
+              .col-sm-auto
+                = f.submit "変更", class: 'btn btn-primary'
+
+      .card.mb-3
+        .card-header 著者
+        .card-body
+          - if @serie.authors
+            .list-group.list-group-flush.mb-3
+              - @serie.authors.each do |a|
+                .list-group-item.d-flex.align-items-center.justify-content-between.gap-2.px-0
+                  = form_tag member_serie_author_path(@serie), :method => :patch, remote: false, class: 'd-flex align-items-center justify-content-between gap-2 w-100' do
+                    %span= a.name
+                    = hidden_field_tag :mode, :remove
+                    = hidden_field_tag :author_id, a.id
+                    = submit_tag "取り除く", :confirm => "#{a.name} を #{@serie.name} から取り除いてよろしいですか？", :class => 'btn btn-outline-danger btn-sm'
+          = form_tag member_serie_author_path(@serie), :method => :patch, remote: false do
+            = hidden_field_tag :mode, "add"
+            .row.g-2.align-items-end
+              .col-sm
+                = text_field_tag :author_name, nil, class: 'form-control'
+              .col-sm-auto
+                = submit_tag "追加する", :class => 'btn btn-outline-primary btn-sm'
+
+      .card.mb-3
+        .card-header 掲載誌
+        .card-body
+          %h3.h6 現在の掲載誌情報
+          .table-responsive.mb-4
+            %table.table.table-sm.align-middle
+              %thead.table-light
+                %tr
+                  %th 雑誌名
+                  %th 雑誌掲載情報
+                  %th 出版社
+                  %th 操作
+              %tbody
+                - @serie.magazines_series.each do |ms|
+                  %tr
+                    %td= ms.magazine && ms.magazine.name
+                    %td= ms.placed
+                    %td= ms.magazine && ms.magazine.publisher
+                    %td
+                      = form_tag member_serie_magazine_serie_path(@serie), :method => :patch, remote: false do
+                        = hidden_field_tag :mode, :remove
+                        = hidden_field_tag :magazines_serie_id, ms.id
+                        = submit_tag "取り除く", :confirm => "#{ms.magazine && ms.magazine.name}, #{ms.placed}を #{@serie.name} から取り除いてよろしいですか？", :class => 'btn btn-outline-danger btn-sm'
+          %h3.h6 掲載誌情報の追加
           = form_tag member_serie_magazine_serie_path(@serie), :method => :patch, remote: false do
             = hidden_field_tag :mode, :add
-            %dt 雑誌名
-            %dd
-              = select_tag :magazine_id, options_from_collection_for_select(Magazine.order("name"), :id, :name, (@serie.magazines.empty? ? nil : @serie.magazines.last.id)), {:include_blank => "右のボックスから雑誌を追加"}
+            .mb-3
+              %label.form-label 雑誌名
+              .row.g-2.align-items-center
+                .col-sm-5
+                  = select_tag :magazine_id, options_from_collection_for_select(Magazine.order("name"), :id, :name, (@serie.magazines.empty? ? nil : @serie.magazines.last.id)), {:include_blank => "右のボックスから雑誌を追加", :class => 'form-select'}
+                .col-sm-auto.text-body-secondary
+                  もしくは
+                .col-sm
+                  = text_field_tag :magazine_name, nil, class: 'form-control'
+            .mb-3
+              %label.form-label 雑誌掲載情報（読み切りの場合は掲載号、Web漫画はURL、など）
+              = text_field_tag :magazine_placed, nil, class: 'form-control'
+            = submit_tag "追加する", :class => 'btn btn-outline-primary btn-sm'
+
+      .card.mb-3
+        .card-header 細部
+        .card-body
+          = form_tag member_serie_post_path(@serie), :method => :patch, remote: false do
+            = hidden_field_tag "topic_id", @serie.topic_id
+            .row.g-2.align-items-center.mb-3
+              .col-sm-auto
+                = submit_tag "書き込み", :class => 'btn btn-primary'
+              .col-sm
+                .input-group
+                  %span.input-group-text E-mail：
+                  = text_field_tag "post[email]", nil, :class => 'form-control'
+            = text_area_tag "post[content]", nil, {:rows => 5, :class => 'form-control'}
+
+%hr.my-4
+.d-flex.flex-wrap.gap-2
+  = link_to 'Show', @serie, class: 'btn btn-outline-secondary'
+  = link_to 'Back', series_path, class: 'btn btn-outline-secondary'
+
+.serie_ranks.mt-4
+  %h2.h4.mb-3 ランキング登録
+  .card
+    .card-body
+      = form_for([:member, Rank.new]) do |f|
+        .mb-3
+          %label.form-label 掲載誌
+          .row.g-2.align-items-center
+            .col-sm-auto.text-body-secondary
+              雑誌を選ぶ
+            .col-sm-5
+              = select_tag :magazine_id, options_from_collection_for_select(Magazine.order("name"), :id, :name, (@serie.magazines.empty? ? nil : @serie.magazines.last.id)), {:include_blank => "右のボックスから雑誌を追加", :class => 'form-select'}
+            .col-sm-auto.text-body-secondary
               もしくは
-              = text_field_tag :magazine_name
-            %dt 雑誌掲載情報（読み切りの場合は掲載号、Web漫画はURL、など）
-            %dd= text_field_tag :magazine_placed
-            %dt 操作
-            %dd= submit_tag "追加する"
-  %p.serie_post
-    %h3 細部:
-    = form_tag member_serie_post_path(@serie), :method => :patch, remote: false do
-      %dt
-        = hidden_field_tag "topic_id", @serie.topic_id
-        = submit_tag "書き込み"
-        E-mail： #{text_field_tag "post[email]"}
-      %dd
-        = text_area_tag "post[content]", nil, {:rows => 5, :cols => 64}
-%hr
-= link_to 'Show', @serie
-|
-\#{link_to 'Back', series_path}
-%p.serie_ranks
-  %h2 ランキング登録
-  = form_for([:member, Rank.new]) do |f|
-    %dl
-      %dt 掲載誌
-      %dd
-        雑誌を選ぶ
-        = select_tag :magazine_id, options_from_collection_for_select(Magazine.order("name"), :id, :name, (@serie.magazines.empty? ? nil : @serie.magazines.last.id)), {:include_blank => "右のボックスから雑誌を追加"}
-        もしくは
-        = text_field_tag :magazine_name
-      %dt 雑誌掲載情報（読み切りの場合は掲載号、Web漫画はURL、など）
-      %dd= text_field_tag :magazine_placed
-      %dt ランキング
-      %dd
-        順位
-        = f.text_field :rank, {:size => 2, :maxlength => 2}
-        ※個人ランキングは1~30位、クソランキングは1~5位です
-      = f.hidden_field :serie_id, :value => @serie.id
-      %dd
-        どのランキング
-        = f.collection_select :ranking_id, @rankings, :id, :name, {:selected => @rankings.map{|r| complete_ranking(r) ? nil : r.id}.compact.min}
-      %dt= f.submit "登録", :confirm => "ランキング登録してよろしいですか？"
-  %p
-    %em{:style => "color: red;"} 雑誌一覧に掲載誌がない！？
+            .col-sm
+              = text_field_tag :magazine_name, nil, class: 'form-control'
+        .mb-3
+          %label.form-label 雑誌掲載情報（読み切りの場合は掲載号、Web漫画はURL、など）
+          = text_field_tag :magazine_placed, nil, class: 'form-control'
+        .mb-3
+          %label.form-label ランキング
+          .row.g-2.align-items-center
+            .col-auto
+              .input-group
+                %span.input-group-text 順位
+                = f.text_field :rank, {:size => 2, :maxlength => 2, :class => 'form-control'}
+            .col
+              %span.form-text ※個人ランキングは1~30位、クソランキングは1~5位です
+          = f.hidden_field :serie_id, :value => @serie.id
+          .row.g-2.align-items-center.mt-1
+            .col-auto.text-body-secondary
+              どのランキング
+            .col-sm
+              = f.collection_select :ranking_id, @rankings, :id, :name, {:selected => @rankings.map{|r| complete_ranking(r) ? nil : r.id}.compact.min}, {:class => 'form-select'}
+        = f.submit "登録", :confirm => "ランキング登録してよろしいですか？", :class => 'btn btn-primary'
+  %p.mt-3
+    %em.text-danger 雑誌一覧に掲載誌がない！？
     = succeed "1." do
       %br
     雑誌名で検索して下さい。検索すると、Amazonに扱いがあれば自動的に追加されます
@@ -100,4 +141,5 @@
     2. Amazonに扱いがない場合、
     %a{:href => "http://ja.wikipedia.org/", :target => "_blank"} Wikipedia
     を検索してページ名をコピーし、登録時に「右のボックスから雑誌を追加」を選んだ状態で右のボックスに雑誌名を入力して下さい
-= link_to "このシリーズに含まれるシリーズを新しく作る", new_member_serie_path(id: @serie.id)
+.mt-3.mb-4
+  = link_to "このシリーズに含まれるシリーズを新しく作る", new_member_serie_path(id: @serie.id), class: 'btn btn-outline-primary'

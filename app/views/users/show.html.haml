@@ -1,73 +1,82 @@
-%p
-  %b アカウント名:
-  = @user.name
-%p
-  %b twitter screen name:
-  = link_to @user.twitter, "http://twitter.com/#{@user.twitter}", :target => "_blank"
-%p
-  %b url:
-  = link_to @user.url, @user.url, :target => "_blank"
-%p
-  %b 外部向け自己紹介:
-  = @user.publicabout
-%p
-  %b 入トロ:
-  = @user.joined
+.card.mb-4
+  .card-body
+    %h2.h5.card-title.mb-3 プロフィール
+    %dl.row.mb-0
+      %dt.col-sm-3 アカウント名
+      %dd.col-sm-9= @user.name
+      %dt.col-sm-3 twitter screen name
+      %dd.col-sm-9
+        = link_to @user.twitter, "http://twitter.com/#{@user.twitter}", :target => "_blank"
+      %dt.col-sm-3 url
+      %dd.col-sm-9
+        = link_to @user.url, @user.url, :target => "_blank"
+      %dt.col-sm-3 外部向け自己紹介
+      %dd.col-sm-9= @user.publicabout
+      %dt.col-sm-3 入トロ
+      %dd.col-sm-9.mb-0= @user.joined
+
 - if current_user
-  %p
-    %b 本名:
-    = @user.realname
-  %p
-    %b パソコンメールアドレス:
-    = @user.pcmail
-  %p
-    %b 携帯メールアドレス:
-    = @user.mbmail
-  %p
-    %b 入学:
-    = @user.entered
-  %p
-    %b 内部向け自己紹介:
-    = @user.privateabout
-  %p
-    %b .userauths.email:
-    = @user.userauths.map{|a| a.email }
-%p
-  %h2 ポスト
-  最新10件
-  %br
+  .card.mb-4.border-warning
+    .card-body
+      %h2.h5.card-title.mb-3
+        %i.bi.bi-lock.me-1
+        内部情報
+      %dl.row.mb-0
+        %dt.col-sm-3 本名
+        %dd.col-sm-9= @user.realname
+        %dt.col-sm-3 パソコンメールアドレス
+        %dd.col-sm-9= @user.pcmail
+        %dt.col-sm-3 携帯メールアドレス
+        %dd.col-sm-9= @user.mbmail
+        %dt.col-sm-3 入学
+        %dd.col-sm-9= @user.entered
+        %dt.col-sm-3 内部向け自己紹介
+        %dd.col-sm-9= @user.privateabout
+        %dt.col-sm-3 .userauths.email
+        %dd.col-sm-9.mb-0= @user.userauths.map{|a| a.email }
+
+%h2.h4.mb-1 ポスト
+%p.text-muted.small 最新10件
+.list-group.mb-4
   - @user.posts.order("id DESC").limit(10).each do |post|
     - post_title = post.topic.title || Serie.find_by(topic_id: post.topic.id)&.name
-    -# member側のスレッドURLには内部IDが出るためゲストにはリンクを見せない
-    - if current_user
-      = link_to post_title, member_topic_show_path(post.topic)
-    - else
-      = post_title
-    = post.content[0..24]
-    %br
-%p
-  %h2 ランキング
-  - if @do_show_ranking
-    - @ranks.each do |rank|
-      = rank.ranking.name
-      = rank.rank
-      位
-      = link_to image_tag(serie_image_path(rank.serie, :small), :alt=> rank.serie.name), rank.serie
-      = link_to rank.serie.name, rank.serie
-      - if rank.serie.authors then
-        - rank.serie.authors.each do |author|
-          = link_to author.name, series_path(:str => author.name)
-      - magazine_names = rank.serie.magazines_series.map{|ms| ms.magazine ? (ms.magazine.name + (ms.placed ? (ms.placed != "" ? "（#{ms.placed}）" : "") : "")) : nil}.compact.uniq.join("　")
-      -# member側の編集リンクはログイン時のみ表示する
+    .list-group-item
+      -# member側のスレッドURLには内部IDが出るためゲストにはリンクを見せない
       - if current_user
-        = link_to magazine_names, edit_member_serie_path(rank.serie)
+        = link_to post_title, member_topic_show_path(post.topic), class: 'fw-bold text-decoration-none'
       - else
-        = magazine_names
-      - if @user == current_user && @registerable_rankings.map{|r| r.id}.include?(rank.ranking_id)
-        = link_to '削除', member_rank_path(rank), :confirm => "#{rank.serie.name} を #{rank.rank} 位から削除していいですか？", :method => :delete, :controller => :ranks
-      %br
-  - @registering_rankings.each do |ranking|
-    %b{:style => "background-color: yellow;"}= ranking.name + '不十分' if !complete_ranking(ranking, @user)
-= link_to 'ユーザー情報を編集する', edit_member_user_path(@user) if @user == current_user
-|
-\#{link_to 'Back', users_path}
+        %span.fw-bold= post_title
+      %span.text-muted.ms-2= post.content[0..24]
+
+%h2.h4.mb-3 ランキング
+- if @do_show_ranking
+  .list-group.mb-3
+    - @ranks.each do |rank|
+      .list-group-item.d-flex.flex-wrap.align-items-center.gap-2
+        %span.badge.text-bg-secondary= rank.ranking.name
+        %span.fw-bold
+          = rank.rank
+          位
+        = link_to image_tag(serie_image_path(rank.serie, :small), :alt => rank.serie.name, :class => 'img-fluid'), rank.serie
+        = link_to rank.serie.name, rank.serie, class: 'fw-bold text-decoration-none'
+        - if rank.serie.authors then
+          %span.text-muted.small
+            - rank.serie.authors.each do |author|
+              = link_to author.name, series_path(:str => author.name), class: 'text-decoration-none me-1'
+        - magazine_names = rank.serie.magazines_series.map{|ms| ms.magazine ? (ms.magazine.name + (ms.placed ? (ms.placed != "" ? "（#{ms.placed}）" : "") : "")) : nil}.compact.uniq.join("　")
+        -# member側の編集リンクはログイン時のみ表示する
+        - if current_user
+          = link_to magazine_names, edit_member_serie_path(rank.serie), class: 'text-muted small text-decoration-none'
+        - else
+          %span.text-muted.small= magazine_names
+        - if @user == current_user && @registerable_rankings.map{|r| r.id}.include?(rank.ranking_id)
+          .ms-auto
+            = link_to member_rank_path(rank), :confirm => "#{rank.serie.name} を #{rank.rank} 位から削除していいですか？", :method => :delete, :controller => :ranks, :class => 'btn btn-sm btn-outline-danger' do
+              %i.bi.bi-trash
+              削除
+- @registering_rankings.each do |ranking|
+  %span.badge.text-bg-warning.me-1= ranking.name + '不十分' if !complete_ranking(ranking, @user)
+
+.mt-4.d-flex.gap-2
+  = link_to 'ユーザー情報を編集する', edit_member_user_path(@user), class: 'btn btn-outline-primary' if @user == current_user
+  = link_to 'Back', users_path, class: 'btn btn-outline-secondary'

@@ -1,47 +1,54 @@
 = form_for([:member, (@serie_new ? Serie.new : @serie)]) do |f|
   - if @serie.errors.any?
-    #error_explanation
-      %h2
+    #error_explanation.alert.alert-danger
+      %h2.h6
         = pluralize(@serie.errors.count, "error")
         prohibited this series from being saved:
-      %ul
+      %ul.mb-0
         - @serie.errors.full_messages.each do |msg|
           %li= msg
-  %div
-    Tips シリーズ情報とは？
-    %br
-    シリース情報とは、ランキングに入れることの出来る漫画の要素という抽象的な概念です。
-    %br
-    「HUNTER×HUNTER」なら単行本を集約したモノ
-    %br
-    「金魚王国の崩壊」ならWebサイトに掲載された漫画を集約したモノ
-    %br
-    「女装少年アンソロジー」なら、「女装少年アンソロジー」というアンソロジー形式それ自体
-    %br
-    「ミックス＊リリィズ」なら、「女装少年アンソロジー」に掲載された漫画
-    %br
-    を指します
-    %br
-  .field
-    = f.label "シリーズ名・タイトル"
-    %br
-    = f.text_field :name, required: true
-  .field
-    = f.label "著者・漫画家"
-    %br
-    = select_tag :author_id, options_from_collection_for_select(Author.order("name"), :id, :name, (@serie.authors.empty? ? nil : @serie.authors.last.id)), {:include_blank => "右のボックスから漫画家を追加"}
-    = text_field_tag :author_name
-  .field
-    = f.label "掲載誌"
-    %br
-    = select_tag :magazine_id, options_from_collection_for_select(Magazine.order("name"), :id, :name, (@serie.magazines.empty? ? nil : @serie.magazines.last.id)), {:include_blank => "右のボックスから雑誌を追加"}
-    = text_field_tag :magazine_name
-    雑誌出版社:#{text_field_tag :magazine_publisher}
-  .field
-    = f.label "次の書籍情報を含める"
-    %br
-    = select_tag :book_ids, options_from_collection_for_select(@serie.books, :id, :name),{:multiple => true}
-    CtrlかShiftキーを押下しながらで複数選択(Editing Serieの時は関係ないです)
-  .actions
+  .alert.alert-info
+    %div
+      Tips シリーズ情報とは？
+      %br
+      シリース情報とは、ランキングに入れることの出来る漫画の要素という抽象的な概念です。
+      %br
+      「HUNTER×HUNTER」なら単行本を集約したモノ
+      %br
+      「金魚王国の崩壊」ならWebサイトに掲載された漫画を集約したモノ
+      %br
+      「女装少年アンソロジー」なら、「女装少年アンソロジー」というアンソロジー形式それ自体
+      %br
+      「ミックス＊リリィズ」なら、「女装少年アンソロジー」に掲載された漫画
+      %br
+      を指します
+  .card.mb-3
+    .card-body
+      .mb-3
+        = f.label "シリーズ名・タイトル", class: 'form-label'
+        = f.text_field :name, required: true, class: 'form-control'
+      .mb-3
+        = f.label "著者・漫画家", class: 'form-label'
+        .row.g-2
+          .col-md-6
+            = select_tag :author_id, options_from_collection_for_select(Author.order("name"), :id, :name, (@serie.authors.empty? ? nil : @serie.authors.last.id)), {:include_blank => "右のボックスから漫画家を追加", :class => 'form-select'}
+          .col-md-6
+            = text_field_tag :author_name, nil, class: 'form-control'
+      .mb-3
+        = f.label "掲載誌", class: 'form-label'
+        .row.g-2.align-items-center
+          .col-md-4
+            = select_tag :magazine_id, options_from_collection_for_select(Magazine.order("name"), :id, :name, (@serie.magazines.empty? ? nil : @serie.magazines.last.id)), {:include_blank => "右のボックスから雑誌を追加", :class => 'form-select'}
+          .col-md-4
+            = text_field_tag :magazine_name, nil, class: 'form-control'
+          .col-md-4
+            .input-group
+              %span.input-group-text 雑誌出版社
+              = text_field_tag :magazine_publisher, nil, class: 'form-control'
+      .mb-3
+        = f.label "次の書籍情報を含める", class: 'form-label'
+        = select_tag :book_ids, options_from_collection_for_select(@serie.books, :id, :name), {:multiple => true, :class => 'form-select'}
+        .form-text CtrlかShiftキーを押下しながらで複数選択(Editing Serieの時は関係ないです)
+  .mt-2
     = hidden_field_tag :serie_id, @serie.id
-    = f.submit
+    = f.submit class: 'btn btn-primary'

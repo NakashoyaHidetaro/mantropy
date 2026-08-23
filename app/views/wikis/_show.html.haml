@@ -1,30 +1,30 @@
-- content_for :header do
-  = javascript_import_module_tag 'wikis_show'
-
 - if @wiki.present?
   = raw(HikiDoc.to_html(@wiki.content, :use_wiki_name=>false))
   - if current_user
-    %hr
-    %h3 Wikiページ情報
-    %p
-      %b 内部のみ？:
-      = @wiki.is_private ? "はい" : "いいえ"
-    %p
-      %b 編集者:
-      = @wiki.user.name
-    = link_to new_member_wiki_path(id: @wiki.id), class: 'btn btn-sm btn-outline-primary' do
-      %i.bi.bi-pencil-fill
-      ページを編集
-
-    %p.mt-2
-      %button{type: :button, class: 'btn btn-sm btn-outline-primary', id: 'show-wiki-histories'}
-        %i.bi.bi-clock-history
-        このページの過去の版
-      %ul#wiki-histories{style: 'display: none;'}
-        - @wikis.each do |wiki|
-          %li
-            = link_to wiki.created_at, wiki_path(wiki.name, id: wiki.id)
-            = link_to wiki.title, wiki_path(wiki.name, id: wiki.id)
-            = link_to (user_name = wiki.user.name), user_path(user_name)
-            = @wiki == wiki ? "<= 閲覧中" : nil
-    = link_to "Wikiページ一覧に戻る", member_wikis_path
+    .card.mt-4
+      .card-body
+        %h3.h5.card-title Wikiページ情報
+        %dl.row.mb-3
+          %dt.col-sm-3 内部のみ？
+          %dd.col-sm-9= @wiki.is_private ? "はい" : "いいえ"
+          %dt.col-sm-3 編集者
+          %dd.col-sm-9.mb-0= @wiki.user.name
+        .d-flex.flex-wrap.gap-2
+          = link_to new_member_wiki_path(id: @wiki.id), class: 'btn btn-sm btn-outline-primary' do
+            %i.bi.bi-pencil-fill
+            ページを編集
+          %button.btn.btn-sm.btn-outline-primary{type: :button, data: { 'bs-toggle' => 'collapse', 'bs-target' => '#wiki-histories' }, aria: { expanded: 'false', controls: 'wiki-histories' }}
+            %i.bi.bi-clock-history
+            このページの過去の版
+        .collapse.mt-3#wiki-histories
+          .list-group
+            - @wikis.each do |wiki|
+              .list-group-item.d-flex.flex-wrap.align-items-center.gap-2
+                %span.text-muted.small
+                  = link_to wiki.created_at, wiki_path(wiki.name, id: wiki.id), class: 'text-muted text-decoration-none'
+                = link_to wiki.title, wiki_path(wiki.name, id: wiki.id), class: 'fw-bold text-decoration-none'
+                = link_to (user_name = wiki.user.name), user_path(user_name), class: 'text-decoration-none'
+                - if @wiki == wiki
+                  %span.badge.text-bg-info <= 閲覧中
+    .mt-3
+      = link_to "Wikiページ一覧に戻る", member_wikis_path, class: 'btn btn-outline-secondary btn-sm'

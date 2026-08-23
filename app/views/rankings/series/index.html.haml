@@ -1,39 +1,49 @@
-= link_to "会誌編集用にランキングとコメント一覧をXMLでダウンロードする", "#{request.url}.xml", download: true
+.my-3
+  = link_to "#{request.url}.xml", download: true, class: 'btn btn-outline-secondary btn-sm' do
+    %i.bi.bi-download.me-1
+    会誌編集用にランキングとコメント一覧をXMLでダウンロードする
+
 = paginate @series
+
 - if @series
-  - @series.each do |serie|
-    - if current_user && serie.ranks.where(:ranking_id => @ranking_ids).map{|r| r.user_id}.include?(current_user.id)
-      - if @is_should_comment_term && serie.rank_info[:rank] <= 50 && serie.posts.where(:user_id => current_user.id).count == 0
-        %p.serie{:style => "background-color: red;"}
-          コメントがまだです
-      - else
-        %p.serie{:style => "background-color: cyan;"}
-          ランキングへ入れています
-    %p.serie
-      順位:
-      = serie.rank_info[:rank]
-      合計得点:
-      = serie.rank_info[:sum_of_mark]
-      糞修正後得点:
-      = serie.rank_info[:sum_of_mark_with_kuso]
-      ランキング重複数:
-      = serie.rank_info[:count_rank]
-      糞重複数:
-      = serie.rank_info[:count_kuso]
-      コメント数:
-      = serie.rank_info[:count_post]
-    = link_to image_tag(serie_image_path(serie), :alt=> serie.name, :style => "float: left;"), serie, {:target => "_blank"} if serie.rank_info[:rank] <= 30
-    %p.serie_detail
-      %h2= link_to serie.name, serie, {:target => "_blank"}
-      = serie.authors.map{|a| a.name}
-      = serie.magazines.select("DISTINCT *").map{|m| m.name}
-      %br
-      - serie.ranks.where(:ranking_id => @ranking_ids).sort{|a, b| (a.ranking_id <=> b.ranking_id).nonzero? || a.rank <=> b.rank}.each do |r|
-        - user = r.user
-        - if @is_should_comment_term && current_user && serie.rank_info[:rank] <= 50 && serie.posts.where(:user_id => user.id).count == 0
-          %span{:style => "background-color: red;"}>< 未コメ
-        = link_to "#{user.name} (#{r.ranking_id == @ranking_ids.last ? "糞" : nil}#{r.rank}位)", user_path(user.name)
-        = "　"
-    %br{:style => "clear: both;"}
-    %br
+  .vstack.gap-3.my-3
+    - @series.each do |serie|
+      .card.shadow-sm
+        - if current_user && serie.ranks.where(:ranking_id => @ranking_ids).map { |r| r.user_id }.include?(current_user.id)
+          - if @is_should_comment_term && serie.rank_info[:rank] <= 50 && serie.posts.where(:user_id => current_user.id).count == 0
+            .card-header.bg-danger-subtle.text-danger-emphasis.fw-bold
+              %i.bi.bi-exclamation-triangle.me-1
+              コメントがまだです
+          - else
+            .card-header.bg-info-subtle.text-info-emphasis.fw-bold
+              %i.bi.bi-check2-circle.me-1
+              ランキングへ入れています
+        .card-body
+          .d-flex.flex-wrap.gap-2.mb-3.small
+            %span.badge.text-bg-primary 順位: #{serie.rank_info[:rank]}
+            %span.badge.text-bg-secondary 合計得点: #{serie.rank_info[:sum_of_mark]}
+            %span.badge.text-bg-secondary 糞修正後得点: #{serie.rank_info[:sum_of_mark_with_kuso]}
+            %span.badge.text-bg-secondary ランキング重複数: #{serie.rank_info[:count_rank]}
+            %span.badge.text-bg-secondary 糞重複数: #{serie.rank_info[:count_kuso]}
+            %span.badge.text-bg-secondary コメント数: #{serie.rank_info[:count_post]}
+          .d-flex.gap-3
+            - if serie.rank_info[:rank] <= 30
+              .flex-shrink-0
+                = link_to serie, { target: "_blank" } do
+                  = image_tag serie_image_path(serie), alt: serie.name, class: 'img-fluid rounded'
+            .flex-grow-1
+              %h5.mb-1= link_to serie.name, serie, { target: "_blank" }
+              %p.text-body-secondary.small.mb-2
+                = serie.authors.map { |a| a.name }.join('、')
+                - if serie.magazines.select("DISTINCT *").any?
+                  %span.mx-1 /
+                  = serie.magazines.select("DISTINCT *").map { |m| m.name }.join('、')
+              .d-flex.flex-wrap.gap-2
+                - serie.ranks.where(:ranking_id => @ranking_ids).sort { |a, b| (a.ranking_id <=> b.ranking_id).nonzero? || a.rank <=> b.rank }.each do |r|
+                  - user = r.user
+                  %span.d-inline-flex.align-items-center.gap-1
+                    - if @is_should_comment_term && current_user && serie.rank_info[:rank] <= 50 && serie.posts.where(:user_id => user.id).count == 0
+                      %span.badge.text-bg-danger 未コメ
+                    = link_to "#{user.name} (#{r.ranking_id == @ranking_ids.last ? '糞' : nil}#{r.rank}位)", user_path(user.name), class: 'link-secondary small'
+
 = paginate @series

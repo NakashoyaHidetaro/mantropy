@@ -1,66 +1,61 @@
-%table{:align => "center", :bgcolor => "#CCFFCC", :border => "1", :cellpadding => "3", :cellspacing => "7", :width => "100%"}
-  %tr
-    %td{:align => "center"}
-      %table{:border => "0", :cellpadding => "1", :width => "100%"}
-        %tr
-          %td{:colspan => "2", :nowrap => ""}
-            %font{:size => "+1"}
-              %b
-                %a{:href => root_path} 京大漫トロピー
-                内部掲示板
-            %br
-          %td{:align => "right", :nowrap => "", :valign => "top", :width => "5%"}
-        %tr
-          %td{:colspan => "3"}
-            %h2{:style => "color:#FFA500;"}
-            %ul
-              私的メモみたいな
-              %li
-                E-mail欄はE-mailアドレスを書く場所ではありません
-                %ul
-                  %li sageとか書く場所です、たぶん。
-              %li sage機能を実装する　→
-              %li ていうか、先ず上げ機能を実装しないと　→
-              %li http://をリンクにする
-              %li リンクにして&lt;div&gt;ポップアップしたい
-        %tr
-          %td{:align => "right", :nowrap => ""}
-%table{:align => "center", :bgcolor => "#CCFFCC", :border => "1", :cellpadding => "3", :cellspacing => "7", :width => "100%"}
-  %tr
-    %td
-      %font{:size => "2"}
-        - i = 0
-        - @topics.each do |topic|
-          - if (i += 1) <= 10 then
+.card.mt-4.mb-3
+  .card-body
+    %h1.h4.mb-3
+      = link_to "京大漫トロピー", root_path, class: 'link-underline-opacity-0 link-underline-opacity-100-hover'
+      内部掲示板
+    .alert.alert-secondary.mb-0
+      %ul.mb-0
+        私的メモみたいな
+        %li
+          E-mail欄はE-mailアドレスを書く場所ではありません
+          %ul
+            %li sageとか書く場所です、たぶん。
+        %li sage機能を実装する　→
+        %li ていうか、先ず上げ機能を実装しないと　→
+        %li http://をリンクにする
+        %li リンクにして&lt;div&gt;ポップアップしたい
+
+.card.mb-3
+  .card-body
+    .d-flex.flex-wrap.gap-2.small
+      - i = 0
+      - @topics.each do |topic|
+        - if (i += 1) <= 10 then
+          %span
             = link_to "#{i}:", member_topic_path(topic)
             = link_to topic.title, "##{i}"
-            　
-          - else
+        - else
+          %span
             = link_to "#{i}: #{topic.title}", topic
-            　
-      %div{:align => "right"}
-        = link_to "スレッド一覧はこちら", member_topics_path
+    .text-end.mt-2
+      = link_to "スレッド一覧はこちら", member_topics_path
+
 - @topics.each_with_index do |topic, i|
   - break if (i += 1) > 10
-  %table{:align => "center", :bgcolor => "#EFEFEF", :border => "1", :cellpadding => "3", :cellspacing => "7", :width => "100%"}
-    %tr
-      %td
-        = render :partial => "member/topics/topic", :locals => {:topic => topic, :i => i}
-%table{:align => "center", :bgcolor => "#CCFFCC", :border => "1", :cellpadding => "3", :cellspacing => "7", :width => "100%"}
-  %tr
-    %td{:nowrap => ""}
-      %dl
-        %dt
-          = form_for([:member, (topic = Topic.new)]) do |f|
-            タイトル：#{f.text_field :title}
-            \#{f.submit "新規スレッド作成"}
-            %br
-            E-mail： #{text_field_tag :email}
-        %dd
-          = text_area_tag :content, nil, {:rows => 5, :cols => 64}
-%br
-%a{:href => root_path} 漫トロピーWeb
-BBS.RB - 2010/12/01*2011/11/05 +
-%a{:href => root_path} 京大漫トロピー
-+ Linux + Apache2 + Passenger + Ruby + Rails
-%br
+  .mb-3
+    = render :partial => "member/topics/topic", :locals => {:topic => topic, :i => i}
+
+.card.mb-3
+  .card-header 新規スレッド作成
+  .card-body
+    = form_for([:member, (topic = Topic.new)]) do |f|
+      .row.g-2.align-items-center.mb-2
+        .col-sm
+          .input-group
+            %span.input-group-text タイトル：
+            = f.text_field :title, class: 'form-control'
+        .col-sm-auto
+          = f.submit "新規スレッド作成", class: 'btn btn-primary'
+      .row.g-2.align-items-center
+        .col-sm-6
+          .input-group
+            %span.input-group-text E-mail：
+            = text_field_tag :email, nil, class: 'form-control'
+    .mt-2
+      = text_area_tag :content, nil, {:rows => 5, :class => 'form-control'}
+
+%footer.text-body-secondary.small.border-top.pt-3.mt-4.mb-4
+  = link_to "漫トロピーWeb", root_path
+  BBS.RB - 2010/12/01*2011/11/05 +
+  = link_to "京大漫トロピー", root_path
+  + Linux + Apache2 + Passenger + Ruby + Rails

@@ -1,12 +1,11 @@
-%dl.post
-  %dt.post
-    = post.order
+.post.border-bottom.pb-2.mb-3
+  .post-header.d-flex.flex-wrap.align-items-center.gap-2.small.text-body-secondary
+    %span.fw-bold= post.order
     \:
     名前：
     %b= link_to post.user.name, user_path(post.user.name), :title => post.email
     = post.created_at.localtime.strftime("%Y/%m/%d (%A) %H:%M:%S")
     -# 内部IDはゲストには見せない（このパーシャルは公開ページの series#show からも描画される）
     - if current_user
-      %small{style: 'color: gray;'}= post.id
-  %dd.post= auto_link simple_format(post.content)
-  </dl
+      %small.text-body-tertiary= post.id
+  .post-body.mt-2= auto_link simple_format(post.content)

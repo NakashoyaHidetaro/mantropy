@@ -1,5 +1,5 @@
-%h1 Editing topic
+%h1.h3.mt-4.mb-3 Editing topic
 = render 'form'
-= link_to 'Show', member_topic_path(@topic)
-|
-\#{link_to 'Back', member_topics_path}
+.d-flex.flex-wrap.gap-2.mt-3
+  = link_to 'Show', member_topic_path(@topic), class: 'btn btn-outline-secondary'
+  = link_to 'Back', member_topics_path, class: 'btn btn-outline-secondary'

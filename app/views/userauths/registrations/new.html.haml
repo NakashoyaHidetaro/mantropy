@@ -1,17 +1,21 @@
-%h2 登録
-= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f|
-  = render "devise/shared/devise_error_messages"
-  %div
-    = f.label :email
-    %br
-    = f.email_field :email
-  %div
-    = f.label :password
-    %br
-    = f.password_field :password
-  %div
-    = f.label :password_confirmation
-    %br
-    = f.password_field :password_confirmation
-  %div= f.submit "登録"
-= render :partial => "devise/shared/links"
+.row.justify-content-center
+  .col-md-6.col-lg-5
+    .card.shadow-sm.my-4
+      .card-body.p-4
+        %h2.h4.card-title.text-center.mb-4
+          %i.bi.bi-person-plus.me-2
+          登録
+        = form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f|
+          = render "devise/shared/devise_error_messages"
+          .mb-3
+            = f.label :email, class: "form-label"
+            = f.email_field :email, class: "form-control", autocomplete: "email"
+          .mb-3
+            = f.label :password, class: "form-label"
+            = f.password_field :password, class: "form-control", autocomplete: "new-password"
+          .mb-3
+            = f.label :password_confirmation, class: "form-label"
+            = f.password_field :password_confirmation, class: "form-control", autocomplete: "new-password"
+          .d-grid
+            = f.submit "登録", class: "btn btn-primary w-100"
+        = render :partial => "devise/shared/links"

@@ -1,19 +1,24 @@
-%h1 Wikiページの一覧
-%table
-  %tr
-    %th Name
-    %th Title
-    %th Content
-    %th Is private
-    %th User
-    %th
-  - @wikis.each do |wiki|
-    %tr
-      %td= link_to wiki.name, wiki_path(name: wiki.name)
-      %td= link_to wiki.title, wiki_path(name: wiki.name)
-      %td= link_to wiki.content[0..100], wiki_path(name: wiki.name)
-      %td= wiki.is_private
-      %td= link_to wiki.user.name, user_path(wiki.user.name)
-      %td= link_to 'Show', wiki
-%br
-= link_to '新しいWikiページを作る', new_member_wiki_path
+.d-flex.flex-wrap.align-items-center.justify-content-between.gap-2.mt-4.mb-3
+  %h1.h3.mb-0 Wikiページの一覧
+  = link_to new_member_wiki_path, class: 'btn btn-primary' do
+    %i.bi.bi-plus-lg.me-1
+    新しいWikiページを作る
+.table-responsive
+  %table.table.table-hover.table-sm.align-middle
+    %thead.table-light
+      %tr
+        %th Name
+        %th Title
+        %th Content
+        %th Is private
+        %th User
+        %th
+    %tbody
+      - @wikis.each do |wiki|
+        %tr
+          %td= link_to wiki.name, wiki_path(name: wiki.name)
+          %td= link_to wiki.title, wiki_path(name: wiki.name)
+          %td.text-break= link_to wiki.content[0..100], wiki_path(name: wiki.name)
+          %td= wiki.is_private
+          %td= link_to wiki.user.name, user_path(wiki.user.name)
+          %td.text-end= link_to 'Show', wiki, class: 'btn btn-sm btn-outline-secondary'

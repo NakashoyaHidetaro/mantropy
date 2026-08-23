@@ -1,11 +1,14 @@
 = form_for([:member, (post = Post.new)]) do |f|
-  %dt
-    = hidden_field_tag :topic_id, topic.id
-    = f.submit "書き込み"
-    E-mail： #{f.text_field :email}
-  %dd
-    = f.text_area :content, {:rows => 5, :cols => 64}
-    %br
-    %b
-      = link_to "全部読む", member_topic_show_path(topic)
-      = link_to "板に戻る", member_topics_path
+  = hidden_field_tag :topic_id, topic.id
+  .row.g-2.align-items-center.mb-2
+    .col-sm-auto
+      = f.submit "書き込み", class: 'btn btn-primary'
+    .col-sm
+      .input-group
+        %span.input-group-text E-mail：
+        = f.text_field :email, class: 'form-control'
+  = f.text_area :content, {:rows => 5, :class => 'form-control'}
+  .mt-2
+    .btn-group.btn-group-sm
+      = link_to "全部読む", member_topic_show_path(topic), class: 'btn btn-outline-secondary'
+      = link_to "板に戻る", member_topics_path, class: 'btn btn-outline-secondary'

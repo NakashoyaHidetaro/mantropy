@@ -1,48 +1,78 @@
-.serie_image
-  = link_to image_tag(serie_image_path(@serie, :large), :alt => @serie.name), serie_to_amazon_url(@serie), {:target => "_blank", :title=>"Amazonで購入"}
-.serie_detail
-  %h1= @serie.name
-  %p.serie_authors
-    %h3 著者
-    = @serie.authors.map{|a| a.name} if @serie.authors
-  %p.serie_magazines
-    %h3 掲載誌
-    %table
-      %tr
-        %th 雑誌名
-        %th 雑誌掲載情報
-        %th 出版社
-      - @serie.magazines_series.each do |ms|
-        %tr
-          %td= ms.magazine && ms.magazine.name
-          %td= ms.placed
-          %td= ms.magazine && ms.magazine.publisher
-  %p.serie_post
-    %h3 細部
-    = render :partial => "member/topics/post", :locals => {:post => @serie.post} if @serie.post
-  - if current_user
-    = link_to 'ランキング登録・シリーズ情報修正', edit_member_serie_path(@serie), :class => :serie_edit
-%h3 ランキング情報
-.serie_ranks
-  - @ranks.each do |rank|
-    = rank.ranking.name
-    = rank.rank
-    位
-    \#{rank.score}点
-    \#{link_to rank.user.name, user_path(rank.user.name) if rank.user}
-    %br
-= render :partial => "member/topics/topic", :locals => {:topic => @serie.topic, :i => nil}
-.serie_similar
-  %b 似ている漫画（デモ）
-  停止中
-  %br
-  -# - @similar_series.each do |serie|
-    = link_to image_tag(serie_image_path(serie, :small), :alt => serie.name), serie
-    = link_to serie.name, serie
-    %br
-.serie_books
-  %b 書籍収録情報
-  - @serie.books.each do |book|
-    %div
-      = image_tag(book.smallimgurl || 'nil_small.jpg', alt: book.name)
-      = book.name
+.row.g-4.my-1
+  .col-12.col-md-4
+    = link_to serie_to_amazon_url(@serie), { target: "_blank", title: "Amazonで購入" } do
+      = image_tag serie_image_path(@serie, :large), alt: @serie.name, class: 'img-fluid rounded shadow-sm'
+  .col-12.col-md-8
+    %h1.h2.mb-3= @serie.name
+
+    - if @serie.authors
+      .mb-3
+        %h5.text-body-secondary 著者
+        %p.mb-0= @serie.authors.map { |a| a.name }.join('、')
+
+    .mb-3
+      %h5.text-body-secondary 掲載誌
+      .table-responsive
+        %table.table.table-sm.table-striped.align-middle.mb-0
+          %thead
+            %tr
+              %th 雑誌名
+              %th 雑誌掲載情報
+              %th 出版社
+          %tbody
+            - @serie.magazines_series.each do |ms|
+              %tr
+                %td= ms.magazine && ms.magazine.name
+                %td= ms.placed
+                %td= ms.magazine && ms.magazine.publisher
+
+    - if @serie.post
+      .mb-3
+        %h5.text-body-secondary 細部
+        = render partial: "member/topics/post", locals: { post: @serie.post }
+
+    - if current_user
+      = link_to edit_member_serie_path(@serie), class: 'btn btn-outline-primary btn-sm' do
+        %i.bi.bi-pencil.me-1
+        ランキング登録・シリーズ情報修正
+
+.my-4
+  %h4 ランキング情報
+  - if @ranks.any?
+    .table-responsive
+      %table.table.table-sm.table-striped.align-middle.mb-0
+        %thead
+          %tr
+            %th ランキング
+            %th.text-end 順位
+            %th.text-end 点数
+            %th ユーザー
+        %tbody
+          - @ranks.each do |rank|
+            %tr
+              %td= rank.ranking.name
+              %td.text-end #{rank.rank}位
+              %td.text-end #{rank.score}点
+              %td= link_to rank.user.name, user_path(rank.user.name) if rank.user
+  - else
+    %p.text-body-secondary.mb-0 ランキング情報はまだありません。
+
+.my-4
+  = render partial: "member/topics/topic", locals: { topic: @serie.topic, i: nil }
+
+.card.my-4
+  .card-body
+    %h5.card-title 似ている漫画（デモ）
+    %p.text-body-secondary.mb-0 停止中
+    -# - @similar_series.each do |serie|
+      = link_to image_tag(serie_image_path(serie, :small), :alt => serie.name), serie
+      = link_to serie.name, serie
+      %br
+
+.my-4
+  %h5 書籍収録情報
+  .d-flex.overflow-auto.gap-3.pb-2
+    - @serie.books.each do |book|
+      .flex-shrink-0.text-center
+        = image_tag(book.smallimgurl || 'nil_small.jpg', alt: book.name, class: 'img-fluid rounded mx-auto')
+        .small.mt-1= book.name

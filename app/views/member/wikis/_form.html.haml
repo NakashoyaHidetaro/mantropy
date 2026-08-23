@@ -1,28 +1,26 @@
 = form_for([:member, @wiki]) do |f|
   - if @wiki.errors.any?
-    #error_explanation
-      %h2
+    #error_explanation.alert.alert-danger
+      %h2.h6
         = pluralize(@wiki.errors.count, "error")
         prohibited this wiki from being saved:
-      %ul
+      %ul.mb-0
         - @wiki.errors.full_messages.each do |msg|
           %li= msg
-  .field
-    = f.label "ページ名"
-    %br
+  .mb-3
+    = f.label "ページ名", class: 'form-label'
     = f.text_field :name, :readonly => (@wiki.name.present? ? true : false), class: 'form-control'
-  .field
-    = f.label "タイトル"
-    %br
+  .mb-3
+    = f.label "タイトル", class: 'form-label'
     = f.text_field :title, class: 'form-control'
-  .field
-    = f.label "内容"
-    %br
-    = f.text_area :content, class: 'form-control', rows: 15
-  .field
-    = f.label "公開は内部のみ"
-    %br
-    = f.check_box :is_private
-  .actions
-    = f.submit
-= raw HikiDoc.to_html(@notation)
+  .mb-3
+    = f.label "内容", class: 'form-label'
+    = f.text_area :content, class: 'form-control font-monospace', rows: 15
+  .mb-3.form-check
+    = f.check_box :is_private, class: 'form-check-input'
+    = f.label "公開は内部のみ", class: 'form-check-label'
+  .mb-3
+    = f.submit class: 'btn btn-primary'
+.card.mt-4
+  .card-body
+    = raw HikiDoc.to_html(@notation)
