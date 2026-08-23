@@ -50,7 +50,8 @@ class Member::UsersController < Member::Base
   private
 
   def set_user
-    @user = User.find(params[:id])
+    # member側もURLには内部IDではなく name を使う
+    @user = User.find_by!(name: params.expect(:name))
   end
 
   def user_params

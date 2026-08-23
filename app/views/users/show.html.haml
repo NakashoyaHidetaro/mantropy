@@ -37,7 +37,12 @@
   最新10件
   %br
   - @user.posts.order("id DESC").limit(10).each do |post|
-    = link_to post.topic.title || Serie.find_by(topic_id: post.topic.id)&.name, member_topics_path(post.topic)
+    - post_title = post.topic.title || Serie.find_by(topic_id: post.topic.id)&.name
+    -# member側のスレッドURLには内部IDが出るためゲストにはリンクを見せない
+    - if current_user
+      = link_to post_title, member_topic_show_path(post.topic)
+    - else
+      = post_title
     = post.content[0..24]
     %br
 %p
@@ -52,7 +57,12 @@
       - if rank.serie.authors then
         - rank.serie.authors.each do |author|
           = link_to author.name, series_path(:str => author.name)
-      = link_to rank.serie.magazines_series.map{|ms| ms.magazine ? (ms.magazine.name + (ms.placed ? (ms.placed != "" ? "（#{ms.placed}）" : "") : "")) : nil}.compact.uniq.join("　"), edit_member_serie_path(rank.serie)
+      - magazine_names = rank.serie.magazines_series.map{|ms| ms.magazine ? (ms.magazine.name + (ms.placed ? (ms.placed != "" ? "（#{ms.placed}）" : "") : "")) : nil}.compact.uniq.join("　")
+      -# member側の編集リンクはログイン時のみ表示する
+      - if current_user
+        = link_to magazine_names, edit_member_serie_path(rank.serie)
+      - else
+        = magazine_names
       - if @user == current_user && @registerable_rankings.map{|r| r.id}.include?(rank.ranking_id)
         = link_to '削除', member_rank_path(rank), :confirm => "#{rank.serie.name} を #{rank.rank} 位から削除していいですか？", :method => :delete, :controller => :ranks
       %br

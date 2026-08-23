@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class HomeControllerTest < ActionDispatch::IntegrationTest
+class HomesControllerTest < ActionDispatch::IntegrationTest
   test 'トップ画面を取得できる' do
     get root_path
     assert_response :success

@@ -27,4 +27,12 @@ class Member::SeriesControllerTest < ActionDispatch::IntegrationTest
     get member_series_path
     assert_redirected_to new_userauth_session_path
   end
+  test 'edit画面のURLはpublic_idで生成される' do
+    assert_equal "/member/series/#{@serie.public_id}/edit", edit_member_serie_path(@serie)
+  end
+
+  test '数値IDを指定したedit画面は404になる' do
+    get "/member/series/#{@serie.id}/edit"
+    assert_response :not_found
+  end
 end

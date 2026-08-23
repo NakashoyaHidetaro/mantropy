@@ -22,7 +22,7 @@ class UsersController < ApplicationController
   end
 
   def show
-    @user = User.find_by(name: params[:id])
+    @user = User.find_by(name: params.expect(:name))
     return redirect_to users_path, notice: '存在しないユーザーです' if @user.blank?
 
     @title = @user.name.to_s

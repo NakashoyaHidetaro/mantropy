@@ -23,7 +23,7 @@
             %td{:align => "left"}
               %font{:size => "-1"}
                 - if current_user
-                  = link_to "メンバートップ", member_path, :class => :head
+                  = link_to "メンバートップ", member_root_path, class: :head
                 - else
                   = link_to "トップ", root_path, :class => :head
                 = link_to "漫トロピーについて", wiki_path('about'), :class => :head

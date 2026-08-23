@@ -1,9 +1,11 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:
-  name: MyString
-  post: 
+  name: MySerieOne
+  public_id: serieonepublic01
+  post:
 
 two:
-  name: MyString
-  post: 
+  name: MySerieTwo
+  public_id: serietwopublic02
+  post:

@@ -81,7 +81,8 @@ class Member::SeriesController < Member::Base
   private
 
   def set_serie
-    @serie = Serie.find(params[:id])
+    # member側もURLには内部IDではなく public_id を使う
+    @serie = Serie.find_by!(public_id: params.expect(:public_id))
   end
 
   def serie_params

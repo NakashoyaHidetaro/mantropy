@@ -16,6 +16,11 @@ class User < ApplicationRecord
   has_many :userauths # rubocop:disable Rails/HasManyOrHasOneDependent
   has_many :wikis # rubocop:disable Rails/HasManyOrHasOneDependent
 
+  # ユーザーのURLには内部IDではなく name を使う
+  def to_param
+    name
+  end
+
   private
 
   def name_valid?

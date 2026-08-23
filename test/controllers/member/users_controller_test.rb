@@ -27,4 +27,12 @@ class Member::UsersControllerTest < ActionDispatch::IntegrationTest
     get new_member_user_path
     assert_redirected_to new_userauth_session_path
   end
+  test 'edit画面のURLはnameで生成される' do
+    assert_equal "/member/users/#{@user.name}/edit", edit_member_user_path(@user)
+  end
+
+  test '存在しないnameを指定したedit画面は404になる' do
+    get '/member/users/nonexistent_user/edit'
+    assert_response :not_found
+  end
 end

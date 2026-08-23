@@ -100,4 +100,4 @@
     2. Amazonに扱いがない場合、
     %a{:href => "http://ja.wikipedia.org/", :target => "_blank"} Wikipedia
     を検索してページ名をコピーし、登録時に「右のボックスから雑誌を追加」を選んだ状態で右のボックスに雑誌名を入力して下さい
-= link_to "このシリーズに含まれるシリーズを新しく作る", new_member_serie_path(@serie)
+= link_to "このシリーズに含まれるシリーズを新しく作る", new_member_serie_path(id: @serie.id)

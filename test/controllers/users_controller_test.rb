@@ -16,4 +16,11 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get user_path('nonexistent_user')
     assert_redirected_to users_path
   end
+
+  test 'ゲストにはmember専用リンクが表示されない' do
+    user = users(:one)
+    get user_path(user.name)
+    assert_response :success
+    assert_select "a[href^='/member/']", false
+  end
 end

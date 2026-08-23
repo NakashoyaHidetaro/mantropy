@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  helper_method :current_user, :complete_ranking, :serie_path
+  helper_method :current_user, :complete_ranking
 
   private
 
@@ -15,22 +15,7 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_in_path_for(_resource)
-    member_path
-  end
-
-  def serie_path(serie, *args)
-    if serie.instance_of?(Serie) && args.empty?
-      clean_serie_name(serie)
-    else
-      serie_url(serie, *args)
-    end
-  end
-
-  def clean_serie_name(serie)
-    base_name = "#{serie.name}-#{serie.authors&.map(&:name)&.join(',')}"[0..31].gsub(
-      %r{[./\\+\s"'{}\[\]*,;:]}, ''
-    )
-    "/#{CGI.escape(base_name)}/series/#{serie.id}"
+    member_root_path
   end
 
   def render_with_encoding(*options)

@@ -1,4 +1,4 @@
-class DeviseRegistrationsController < Devise::RegistrationsController
+class Userauths::RegistrationsController < Devise::RegistrationsController
   before_action :basic_authentication
 
   protected

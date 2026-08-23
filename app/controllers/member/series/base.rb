@@ -4,6 +4,7 @@ class Member::Series::Base < Member::Base
   private
 
   def set_serie
-    @serie = Serie.find(params[:serie_id])
+    # 親の member/series が param: :public_id のため、ネスト側は :serie_public_id を受け取る
+    @serie = Serie.find_by!(public_id: params.expect(:serie_public_id))
   end
 end

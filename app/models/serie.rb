@@ -1,4 +1,6 @@
 class Serie < ApplicationRecord
+  include PublicIdentifiable
+
   validates :name, presence: true
   has_many :ranks # rubocop:disable Rails/HasManyOrHasOneDependent
   has_many :authors_series # rubocop:disable Rails/HasManyOrHasOneDependent
