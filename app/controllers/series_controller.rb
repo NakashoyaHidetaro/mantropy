@@ -33,9 +33,6 @@ class SeriesController < ApplicationController
     raise ActiveRecord::RecordNotFound if @serie.blank?
 
     @title = "#{@serie.name} のシリーズ情報"
-    # rubocop:disable Layout/LineLength
-    # @similar_series = Serie.find_by_sql("SELECT s.* FROM series s INNER JOIN (SELECT r1.serie_id, COUNT(*) AS similarity FROM ranks r1 INNER JOIN ranks r2 ON r1.user_id=r2.user_id WHERE r2.serie_id=#{@serie.id} GROUP BY r1.serie_id ORDER BY similarity DESC, SUM(r1.score) DESC) r ON r.serie_id=s.id WHERE s.id!=#{@serie.id} LIMIT 4")
-    # rubocop:enable Layout/LineLength
     @ranks = @serie.finished_ranks
     @serie.ensure_topic!
 

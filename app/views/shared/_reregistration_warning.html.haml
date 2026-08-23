@@ -1,0 +1,10 @@
+-# 休会会員がアカウントを重複作成しないよう、登録フォームの冒頭で警告する
+.alert.alert-warning
+  %p.mb-1
+    %i.bi.bi-exclamation-triangle.me-1
+    %strong 過去に漫トロに在籍していた方へ
+  %p.mb-1
+    退会・休会された方のアカウントは削除されずに残っています。
+    = link_to 'メンバー一覧', users_path, class: 'alert-link'
+    の「More」ボタンから確認できます。
+  %p.mb-0 重複してアカウントを作らず、管理者に連絡して既存アカウントを再利用してください。

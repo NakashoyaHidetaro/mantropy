@@ -23,28 +23,19 @@
 
 %h2.h4.mb-3 現在の漫トロを構成する者たち
 .row.row-cols-2.row-cols-md-4.g-3
-  - @users.each do |user|
-    .col
-      .card.h-100.text-center
-        .card-body
-          = link_to user_path(user.name) do
-            = image_tag "nil_medium.jpg", :alt => user.name, :width => 128, :height => 128, :class => 'rounded-circle img-fluid mb-2'
-          %h3.h6.card-title.mb-1
-            = link_to user.name, user_path(user.name), class: 'text-decoration-none'
-          %p.card-text.text-muted.small.mb-0
-            = user.publicabout && user.publicabout != "" ? "#{user.publicabout[0..7]}#{user.publicabout.length > 9 ? "…" : nil}" : "頭がァッ！　ぶわわ"
+  = render partial: 'users/user_card', collection: @users, as: :user
 
-- if current_user
-  %h2.h4.mt-5.mb-2 かつて漫トロを創りし者たち
-  %p.text-muted ログイン情報は生きてます。
+-# 旧メンバーはゲスト含む全員に見せる（休会会員が自分の既存アカウントに気付けるようにするため）。ただし既定では折りたたむ
+%h2.h4.mt-5.mb-2 かつて漫トロを創りし者たち
+%p.text-muted.mb-2
+  ログイン情報は生きてます。休会・退会された方のアカウントも削除せず残しています。
+  再開される方は新しくアカウントを作らず、管理者にご連絡ください。
+.d-flex.flex-wrap.align-items-center.gap-2
+  %button.btn.btn-sm.btn-outline-secondary.old-users-toggle{type: :button, data: { 'bs-toggle' => 'collapse', 'bs-target' => '#old-users-collapse' }, aria: { expanded: 'false', controls: 'old-users-collapse' }}
+    %i.bi.bi-plus-lg
+    %i.bi.bi-dash-lg
+    %span.ms-1 More
+  %span.text-muted.small= "#{@old_users.size}人"
+.collapse.old-users-collapse.mt-2#old-users-collapse
   .row.row-cols-2.row-cols-md-4.g-3
-    - @old_users.each do |user|
-      .col
-        .card.h-100.text-center
-          .card-body
-            = link_to user_path(user.name) do
-              = image_tag "nil_medium.jpg", :alt => user.name, :width => 128, :height => 128, :class => 'rounded-circle img-fluid mb-2'
-            %h3.h6.card-title.mb-1
-              = link_to user.name, user_path(user.name), class: 'text-decoration-none'
-            %p.card-text.text-muted.small.mb-0
-              = user.publicabout && user.publicabout != "" ? "#{user.publicabout[0..7]}#{user.publicabout.length > 9 ? "…" : nil}" : "頭がァッ！　ぶわわ"
+    = render partial: 'users/user_card', collection: @old_users, as: :user

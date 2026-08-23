@@ -35,18 +35,13 @@
         %dt.col-sm-3 .userauths.email
         %dd.col-sm-9.mb-0= @user.userauths.map{|a| a.email }
 
-%h2.h4.mb-1 ポスト
-%p.text-muted.small 最新10件
-.list-group.mb-4
-  - @user.posts.order("id DESC").limit(10).each do |post|
-    - post_title = post.topic.title || Serie.find_by(topic_id: post.topic.id)&.name
-    .list-group-item
-      -# member側のスレッドURLには内部IDが出るためゲストにはリンクを見せない
-      - if current_user
-        = link_to post_title, member_topic_show_path(post.topic), class: 'fw-bold text-decoration-none'
-      - else
-        %span.fw-bold= post_title
-      %span.text-muted.ms-2= post.content[0..24]
+%h2.h4.mb-1 コメント
+%p.text-muted.small= "最新#{PostTimeline::RECENT_USER_POSTS_LIMIT}件"
+- if @posts.empty?
+  %p.text-muted.mb-4 コメントはまだありません
+- else
+  .list-group.mb-4
+    = render partial: 'posts/timeline_post', collection: @posts, as: :post
 
 %h2.h4.mb-3 ランキング
 -# 年度ごとに折りたたむ（モバイルは初期状態で格納、デスクトップは JS で展開）

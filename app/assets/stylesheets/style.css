@@ -145,15 +145,18 @@
   color: #000;
 }
 
-/* 年度別ランキングの折りたたみトグル: Wikipedia 風に +/- を切り替える */
-.year-toggle .bi-dash-lg {
+/* 年度別ランキング・旧メンバー一覧の折りたたみトグル: Wikipedia 風に +/- を切り替える */
+.year-toggle .bi-dash-lg,
+.old-users-toggle .bi-dash-lg {
   display: none;
 }
 
-.year-toggle[aria-expanded="true"] .bi-plus-lg {
+.year-toggle[aria-expanded="true"] .bi-plus-lg,
+.old-users-toggle[aria-expanded="true"] .bi-plus-lg {
   display: none;
 }
 
-.year-toggle[aria-expanded="true"] .bi-dash-lg {
+.year-toggle[aria-expanded="true"] .bi-dash-lg,
+.old-users-toggle[aria-expanded="true"] .bi-dash-lg {
   display: inline-block;
 }

@@ -15,3 +15,16 @@ two:
   mbmail: MyString
   twitter: MyString
   url: MyString
+
+# 旧メンバー: 2年前に登録し、ランキング提出実績が無いユーザー
+old_member:
+  name: OldMember
+  realname: 旧メンバー
+  pcmail: old@example.com
+  mbmail: old@example.com
+  twitter: old_member
+  url: http://example.com/old
+  joined: '2000'
+  entered: '2000'
+  created_at: <%= 2.years.ago %>
+  updated_at: <%= 2.years.ago %>

@@ -1,0 +1,10 @@
+-# ユーザー一覧のカード1枚分。現役メンバー・旧メンバー双方から利用する
+.col
+  .card.h-100.text-center
+    .card-body
+      = link_to user_path(user.name) do
+        = image_tag "nil_medium.jpg", :alt => user.name, :width => 128, :height => 128, :class => 'rounded-circle img-fluid mb-2'
+      %h3.h6.card-title.mb-1
+        = link_to user.name, user_path(user.name), class: 'text-decoration-none'
+      %p.card-text.text-muted.small.mb-0
+        = user.publicabout && user.publicabout != "" ? "#{user.publicabout[0..7]}#{user.publicabout.length > 9 ? "…" : nil}" : "頭がァッ！　ぶわわ"

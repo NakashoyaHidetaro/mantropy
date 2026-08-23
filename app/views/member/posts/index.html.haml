@@ -8,19 +8,6 @@
 = paginate @posts
 
 .list-group.mb-3
-  - @posts.each do |post|
-    - post_title = PostTimeline.title_for(post)
-    .list-group-item
-      .d-flex.flex-wrap.align-items-center.gap-2.small.text-body-secondary
-        %b
-          - if post.user
-            = link_to PostTimeline.author_name_for(post), user_path(post.user.name)
-          - else
-            = PostTimeline.author_name_for(post)
-        = post.created_at.localtime.strftime("%Y/%m/%d (%A) %H:%M:%S")
-        - if post_title.present?
-          %span.ms-auto
-            = link_to post_title, member_topic_show_path(post.topic), class: 'text-decoration-none'
-      .post-body.mt-2= auto_link simple_format(post.content)
+  = render partial: 'posts/timeline_post', collection: @posts, as: :post
 
 = paginate @posts

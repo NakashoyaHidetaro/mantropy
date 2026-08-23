@@ -1,11 +1,8 @@
 class UsersController < ApplicationController
   def index
     @title = 'メンバー一覧'
-    @users = (
-      User.includes(:ranks).where('ranks.created_at > ?', 1.year.ago).references(:ranks) +
-      User.where('created_at > ?', 6.months.ago)
-    ).uniq
-    @old_users = User.all - @users
+    @users = UserListing.active_users
+    @old_users = UserListing.old_users(@users)
     @registering_rankings = registering_rankings
     @display_rankings = if @registering_rankings.empty?
                           Ranking.of_year(Time.zone.now.year, kind: %w[kojin kuso])
@@ -33,6 +30,8 @@ class UsersController < ApplicationController
     @ranks_by_year = RankAggregation.ranks_by_year(
       @user, excluded_years: @show_registering_ranks ? [] : @registering_years
     )
+    # 非ログインユーザーには内部掲示板の書き込みを見せない
+    @posts = PostTimeline.recent_user_posts(@user, include_board: current_user.present?)
 
     respond_to do |format|
       format.html # show.html.erb

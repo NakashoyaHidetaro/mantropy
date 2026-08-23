@@ -5,6 +5,7 @@
         %h2.h4.card-title.text-center.mb-4
           %i.bi.bi-person-plus.me-2
           登録
+        = render 'shared/reregistration_warning'
         = form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f|
           = render "devise/shared/devise_error_messages"
           = required_legend

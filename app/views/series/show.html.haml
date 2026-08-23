@@ -60,15 +60,6 @@
 .my-4
   = render partial: "member/topics/topic", locals: { topic: @serie.topic, i: nil }
 
-.card.my-4
-  .card-body
-    %h5.card-title 似ている漫画（デモ）
-    %p.text-body-secondary.mb-0 停止中
-    -# - @similar_series.each do |serie|
-      = link_to image_tag(serie_image_path(serie, :small), :alt => serie.name), serie
-      = link_to serie.name, serie
-      %br
-
 .my-4
   %h5 書籍収録情報
   .d-flex.overflow-auto.gap-3.pb-2

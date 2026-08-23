@@ -1,0 +1,29 @@
+-# タイムライン1件分。漫画へのコメントと内部掲示板の書き込みの両方を扱う
+- post_title = PostTimeline.title_for(post)
+- board_post = PostTimeline.board_post?(post)
+.list-group-item
+  .d-flex.flex-wrap.align-items-center.gap-2.small.text-body-secondary
+    %b
+      - if post.user
+        = link_to PostTimeline.author_name_for(post), user_path(post.user.name)
+      - else
+        = PostTimeline.author_name_for(post)
+    = post.created_at.localtime.strftime("%Y/%m/%d (%A) %H:%M:%S")
+    - if post_title.present?
+      - if board_post
+        -# member側のスレッドURLには内部IDが出るためゲストにはリンクを見せない
+        - if current_user
+          %span.ms-auto
+            = link_to member_topic_show_path(post.topic), class: 'text-decoration-none' do
+              %i.bi.bi-lock.me-1
+              = post_title
+        - else
+          %span.ms-auto
+            %i.bi.bi-lock.me-1
+            = post_title
+      - elsif post.topic&.serie
+        %span.ms-auto
+          = link_to post_title, serie_path(post.topic.serie), class: 'text-decoration-none'
+      - else
+        %span.ms-auto= post_title
+  .post-body.mt-2= auto_link simple_format(post.content)
