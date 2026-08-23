@@ -33,10 +33,12 @@
         %h5.text-body-secondary 細部
         = render partial: "member/topics/post", locals: { post: @serie.post }
 
-    - if current_user
-      = link_to edit_member_serie_path(@serie), class: 'btn btn-outline-primary btn-sm' do
-        %i.bi.bi-pencil.me-1
-        ランキング登録・シリーズ情報修正
+    .d-flex.flex-wrap.gap-2
+      = x_share_button("#{@serie.name} - 漫トロピーWeb", serie_url(@serie))
+      - if current_user
+        = link_to edit_member_serie_path(@serie), class: 'btn btn-outline-primary btn-sm' do
+          %i.bi.bi-pencil.me-1
+          ランキング登録・シリーズ情報修正
 
 .my-4
   %h4 ランキング情報

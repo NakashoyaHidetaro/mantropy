@@ -13,3 +13,10 @@ two:
   content: MyString
   is_private:
   user: two
+
+private_wiki:
+  name: private_page
+  title: 内部限定ページ
+  content: MyString
+  is_private: true
+  user: one

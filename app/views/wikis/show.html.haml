@@ -1,3 +1,8 @@
 - content_for :title, @wiki.title
 
 = render 'show'
+
+-# 内部限定ページは外部に共有しない
+- if @wiki.present? && !@wiki.is_private
+  .mt-3
+    = x_share_button("#{@wiki.title} - 漫トロピーWeb", wiki_url(@wiki.name))

@@ -84,6 +84,7 @@
 - @registering_rankings.each do |ranking|
   %span.badge.text-bg-warning.me-1= ranking.name + '不十分' if !complete_ranking(ranking, @user)
 
-.mt-4.d-flex.gap-2
+.mt-4.d-flex.flex-wrap.gap-2
+  = x_share_button("#{@user.name} - 漫トロピーWeb", user_url(@user.name))
   = link_to 'ユーザー情報を編集する', edit_member_user_path(@user), class: 'btn btn-outline-primary' if @user == current_user
   = link_to 'Back', users_path, class: 'btn btn-outline-secondary'
