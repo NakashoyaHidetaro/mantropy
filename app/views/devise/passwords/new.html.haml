@@ -7,8 +7,9 @@
           パスワードを忘れた
         = form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post }) do |f|
           = render "devise/shared/devise_error_messages"
+          = required_legend
           .mb-3
-            = f.label "メールアドレス", class: "form-label"
+            = required_label f, :email, "メールアドレス"
             = f.email_field :email, class: "form-control", autocomplete: "email"
           .d-grid
             = f.submit "私にパスワードをリセットするための手順をメールで送ってよ", class: "btn btn-primary w-100"

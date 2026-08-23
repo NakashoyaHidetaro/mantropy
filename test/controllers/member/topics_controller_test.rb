@@ -22,6 +22,14 @@ class Member::TopicsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'new画面には必須項目がないため必須マークと凡例は表示されない' do
+    get new_member_topic_path
+    assert_response :success
+    # Topicモデルにpresenceバリデーションが無いので必須マークは付けない
+    assert_select 'label span.text-danger', false
+    assert_select 'p.form-text', { text: /は必須項目です/, count: 0 }
+  end
+
   test 'ログインしていない場合はログイン画面にリダイレクトされる' do
     sign_out @userauth
     get member_topics_path

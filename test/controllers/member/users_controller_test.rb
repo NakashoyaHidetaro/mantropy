@@ -22,6 +22,37 @@ class Member::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'new画面の必須項目のラベルには必須マークと凡例が表示される' do
+    sign_out @userauth
+    # ユーザー情報未登録のuserauthでログイン
+    userauth_without_user = userauths(:two)
+    userauth_without_user.update!(user: nil)
+    sign_in userauth_without_user
+    get new_member_user_path
+    assert_response :success
+    # 必須の5項目には赤い * が付く
+    %w[name realname mbmail joined entered].each do |attribute|
+      assert_select 'label[for=?] span.text-danger', "user_#{attribute}", text: '*'
+    end
+    # 凡例が表示される
+    assert_select 'p.form-text', text: /は必須項目です/
+  end
+
+  test 'new画面の任意項目のラベルには必須マークが付かない' do
+    sign_out @userauth
+    # ユーザー情報未登録のuserauthでログイン
+    userauth_without_user = userauths(:two)
+    userauth_without_user.update!(user: nil)
+    sign_in userauth_without_user
+    get new_member_user_path
+    assert_response :success
+    # パソコンメールなどの任意項目には * を付けない
+    %w[pcmail twitter url publicabout privateabout].each do |attribute|
+      assert_select 'label[for=?]', "user_#{attribute}"
+      assert_select 'label[for=?] span.text-danger', "user_#{attribute}", false
+    end
+  end
+
   test 'ログインしていない場合はログイン画面にリダイレクトされる' do
     sign_out @userauth
     get new_member_user_path

@@ -17,6 +17,18 @@ class Member::WikisControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'new画面の必須項目には必須マークと凡例が表示される' do
+    get new_member_wiki_path
+    assert_response :success
+    # ページ名・タイトル・内容が必須
+    %w[name title content].each do |attribute|
+      assert_select 'label[for=?] span.text-danger', "wiki_#{attribute}", text: '*'
+    end
+    assert_select 'p.form-text', text: /は必須項目です/
+    # 公開範囲は任意項目なので * は付かない
+    assert_select 'label[for=?] span.text-danger', 'wiki_is_private', false
+  end
+
   test 'ログインしていない場合はログイン画面にリダイレクトされる' do
     sign_out @userauth
     get member_wikis_path

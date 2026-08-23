@@ -6,11 +6,12 @@
           %i.bi.bi-box-arrow-in-right.me-2
           ログイン
         = form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f|
+          = required_legend
           .mb-3
-            = f.label :email, class: "form-label"
+            = required_label f, :email, "Email"
             = f.email_field :email, class: "form-control", autocomplete: "email"
           .mb-3
-            = f.label :password, class: "form-label"
+            = required_label f, :password, "Password"
             = f.password_field :password, class: "form-control", autocomplete: "current-password"
           - if devise_mapping.rememberable?
             .form-check.mb-3

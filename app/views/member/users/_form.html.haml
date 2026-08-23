@@ -7,37 +7,38 @@
       %ul.mb-0
         - @user.errors.full_messages.each do |msg|
           %li= msg
+  = required_legend
   .row
     .col-md-6.mb-3
-      = f.label "ペンネーム", class: 'form-label'
+      = required_label(f, :name, 'ペンネーム')
       = f.text_field :name, class: 'form-control'
     .col-md-6.mb-3
-      = f.label "本名", class: 'form-label'
+      = required_label(f, :realname, '本名')
       = f.text_field :realname, class: 'form-control'
     .col-md-6.mb-3
-      = f.label "パソコンメール", class: 'form-label'
+      = f.label :pcmail, 'パソコンメール', class: 'form-label'
       = f.email_field :pcmail, class: 'form-control'
     .col-md-6.mb-3
-      = f.label "携帯メール", class: 'form-label'
+      = required_label(f, :mbmail, '携帯メール')
       = f.email_field :mbmail, class: 'form-control'
     .col-md-6.mb-3
-      = f.label "Twitterアカウント", class: 'form-label'
+      = f.label :twitter, 'Twitterアカウント', class: 'form-label'
       = f.text_field :twitter, class: 'form-control'
     .col-md-6.mb-3
-      = f.label "外部Webサイト", class: 'form-label'
+      = f.label :url, '外部Webサイト', class: 'form-label'
       = f.text_field :url, class: 'form-control'
   .mb-3
-    = f.label "外部向けAbout", class: 'form-label'
+    = f.label :publicabout, '外部向けAbout', class: 'form-label'
     = f.text_area :publicabout, :rows => 4, class: 'form-control'
   .mb-3
-    = f.label "内部向けAbout", class: 'form-label'
+    = f.label :privateabout, '内部向けAbout', class: 'form-label'
     = f.text_area :privateabout, :rows => 4, class: 'form-control'
   .row
     .col-md-6.mb-3
-      = f.label "入トロ年度", class: 'form-label'
+      = required_label(f, :joined, '入トロ年度')
       = f.text_field :joined, class: 'form-control'
     .col-md-6.mb-3
-      = f.label "入学年度", class: 'form-label'
+      = required_label(f, :entered, '入学年度')
       = f.text_field :entered, class: 'form-control'
   .mt-2
     = f.submit class: 'btn btn-primary'

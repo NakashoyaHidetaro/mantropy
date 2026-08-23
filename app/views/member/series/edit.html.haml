@@ -12,9 +12,11 @@
           %span.fw-bold タイトル
         .card-body
           = form_for([:member, @serie]) do |f|
+            = required_legend
+            = required_label(f, :name, 'シリーズ名・タイトル')
             .row.g-2.align-items-center
               .col-sm
-                = f.text_field :name, class: 'form-control'
+                = f.text_field :name, required: true, class: 'form-control'
               .col-sm-auto
                 = f.submit "変更", class: 'btn btn-primary'
 

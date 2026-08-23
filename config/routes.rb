@@ -40,7 +40,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   namespace :member do
     root 'homes#index'
 
-    resources :posts, only: %i[create]
+    resources :posts, only: %i[index create]
     resources :ranks, only: %i[create destroy]
 
     resources :topics, only: %i[index new create edit update]

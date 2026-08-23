@@ -1,4 +1,8 @@
 class Member::PostsController < Member::Base
+  def index
+    @posts = PostTimeline.recent_posts(page: params[:page])
+  end
+
   def create
     @post = Post.new(post_params)
     @post.topic_id = params[:topic_id]

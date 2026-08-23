@@ -24,18 +24,19 @@
       を指します
   .card.mb-3
     .card-body
+      = required_legend
       .mb-3
-        = f.label "シリーズ名・タイトル", class: 'form-label'
+        = required_label(f, :name, 'シリーズ名・タイトル')
         = f.text_field :name, required: true, class: 'form-control'
       .mb-3
-        = f.label "著者・漫画家", class: 'form-label'
+        %label.form-label 著者・漫画家
         .row.g-2
           .col-md-6
             = select_tag :author_id, options_from_collection_for_select(Author.order("name"), :id, :name, (@serie.authors.empty? ? nil : @serie.authors.last.id)), {:include_blank => "右のボックスから漫画家を追加", :class => 'form-select'}
           .col-md-6
             = text_field_tag :author_name, nil, class: 'form-control'
       .mb-3
-        = f.label "掲載誌", class: 'form-label'
+        %label.form-label 掲載誌
         .row.g-2.align-items-center
           .col-md-4
             = select_tag :magazine_id, options_from_collection_for_select(Magazine.order("name"), :id, :name, (@serie.magazines.empty? ? nil : @serie.magazines.last.id)), {:include_blank => "右のボックスから雑誌を追加", :class => 'form-select'}
@@ -46,7 +47,7 @@
               %span.input-group-text 雑誌出版社
               = text_field_tag :magazine_publisher, nil, class: 'form-control'
       .mb-3
-        = f.label "次の書籍情報を含める", class: 'form-label'
+        %label.form-label 次の書籍情報を含める
         = select_tag :book_ids, options_from_collection_for_select(@serie.books, :id, :name), {:multiple => true, :class => 'form-select'}
         .form-text CtrlかShiftキーを押下しながらで複数選択(Editing Serieの時は関係ないです)
   .mt-2

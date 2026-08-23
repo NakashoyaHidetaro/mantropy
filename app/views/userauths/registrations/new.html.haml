@@ -7,14 +7,15 @@
           登録
         = form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f|
           = render "devise/shared/devise_error_messages"
+          = required_legend
           .mb-3
-            = f.label :email, class: "form-label"
+            = required_label f, :email, "Email"
             = f.email_field :email, class: "form-control", autocomplete: "email"
           .mb-3
-            = f.label :password, class: "form-label"
+            = required_label f, :password, "Password"
             = f.password_field :password, class: "form-control", autocomplete: "new-password"
           .mb-3
-            = f.label :password_confirmation, class: "form-label"
+            = required_label f, :password_confirmation, "Password confirmation"
             = f.password_field :password_confirmation, class: "form-control", autocomplete: "new-password"
           .d-grid
             = f.submit "登録", class: "btn btn-primary w-100"

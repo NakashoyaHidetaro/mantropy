@@ -17,6 +17,13 @@ class Member::SeriesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'new画面のシリーズ名には必須マークと凡例が表示される' do
+    get new_member_serie_path
+    assert_response :success
+    assert_select 'label[for=serie_name] span.text-danger', text: '*'
+    assert_select 'p.form-text', text: /は必須項目です/
+  end
+
   test 'ログインしていない場合はログイン画面にリダイレクトされる' do
     sign_out @userauth
     get new_member_serie_path
