@@ -49,31 +49,41 @@
       %span.text-muted.ms-2= post.content[0..24]
 
 %h2.h4.mb-3 ランキング
-- if @do_show_ranking
-  .list-group.mb-3
-    - @ranks.each do |rank|
-      .list-group-item.d-flex.flex-wrap.align-items-center.gap-2
-        %span.badge.text-bg-secondary= rank.ranking.name
-        %span.fw-bold
-          = rank.rank
-          位
-        = link_to image_tag(serie_image_path(rank.serie, :small), :alt => rank.serie.name, :class => 'img-fluid'), rank.serie
-        = link_to rank.serie.name, rank.serie, class: 'fw-bold text-decoration-none'
-        - if rank.serie.authors then
-          %span.text-muted.small
-            - rank.serie.authors.each do |author|
-              = link_to author.name, series_path(:str => author.name), class: 'text-decoration-none me-1'
-        - magazine_names = rank.serie.magazines_series.map{|ms| ms.magazine ? (ms.magazine.name + (ms.placed ? (ms.placed != "" ? "（#{ms.placed}）" : "") : "")) : nil}.compact.uniq.join("　")
-        -# member側の編集リンクはログイン時のみ表示する
-        - if current_user
-          = link_to magazine_names, edit_member_serie_path(rank.serie), class: 'text-muted small text-decoration-none'
-        - else
-          %span.text-muted.small= magazine_names
-        - if @user == current_user && @registerable_rankings.map{|r| r.id}.include?(rank.ranking_id)
-          .ms-auto
-            = link_to member_rank_path(rank), :confirm => "#{rank.serie.name} を #{rank.rank} 位から削除していいですか？", :method => :delete, :controller => :ranks, :class => 'btn btn-sm btn-outline-danger' do
-              %i.bi.bi-trash
-              削除
+-# 年度ごとに折りたたむ（モバイルは初期状態で格納、デスクトップは JS で展開）
+- @ranks_by_year.each_with_index do |(year, ranks), index|
+  - collapse_id = "year-ranks-#{index}"
+  .mb-3
+    .d-flex.flex-wrap.align-items-center.gap-2
+      %button.btn.btn-sm.btn-outline-secondary.year-toggle{type: :button, data: { 'bs-toggle' => 'collapse', 'bs-target' => "##{collapse_id}" }, aria: { expanded: 'false', controls: collapse_id }}
+        %i.bi.bi-plus-lg
+        %i.bi.bi-dash-lg
+        %span.ms-1= "#{year}年"
+      %span.text-muted.small= "#{ranks.size}件"
+    .collapse.year-collapse.mt-2{id: collapse_id}
+      .list-group
+        - ranks.each do |rank|
+          .list-group-item.d-flex.flex-wrap.align-items-center.gap-2
+            %span.badge.text-bg-secondary= rank.ranking.name
+            %span.fw-bold
+              = rank.rank
+              位
+            = link_to image_tag(serie_image_path(rank.serie, :small), :alt => rank.serie.name, :class => 'img-fluid'), rank.serie
+            = link_to rank.serie.name, rank.serie, class: 'fw-bold text-decoration-none'
+            - if rank.serie.authors then
+              %span.text-muted.small
+                - rank.serie.authors.each do |author|
+                  = link_to author.name, series_path(:str => author.name), class: 'text-decoration-none me-1'
+            - magazine_names = rank.serie.magazines_series.map{|ms| ms.magazine ? (ms.magazine.name + (ms.placed ? (ms.placed != "" ? "（#{ms.placed}）" : "") : "")) : nil}.compact.uniq.join("　")
+            -# member側の編集リンクはログイン時のみ表示する
+            - if current_user
+              = link_to magazine_names, edit_member_serie_path(rank.serie), class: 'text-muted small text-decoration-none'
+            - else
+              %span.text-muted.small= magazine_names
+            - if @user == current_user && @registerable_rankings.map{|r| r.id}.include?(rank.ranking_id)
+              .ms-auto
+                = link_to member_rank_path(rank), :confirm => "#{rank.serie.name} を #{rank.rank} 位から削除していいですか？", :method => :delete, :controller => :ranks, :class => 'btn btn-sm btn-outline-danger' do
+                  %i.bi.bi-trash
+                  削除
 - @registering_rankings.each do |ranking|
   %span.badge.text-bg-warning.me-1= ranking.name + '不十分' if !complete_ranking(ranking, @user)
 

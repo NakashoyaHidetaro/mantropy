@@ -4,14 +4,14 @@ one:
   name: MyString
   email: MyString
   order: 1
-  content: MyText
-  topic_id: 1
-  user_id: 1
+  content: ポストひとつめの本文
+  topic: one
+  user: one
 
 two:
   name: MyString
   email: MyString
   order: 1
-  content: MyText
-  topic_id: 2
-  user_id: 2
+  content: ポストふたつめの本文
+  topic: two
+  user: two

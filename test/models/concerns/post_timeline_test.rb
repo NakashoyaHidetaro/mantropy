@@ -28,7 +28,9 @@ class PostTimelineTest < ActiveSupport::TestCase
 
   test 'author_name_for は会員投稿ではユーザー名を返す' do
     post = posts(:one)
-    post.user.update!(name: '会員ユーザー')
+    # users fixture は joined / entered が空でバリデーションを通らないため、属性だけ差し替える
+    post.user.name = '会員ユーザー'
+    post.user.save!(validate: false)
     assert_equal '会員ユーザー', PostTimeline.author_name_for(post.reload)
   end
 

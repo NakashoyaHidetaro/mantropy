@@ -144,3 +144,16 @@
 .mantro-chan-bg__caption {
   color: #000;
 }
+
+/* 年度別ランキングの折りたたみトグル: Wikipedia 風に +/- を切り替える */
+.year-toggle .bi-dash-lg {
+  display: none;
+}
+
+.year-toggle[aria-expanded="true"] .bi-plus-lg {
+  display: none;
+}
+
+.year-toggle[aria-expanded="true"] .bi-dash-lg {
+  display: inline-block;
+}

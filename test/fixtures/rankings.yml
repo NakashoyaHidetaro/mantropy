@@ -5,3 +5,17 @@ one:
 
 two:
   name: MyString
+
+kojin2015:
+  name: 2015年個人ランキング
+  kind: kojin
+  is_registerable: false
+  scope_min: 1
+  scope_max: 2
+
+kojin2016:
+  name: 2016年個人ランキング
+  kind: kojin
+  is_registerable: false
+  scope_min: 1
+  scope_max: 2

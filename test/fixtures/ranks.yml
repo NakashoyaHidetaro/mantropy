@@ -13,3 +13,15 @@ two:
   ranking: one
   user: two
   serie: two
+
+kojin2015_user_one_first:
+  rank: 1
+  ranking: kojin2015
+  user: one
+  serie: one
+
+kojin2015_user_one_second:
+  rank: 2
+  ranking: kojin2015
+  user: one
+  serie: two

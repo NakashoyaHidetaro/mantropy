@@ -28,18 +28,39 @@ class UsersController < ApplicationController
     @title = @user.name.to_s
     @registerable_rankings = registerable_rankings
     @registering_rankings = registering_rankings
-    list_rankings = @registerable_rankings.empty? ? Ranking.all : registering_rankings
-    @ranks = @user.ranks.where(ranking_id: list_rankings).sort do |a, b|
-      (a.ranking_id <=> b.ranking_id).nonzero? or a.rank <=> b.rank
-    end
-    @do_show_ranking = current_user == @user ||
-                       (current_user && (@registerable_rankings.empty? ||
-                        complete_ranking(@registering_rankings.order(:id).first)))
+    @registering_years = @registering_rankings.map(&:year).uniq
+    @show_registering_ranks = show_registering_ranks?
+    @ranks_by_year = ranks_by_year_for(@user)
 
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render xml: @user }
       format.csv  { render csv: @user }
+    end
+  end
+
+  private
+
+  # 集計中（登録受付中）の年度のランキングを閲覧できるか
+  # 本人、または今年の個人ランキングを提出完了済みのログインユーザーのみ許可する
+  def show_registering_ranks?
+    return false if @registering_rankings.empty?
+    return true if current_user == @user
+
+    kojin = @registering_rankings.select { |r| r.kind == 'kojin' }.min_by(&:id) ||
+            @registering_rankings.min_by(&:id)
+    current_user.present? && complete_ranking(kojin)
+  end
+
+  # 年度（降順）ごとにまとめた ranks を返す。集計中年度は閲覧権限が無ければ除外する
+  def ranks_by_year_for(user)
+    ranks = user.ranks.includes(:ranking, serie: [:authors, { magazines_series: :magazine }]).to_a
+    grouped = ranks.group_by { |rank| rank.ranking.year }
+    grouped = grouped.except(*@registering_years) unless @show_registering_ranks
+    grouped.sort_by { |year, _| year.to_s }.reverse.to_h.transform_values do |list|
+      list.sort do |a, b|
+        (a.ranking_id <=> b.ranking_id).nonzero? || (a.rank.to_i <=> b.rank.to_i)
+      end
     end
   end
 end
