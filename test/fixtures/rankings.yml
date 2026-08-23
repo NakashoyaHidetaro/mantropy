@@ -12,6 +12,19 @@ kojin2015:
   is_registerable: false
   scope_min: 1
   scope_max: 2
+  # コメント数（count_post）の集計基準日時。この日時より後の post だけが数えられる
+  created_at: <%= 30.days.ago %>
+  updated_at: <%= 30.days.ago %>
+
+# 2015年度の糞ランキング。kojin2015 と対になる
+kuso2015:
+  name: 2015年糞ランキング
+  kind: kuso
+  is_registerable: false
+  scope_min: 1
+  scope_max: 2
+  created_at: <%= 30.days.ago %>
+  updated_at: <%= 30.days.ago %>
 
 kojin2016:
   name: 2016年個人ランキング

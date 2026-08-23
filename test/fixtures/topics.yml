@@ -7,3 +7,8 @@ one:
 two:
   title: MyString
   appear: 1
+
+# 集計テスト用: 漫画Aの掲示板トピック（title が nil なので漫画へのコメント扱い）
+serie_a_topic:
+  title:
+  appear: 1

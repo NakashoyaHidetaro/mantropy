@@ -28,3 +28,24 @@ old_member:
   entered: '2000'
   created_at: <%= 2.years.ago %>
   updated_at: <%= 2.years.ago %>
+
+# 集計テスト用: kojin2015 / kuso2015 に投票するユーザー
+three:
+  name: MyUserThree
+  realname: 集計テストユーザー3
+  pcmail: three@example.com
+  mbmail: three@example.com
+  twitter: user_three
+  url: http://example.com/three
+  joined: '2015'
+  entered: '2015'
+
+four:
+  name: MyUserFour
+  realname: 集計テストユーザー4
+  pcmail: four@example.com
+  mbmail: four@example.com
+  twitter: user_four
+  url: http://example.com/four
+  joined: '2015'
+  entered: '2015'

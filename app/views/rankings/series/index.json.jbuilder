@@ -1,10 +1,10 @@
 # rubocop:disable Metrics/BlockLength,Layout/LineLength,Rails/OutputSafety
 @series.each do |serie|
   json.serie do |json|
-    json.rank "#{serie.url[:rank]}位"
+    json.rank "#{serie.rank_info[:rank]}位"
     json.name serie.name
     json.authors serie.authors.map(&:name).join('・')
-    json.ranking "（#{serie.url[:sum_of_mark]}点： 得票数#{serie.url[:count_rank]}, クソ修正後得点#{serie.url[:sum_of_mark_with_kuso]}点, クソ得票数#{serie.url[:count_kuso]}）"
+    json.ranking "（#{serie.rank_info[:sum_of_mark]}点： 得票数#{serie.rank_info[:count_rank]}, クソ修正後得点#{serie.rank_info[:sum_of_mark_with_kuso]}点, クソ得票数#{serie.rank_info[:count_kuso]}）"
     json.magazine serie.magazines_series.map { |ms|
                     next unless ms.magazine
 
@@ -23,7 +23,7 @@
       comment = related_topics.map do |post|
         content = post.content.gsub(/[\r\n]/, '')
         name = post.user.name
-        rank = serie.ranks.where(ranking_id: @ranking_ids, user_id: post.user.id).first
+        rank = serie.ranks.find { |r| @ranking_ids.include?(r.ranking_id) && r.user_id == post.user.id }
         rank_str = if rank
                      ":#{'糞' unless rank.ranking_id == @ranking_ids[0]}#{rank.rank}位"
                    end

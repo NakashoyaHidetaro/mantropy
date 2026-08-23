@@ -9,3 +9,16 @@ two:
   name: MySerieTwo
   public_id: serietwopublic02
   post:
+
+# 集計テスト用: kojin2015 / kuso2015 の両方に票があり、トピックにコメントも付いている漫画
+voted_a:
+  name: 集計テスト漫画A
+  public_id: serietestaaaa001
+  topic: serie_a_topic
+  post:
+
+# 集計テスト用: どのランキングにも票が無い漫画（集計結果に含まれないことの検証用）
+unvoted:
+  name: 集計テスト漫画Z
+  public_id: serietestzzzz002
+  post:

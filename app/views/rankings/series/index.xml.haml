@@ -11,4 +11,4 @@
         %content= raw serie.post.content.gsub(/[\r\n]/, "") if serie.post
         %by= serie.post.user.name if serie.post
       - if serie.topic
-        %comments= raw (serie.topic.posts - [serie.post]).map{|post| "#{post.content.gsub(/[\r\n]/, "")}【#{post.user.name}#{(rank = serie.ranks.where(ranking_id: @ranking_ids, user_id: post.user.id).first) ? ":#{rank.ranking_id == @ranking_ids[0] ? nil : "糞"}#{rank.rank}位" : nil}】"}.join("\n")
+        %comments= raw (serie.topic.posts - [serie.post]).map{|post| "#{post.content.gsub(/[\r\n]/, "")}【#{post.user.name}#{(rank = serie.ranks.find{|r| @ranking_ids.include?(r.ranking_id) && r.user_id == post.user.id}) ? ":#{rank.ranking_id == @ranking_ids[0] ? nil : "糞"}#{rank.rank}位" : nil}】"}.join("\n")

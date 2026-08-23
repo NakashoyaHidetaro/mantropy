@@ -25,3 +25,59 @@ kojin2015_user_one_second:
   ranking: kojin2015
   user: one
   serie: two
+
+# --- 集計テスト用の kojin2015 への追加票（scope_max=2 なので 1位=+2点 / 2位=+1点） ---
+kojin2015_user_two_first:
+  rank: 1
+  ranking: kojin2015
+  user: two
+  serie: one
+
+kojin2015_user_three_second:
+  rank: 2
+  ranking: kojin2015
+  user: three
+  serie: one
+
+kojin2015_user_three_first:
+  rank: 1
+  ranking: kojin2015
+  user: three
+  serie: voted_a
+
+kojin2015_user_four_first:
+  rank: 1
+  ranking: kojin2015
+  user: four
+  serie: voted_a
+
+kojin2015_user_four_second:
+  rank: 2
+  ranking: kojin2015
+  user: four
+  serie: two
+
+# --- 集計テスト用の kuso2015 への票（scope_max=2 なので 1位=-2点 / 2位=-1点、×2倍） ---
+kuso2015_user_two_first:
+  rank: 1
+  ranking: kuso2015
+  user: two
+  serie: one
+
+kuso2015_user_two_second:
+  rank: 2
+  ranking: kuso2015
+  user: two
+  serie: voted_a
+
+kuso2015_user_three_first:
+  rank: 1
+  ranking: kuso2015
+  user: three
+  serie: voted_a
+
+kuso2015_user_three_second:
+  rank: 2
+  ranking: kuso2015
+  user: three
+  serie: one

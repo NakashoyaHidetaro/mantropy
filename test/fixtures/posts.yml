@@ -15,3 +15,23 @@ two:
   content: ポストふたつめの本文
   topic: two
   user: two
+
+# 集計テスト用: kojin2015 の作成日時より後に投稿されたコメント（count_post に数えられる）
+after_kojin2015:
+  name: MyString
+  email: MyString
+  order: 1
+  content: ランキング作成後のコメント
+  topic: serie_a_topic
+  user: three
+  created_at: <%= 1.day.ago %>
+
+# 集計テスト用: kojin2015 の作成日時より前に投稿されたコメント（count_post に数えられない）
+before_kojin2015:
+  name: MyString
+  email: MyString
+  order: 1
+  content: ランキング作成前のコメント
+  topic: serie_a_topic
+  user: four
+  created_at: <%= 60.days.ago %>

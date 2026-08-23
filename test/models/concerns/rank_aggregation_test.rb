@@ -10,9 +10,9 @@ class RankAggregationTest < ActiveSupport::TestCase
 
   test '比較キーがすべて等しい漫画には同じ順位が付く' do
     series = [
-      build_serie(sum_of_mark: '10', count_rank: '2', min_rank: '1'),
-      build_serie(sum_of_mark: '10', count_rank: '2', min_rank: '1'),
-      build_serie(sum_of_mark: '5',  count_rank: '1', min_rank: '3')
+      build_serie(sum_of_mark: 10, count_rank: 2, min_rank: 1),
+      build_serie(sum_of_mark: 10, count_rank: 2, min_rank: 1),
+      build_serie(sum_of_mark: 5,  count_rank: 1, min_rank: 3)
     ]
     RankAggregation.assign_ranks(series, keys: %i[sum_of_mark count_rank min_rank])
     assert_equal([1, 1, 3], series.map { |s| s.rank_info[:rank] })
@@ -20,10 +20,10 @@ class RankAggregationTest < ActiveSupport::TestCase
 
   test '同順位が続いた分だけ次の順位は飛び番になる' do
     series = [
-      build_serie(sum_of_mark: '10'),
-      build_serie(sum_of_mark: '10'),
-      build_serie(sum_of_mark: '10'),
-      build_serie(sum_of_mark: '1')
+      build_serie(sum_of_mark: 10),
+      build_serie(sum_of_mark: 10),
+      build_serie(sum_of_mark: 10),
+      build_serie(sum_of_mark: 1)
     ]
     RankAggregation.assign_ranks(series, keys: %i[sum_of_mark])
     assert_equal([1, 1, 1, 4], series.map { |s| s.rank_info[:rank] })
@@ -31,8 +31,8 @@ class RankAggregationTest < ActiveSupport::TestCase
 
   test '比較キーの一部でも異なれば別の順位になる' do
     series = [
-      build_serie(sum_of_mark: '10', count_rank: '2', min_rank: '1'),
-      build_serie(sum_of_mark: '10', count_rank: '2', min_rank: '2')
+      build_serie(sum_of_mark: 10, count_rank: 2, min_rank: 1),
+      build_serie(sum_of_mark: 10, count_rank: 2, min_rank: 2)
     ]
     RankAggregation.assign_ranks(series, keys: %i[sum_of_mark count_rank min_rank])
     assert_equal([1, 2], series.map { |s| s.rank_info[:rank] })
@@ -40,8 +40,8 @@ class RankAggregationTest < ActiveSupport::TestCase
 
   test '糞ランキング用の比較キーでも順位を付与できる' do
     series = [
-      build_serie(sum_of_mark_with_kuso: '-1', count_kuso: '1', min_rank: '1'),
-      build_serie(sum_of_mark_with_kuso: '-1', count_kuso: '1', min_rank: '1')
+      build_serie(sum_of_mark_with_kuso: -1, count_kuso: 1, min_rank: 1),
+      build_serie(sum_of_mark_with_kuso: -1, count_kuso: 1, min_rank: 1)
     ]
     RankAggregation.assign_ranks(series, keys: %i[sum_of_mark_with_kuso count_kuso min_rank])
     assert_equal([1, 1], series.map { |s| s.rank_info[:rank] })
