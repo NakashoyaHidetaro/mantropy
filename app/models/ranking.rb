@@ -42,6 +42,21 @@ class Ranking < ApplicationRecord
     "#{year}年#{KIND_NAMES[kind]}"
   end
 
+  # 年度を含まない種別の表示名(例: '漫トロ個人ランキング')
+  def kind_name
+    KIND_NAMES[kind]
+  end
+
+  # 種別ごとのアイコンクラス(例: 'bi bi-trophy-fill')
+  def icon_class
+    RankingAppearance.icon_class(kind)
+  end
+
+  # 種別ごとの Bootstrap テーマカラー名(例: 'primary')
+  def theme_color
+    RankingAppearance.color(kind)
+  end
+
   def to_param
     "#{year}-#{KIND_SLUGS[kind]}"
   end

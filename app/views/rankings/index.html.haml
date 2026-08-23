@@ -2,15 +2,42 @@
 
 %h2.h3.my-4 漫画ランキング一覧
 
-.card.shadow-sm.mb-4
-  .list-group.list-group-flush
-    - @rankings.each do |ranking|
-      - if !ranking.registerable? || current_user.present?
-        = link_to ranking_series_path(ranking), class: 'list-group-item list-group-item-action d-flex align-items-center gap-2' do
-          %i.bi.bi-globe2.text-primary
-          = ranking.name
-      - else
-        .list-group-item.d-flex.align-items-center.gap-2.text-body-secondary
-          %i.bi.bi-lock
-          = ranking.name
-          %span.badge.text-bg-secondary.ms-auto 登録作業中
+- @rankings_by_year.each do |year, rankings|
+  %section.mb-5
+    %h3.h4.d-flex.align-items-center.gap-2.pb-2.mb-3.border-bottom.border-2.border-primary-subtle
+      %i.bi.bi-calendar3.text-primary
+      %span.text-primary-emphasis.fw-bold= "#{year}年"
+      %span.badge.rounded-pill.text-bg-light.fw-normal.ms-auto= "#{rankings.size}件"
+    .row.row-cols-1.row-cols-md-2.g-3
+      - rankings.each do |ranking|
+        -# 集計期間中のランキングはログインユーザーのみ閲覧できる(登録作業中のため)
+        - viewable = !ranking.registerable? || current_user.present?
+        .col
+          .card.h-100.shadow-sm.position-relative{ class: viewable ? nil : 'bg-body-tertiary' }
+            .card-header.d-flex.align-items-center.gap-2.border-0{ class: "bg-#{ranking.theme_color}-subtle text-#{ranking.theme_color}-emphasis" }
+              %i.fs-5{ class: ranking.icon_class }
+              %span.fw-semibold= ranking.kind_name
+            .card-body.d-flex.align-items-center.gap-2
+              - if !viewable
+                %span.badge.text-bg-secondary
+                  %i.bi.bi-lock-fill.me-1
+                  登録作業中
+              - elsif ranking.registerable?
+                %span.badge.text-bg-warning
+                  %i.bi.bi-hourglass-split.me-1
+                  集計中
+              - elsif ranking.published?
+                %span.badge.text-bg-success
+                  %i.bi.bi-check-circle-fill.me-1
+                  公開中
+              - else
+                %span.badge.text-bg-info
+                  %i.bi.bi-eye-slash-fill.me-1
+                  公開前
+              - if viewable
+                %span.ms-auto.text-body-secondary.small
+                  作品一覧を見る
+                  %i.bi.bi-chevron-right.ms-1
+            - if viewable
+              = link_to ranking_series_path(ranking), class: 'stretched-link' do
+                %span.visually-hidden= ranking.name

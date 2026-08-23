@@ -53,6 +53,11 @@ module SerieRanking # rubocop:disable Metrics/ModuleLength
       end
     end
 
+    # ランキングの XML/CSV/JSON をダウンロードできるか。ログイン中のユーザーのみ許可する。
+    def downloadable?(user)
+      user.present?
+    end
+
     # 集計本体。ranking_plus は必須、ranking_minus は nil 可（nil なら糞補正なし＝0扱い）。
     # sort_by_kuso: true なら補正後合計点を第一ソートキーにする（糞ランキング表示用）。
     # 戻り値は順位順に並んだ Serie の配列で、各要素の rank_info に集計値が入る。

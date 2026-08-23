@@ -84,6 +84,16 @@ class SerieRankingTest < ActiveSupport::TestCase
     assert_nil SerieRanking.restriction_notice(kojin, nil)
   end
 
+  # --- downloadable? ---
+
+  test 'downloadable? はログイン中のユーザーなら true を返す' do
+    assert SerieRanking.downloadable?(users(:one))
+  end
+
+  test 'downloadable? はゲスト（nil）なら false を返す' do
+    assert_not SerieRanking.downloadable?(nil)
+  end
+
   # --- aggregate: プラス点の計算 ---
 
   test 'aggregate は満点から順位を引いた点数と重複ボーナスを合計する' do

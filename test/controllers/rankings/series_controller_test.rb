@@ -77,10 +77,18 @@ class Rankings::SeriesControllerTest < ActionDispatch::IntegrationTest
     assert_select 'span.badge', text: '重複数: 0'
   end
 
-  test 'ランキング別シリーズ一覧をCSV・JSON・XMLで取得できる' do
+  test 'ログインしていればランキング別シリーズ一覧をCSV・JSON・XMLで取得できる' do
+    sign_in @userauth
     %i[csv json xml].each do |format|
       get ranking_series_path(@kojin, format:)
       assert_response :success
+    end
+  end
+
+  test 'ゲストはランキング別シリーズ一覧のCSV・JSON・XMLを取得できない' do
+    %i[csv json xml].each do |format|
+      get ranking_series_path(@kojin, format:)
+      assert_response :not_acceptable
     end
   end
 
@@ -130,7 +138,16 @@ class Rankings::SeriesControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test '一般公開日以降はゲストもダウンロードリンク付きで閲覧できる' do
+  test '一般公開日以降はゲストも閲覧できるがダウンロードリンクは表示されない' do
+    get ranking_series_path(rankings(:kojin2015))
+    assert_response :success
+    assert_select 'a[href=?]', ranking_series_path(rankings(:kojin2015), format: :csv), false
+    assert_select 'a[href=?]', ranking_series_path(rankings(:kojin2015), format: :json), false
+    assert_select 'a[href=?]', ranking_series_path(rankings(:kojin2015), format: :xml), false
+  end
+
+  test 'ログイン中のユーザーにはダウンロードリンクが表示される' do
+    sign_in @userauth
     get ranking_series_path(rankings(:kojin2015))
     assert_response :success
     assert_select 'a[href=?]', ranking_series_path(rankings(:kojin2015), format: :csv)
@@ -155,6 +172,7 @@ class Rankings::SeriesControllerTest < ActionDispatch::IntegrationTest
 
   test '個人ランキングのCSVは合計得点の高い順に出力される' do
     create_votes_of_year2013
+    sign_in @userauth
     get ranking_series_path(@kojin, format: :csv)
     assert_response :success
 
@@ -168,6 +186,7 @@ class Rankings::SeriesControllerTest < ActionDispatch::IntegrationTest
 
   test '糞ランキングのCSVは糞補正後得点の高い順に出力される' do
     create_votes_of_year2013
+    sign_in @userauth
     get ranking_series_path(@kuso, format: :csv)
     assert_response :success
 
@@ -176,8 +195,9 @@ class Rankings::SeriesControllerTest < ActionDispatch::IntegrationTest
     assert_equal(%w[1 2], rows.pluck(0))
   end
 
-  test '票がある状態でもJSON・XMLを取得できる' do
+  test '票がある状態でもログインしていればJSON・XMLを取得できる' do
     create_votes_of_year2013
+    sign_in @userauth
     %i[json xml].each do |format|
       get ranking_series_path(@kojin, format:)
       assert_response :success
@@ -191,8 +211,9 @@ class Rankings::SeriesControllerTest < ActionDispatch::IntegrationTest
     assert_select 'div.card.shadow-sm', 1
   end
 
-  test '同年度に糞ランキングが無くてもCSV・JSON・XMLを取得できる' do
+  test '同年度に糞ランキングが無くてもログインしていればCSV・JSON・XMLを取得できる' do
     kojin_only = create_kojin_only_ranking
+    sign_in @userauth
     %i[csv json xml].each do |format|
       get ranking_series_path(kojin_only, format:)
       assert_response :success

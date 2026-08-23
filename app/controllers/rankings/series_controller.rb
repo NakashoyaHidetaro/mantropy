@@ -14,11 +14,13 @@ class Rankings::SeriesController < Rankings::Base
     @aggregated_rankings = Ranking.same_year_as(@ranking).aggregated
     @series = Kaminari.paginate_array(@series).page(params[:page]).per(SerieRanking::PER_PAGE)
 
+    @downloadable = SerieRanking.downloadable?(current_user)
+
     respond_to do |format|
       format.html
-      format.csv
-      format.xml  { @series = @series[0...SerieRanking::EXPORT_LIMIT] }
-      format.json { @series = @series[0...SerieRanking::EXPORT_LIMIT] }
+      format.csv if @downloadable
+      format.xml { @series = @series[0...SerieRanking::EXPORT_LIMIT] } if @downloadable
+      format.json { @series = @series[0...SerieRanking::EXPORT_LIMIT] } if @downloadable
     end
   end
 

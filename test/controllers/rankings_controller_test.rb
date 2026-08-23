@@ -6,6 +6,12 @@ class RankingsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test '年度ごとの見出しセクションが年度数だけ表示される' do
+    get rankings_path
+    assert_response :success
+    assert_select 'section h3', count: Ranking.distinct.count(:year)
+  end
+
   test '一般公開済みのランキングはゲストにもリンクされる' do
     get rankings_path
     assert_response :success
