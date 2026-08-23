@@ -12,11 +12,6 @@ class Member::RankingsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test 'show画面を取得できる（認証あり）' do
-    get member_ranking_path(@ranking), headers: basic_auth_header
-    assert_response :success
-  end
-
   test 'ログインしていない場合はログイン画面にリダイレクトされる' do
     sign_out @userauth
     get member_rankings_path

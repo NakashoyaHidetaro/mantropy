@@ -5,7 +5,7 @@
     = @serie.name
   %h2 シリーズ情報修正
   %p.serie_authors
-    = form_for(@serie) do |f|
+    = form_for([:member, @serie]) do |f|
       %b タイトル:
       = f.text_field :name
       = f.submit "変更"

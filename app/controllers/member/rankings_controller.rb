@@ -1,13 +1,11 @@
 class Member::RankingsController < Member::Base
   before_action :admin_basic_authentication
-  before_action :set_ranking, only: %i[show update]
+  before_action :set_ranking, only: %i[update]
 
   def index
     @rankings = Ranking.order(:name)
     @new_ranking = Ranking.new
   end
-
-  def show; end
 
   def create
     @ranking = Ranking.new(ranking_params)

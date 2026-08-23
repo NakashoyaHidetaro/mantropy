@@ -44,10 +44,5 @@
   %b 書籍収録情報
   - @serie.books.each do |book|
     %div
-      -# 書籍詳細は member 専用（URLに内部IDが出る）ためゲストにはリンクを見せない
-      - if current_user
-        = link_to image_tag(book.smallimgurl || 'nil_small.jpg', alt: book.name), member_book_path(book)
-        = link_to book.name, member_book_path(book)
-      - else
-        = image_tag(book.smallimgurl || 'nil_small.jpg', alt: book.name)
-        = book.name
+      = image_tag(book.smallimgurl || 'nil_small.jpg', alt: book.name)
+      = book.name

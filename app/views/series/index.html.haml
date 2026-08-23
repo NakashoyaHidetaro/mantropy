@@ -7,7 +7,7 @@
   %h2= link_to serie.name, serie, {:target => "_blank"}
   .serie_books
     - serie.books.each do |book|
-      = link_to book.name, member_book_path(book)
+      = book.name
       %br
     %br{:style => "clear: both;"}
 = paginate @series

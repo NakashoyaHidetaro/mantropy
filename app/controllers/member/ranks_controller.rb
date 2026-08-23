@@ -1,17 +1,5 @@
 class Member::RanksController < Member::Base
-  before_action :set_rank, only: %i[show edit update destroy]
-
-  def index
-    @ranks = Rank.all
-  end
-
-  def show; end
-
-  def new
-    @rank = Rank.new
-  end
-
-  def edit; end
+  before_action :set_rank, only: %i[destroy]
 
   def create # rubocop:disable Metrics/AbcSize,Metrics/MethodLength,Metrics/PerceivedComplexity
     params[:rank][:rank].tr!('０-９', '0-9')
@@ -57,14 +45,6 @@ class Member::RanksController < Member::Base
                   notice: "#{@rank.serie.name} に #{@rank.rank} 位を#{msg || '登録しました。'}")
     else
       redirect_to(@rank.serie, notice: '失敗。ランク登録に合わない情報が混じった気がする')
-    end
-  end
-
-  def update
-    if @rank.update(rank_params)
-      redirect_to(member_rank_path(@rank), notice: 'Rank was successfully updated.')
-    else
-      render action: 'edit'
     end
   end
 

@@ -1,23 +1,9 @@
 class Member::PostsController < Member::Base
-  before_action :set_post, only: %i[show edit update destroy]
-
-  def index
-    @posts = Post.all
-  end
-
-  def show; end
-
-  def new
-    @post = Post.new
-  end
-
-  def edit; end
-
   def create
     @post = Post.new(post_params)
     @post.topic_id = params[:topic_id]
     topic = @post.topic
-    redirect_path = (topic.title ? member_topic_path(topic) : serie_path(Serie.find_by(topic_id: topic.id)))
+    redirect_path = (topic.title ? member_topic_show_path(topic) : serie_path(Serie.find_by(topic_id: topic.id)))
     begin
       Post.transaction do
         @post.user = current_user
@@ -34,25 +20,7 @@ class Member::PostsController < Member::Base
     end
   end
 
-  def update
-    if @post.update(post_params)
-      redirect_to(member_post_path(@post), notice: 'Post was successfully updated.')
-    else
-      render action: 'edit'
-    end
-  end
-
-  def destroy
-    @post.destroy
-
-    redirect_to(member_posts_path)
-  end
-
   private
-
-  def set_post
-    @post = Post.find(params[:id])
-  end
 
   def post_params
     params.expect(

@@ -40,9 +40,8 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   namespace :member do
     root 'homes#index'
 
-    resources :books, only: %i[index show new create edit update]
-    resources :posts, only: %i[index show new create edit update]
-    resources :ranks, only: %i[index show new create edit update destroy]
+    resources :posts, only: %i[create]
+    resources :ranks, only: %i[create destroy]
 
     resources :topics, only: %i[index new create edit update]
     # オプショナルセグメント（範囲指定・top指定）を含むため resources では表現できないので生ルートで維持する
@@ -53,7 +52,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
     resources :users, only: %i[new create edit update], param: :name
     resources :site_configs, only: %i[index create update destroy]
 
-    resources :series, only: %i[index new create edit update], param: :public_id do
+    resources :series, only: %i[new create edit update], param: :public_id do
       scope module: :series do
         resource :author, only: %i[update]
         resource :magazine_serie, only: %i[update]
@@ -61,7 +60,6 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
       end
     end
 
-    resources :rankings, only: %i[index show create update]
-    resources :magazines, only: %i[index]
+    resources :rankings, only: %i[index create update]
   end
 end

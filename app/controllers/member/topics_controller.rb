@@ -1,5 +1,5 @@
 class Member::TopicsController < Member::Base
-  before_action :set_topic, only: %i[show edit update destroy]
+  before_action :set_topic, only: %i[show edit update]
 
   def index
     @topics = Topic.where(appear: 1).order(updated_at: :desc, id: :desc)
@@ -41,16 +41,10 @@ class Member::TopicsController < Member::Base
 
   def update
     if @topic.update(topic_params)
-      redirect_to(member_topic_path(@topic), notice: 'Topic was successfully updated.')
+      redirect_to(member_topic_show_path(@topic), notice: 'Topic was successfully updated.')
     else
       render action: 'edit'
     end
-  end
-
-  def destroy
-    @topic.destroy
-
-    redirect_to(member_topics_path)
   end
 
   private

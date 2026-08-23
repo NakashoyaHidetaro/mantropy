@@ -1,12 +1,7 @@
 class Member::SeriesController < Member::Base
-  before_action :set_serie, only: %i[edit update destroy]
+  before_action :set_serie, only: %i[edit update]
 
   @title = 'シリーズ'
-
-  def index
-    @title = 'シリーズ一覧'
-    @series = Serie.order(id: :desc).page(params[:page])
-  end
 
   def new
     @serie = (params[:id] ? Serie.find(params[:id]) : Serie.new)
@@ -54,28 +49,6 @@ class Member::SeriesController < Member::Base
     else
       render action: 'edit'
     end
-  end
-
-  def destroy
-    @serie.destroy
-
-    redirect_to(series_url)
-  end
-
-  # 不要疑惑
-  def remove_duplications
-    order_by = params[:order_by]&.gsub('_', '.') || 'authors.name'
-    @series = Serie.select(
-      'DISTINCT series.*'
-    ).includes(
-      :ranks, :authors
-    ).where(
-      ranks: { ranking_id: params[:ranking_id] }
-    ).order(
-      order_by
-    ).page(
-      params[:page]
-    ).per(1000)
   end
 
   private

@@ -1,6 +1,6 @@
 class Member::UsersController < Member::Base
   skip_before_action :authenticate_user!, only: %i[new create]
-  before_action :set_user, only: %i[edit update destroy]
+  before_action :set_user, only: %i[edit update]
 
   def new
     @user = User.new
@@ -39,12 +39,6 @@ class Member::UsersController < Member::Base
     else
       render action: 'edit'
     end
-  end
-
-  def destroy
-    @user.destroy
-
-    redirect_to(users_path)
   end
 
   private
