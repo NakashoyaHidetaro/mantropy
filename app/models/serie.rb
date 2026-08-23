@@ -12,7 +12,23 @@ class Serie < ApplicationRecord
   belongs_to :post, optional: true
   belongs_to :topic, optional: true
   has_many :posts, through: :topic
-  validates :name, presence: true
 
   attr_accessor :rank_info
+
+  # 集計が終了したランキングでの順位のみを、新しいランキング順・上位順に返す。
+  # 表示時に rank.ranking / rank.user を参照するためまとめて eager load する。
+  def finished_ranks
+    ranks.where(ranking_id: Ranking.finished.select(:id))
+         .includes(:ranking, :user)
+         .order(ranking_id: :desc, rank: :asc)
+  end
+
+  # このシリーズの掲示板トピックがまだ無ければ作成して紐づける。
+  def ensure_topic!
+    return topic if topic
+
+    self.topic = Topic.create!
+    save!
+    topic
+  end
 end

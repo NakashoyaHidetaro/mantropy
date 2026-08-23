@@ -8,16 +8,16 @@ class UsersController < ApplicationController
     @old_users = User.all - @users
     @registering_rankings = registering_rankings
     @display_rankings = if @registering_rankings.empty?
-                          Ranking.where('name LIKE ? AND (kind = ? OR kind = ?)',
-                                        "#{Time.zone.now.year}%", 'kojin', 'kuso')
+                          Ranking.of_year(Time.zone.now.year, kind: %w[kojin kuso])
                         else
                           @registering_rankings
                         end
+    @downloadable = member_list_downloadable?(@registering_rankings)
 
     respond_to do |format|
       format.html # index.html.erb
-      format.csv if current_user && (registerable_rankings.empty? || complete_ranking(@registering_rankings.first))
-      format.json if current_user && (registerable_rankings.empty? || complete_ranking(@registering_rankings.first))
+      format.csv if @downloadable
+      format.json if @downloadable
     end
   end
 
@@ -30,7 +30,9 @@ class UsersController < ApplicationController
     @registering_rankings = registering_rankings
     @registering_years = @registering_rankings.map(&:year).uniq
     @show_registering_ranks = show_registering_ranks?
-    @ranks_by_year = ranks_by_year_for(@user)
+    @ranks_by_year = RankAggregation.ranks_by_year(
+      @user, excluded_years: @show_registering_ranks ? [] : @registering_years
+    )
 
     respond_to do |format|
       format.html # show.html.erb
@@ -50,17 +52,5 @@ class UsersController < ApplicationController
     kojin = @registering_rankings.select { |r| r.kind == 'kojin' }.min_by(&:id) ||
             @registering_rankings.min_by(&:id)
     current_user.present? && complete_ranking(kojin)
-  end
-
-  # 年度（降順）ごとにまとめた ranks を返す。集計中年度は閲覧権限が無ければ除外する
-  def ranks_by_year_for(user)
-    ranks = user.ranks.includes(:ranking, serie: [:authors, { magazines_series: :magazine }]).to_a
-    grouped = ranks.group_by { |rank| rank.ranking.year }
-    grouped = grouped.except(*@registering_years) unless @show_registering_ranks
-    grouped.sort_by { |year, _| year.to_s }.reverse.to_h.transform_values do |list|
-      list.sort do |a, b|
-        (a.ranking_id <=> b.ranking_id).nonzero? || (a.rank.to_i <=> b.rank.to_i)
-      end
-    end
   end
 end

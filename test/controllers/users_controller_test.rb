@@ -70,6 +70,53 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_select 'div.collapse.year-collapse'
   end
 
+  test 'ゲストにはCSV/JSONダウンロードリンクが表示されない' do
+    get users_path
+    assert_response :success
+    assert_select "a[href='/users.csv']", false
+    assert_select "a[href='/users.json']", false
+  end
+
+  test 'ゲストはCSVを取得できない' do
+    get users_path(format: :csv)
+    assert_response :not_acceptable
+  end
+
+  test '集計中に未提出のログインユーザーにはダウンロードリンクが表示されない' do
+    rankings(:kojin2016).update!(is_registerable: true)
+    sign_in userauths(:two)
+    get users_path
+    assert_response :success
+    assert_select "a[href='/users.csv']", false
+  end
+
+  test '集計中に未提出のログインユーザーはCSVを取得できない' do
+    rankings(:kojin2016).update!(is_registerable: true)
+    sign_in userauths(:two)
+    get users_path(format: :csv)
+    assert_response :not_acceptable
+  end
+
+  test '提出完了したログインユーザーにはダウンロードリンクが表示される' do
+    rankings(:kojin2016).update!(is_registerable: true)
+    create_kojin_ranks_of_year2016(users(:two))
+    sign_in userauths(:two)
+    get users_path
+    assert_response :success
+    assert_select "a[href='/users.csv']"
+    assert_select "a[href='/users.json']"
+  end
+
+  test '提出完了したログインユーザーはCSV/JSONを取得できる' do
+    rankings(:kojin2016).update!(is_registerable: true)
+    create_kojin_ranks_of_year2016(users(:two))
+    sign_in userauths(:two)
+    get users_path(format: :csv)
+    assert_response :success
+    get users_path(format: :json)
+    assert_response :success
+  end
+
   private
 
   # 2016年を集計中（登録受付中）にし、ページ主のユーザーにも2016年の順位を持たせる

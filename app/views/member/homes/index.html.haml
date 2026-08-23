@@ -20,6 +20,22 @@
     %i.bi.bi-gear-fill
     mantropy.net グローバル設定変更
 
+%h3.mt-4.text-center 集計データ
+.list-group.mt-2
+  - @rankings.each do |ranking|
+    .list-group-item.d-flex.flex-wrap.align-items-center.gap-2
+      %i.bi.bi-list-ol
+      = link_to ranking.name, ranking_series_path(ranking.name)
+      = link_to '集計ページ', aggregated_ranking_series_path(ranking.name), class: 'badge text-bg-secondary text-decoration-none'
+      = link_to 'CSV', ranking_series_path(ranking.name, format: :csv), class: 'badge text-bg-light border text-decoration-none'
+      = link_to 'JSON', ranking_series_path(ranking.name, format: :json), class: 'badge text-bg-light border text-decoration-none'
+      = link_to 'XML', ranking_series_path(ranking.name, format: :xml), class: 'badge text-bg-light border text-decoration-none'
+  .list-group-item.d-flex.flex-wrap.align-items-center.gap-2
+    %i.bi.bi-people
+    = link_to '全メンバー順位一覧', users_path
+    = link_to 'CSV', users_path(format: :csv), class: 'badge text-bg-light border text-decoration-none'
+    = link_to 'JSON', users_path(format: :json), class: 'badge text-bg-light border text-decoration-none'
+
 %h3.mt-4.text-center 外部リソース
 .list-group.mt-2
   = link_to 'http://wiki.livedoor.jp/mantropy/', target: '_blank', class: 'list-group-item list-group-item-action' do

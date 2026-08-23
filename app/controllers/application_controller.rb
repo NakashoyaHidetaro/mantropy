@@ -1,13 +1,17 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  helper_method :current_user, :complete_ranking
+  helper_method :current_user, :complete_ranking, :member_list_downloadable?
 
   private
 
-  def complete_ranking(ranking, user = current_user)
-    user && user.ranks.where(ranking_id: ranking.id).map do |r|
-      (r.serie ? r.rank : 0)
-    end.sort == ((ranking.scope_min)..(ranking.scope_max)).to_a
+  # ビューからも参照される helper_method のため名前は据え置く
+  def complete_ranking(ranking, user = current_user) # rubocop:disable Naming/PredicateMethod
+    RankAggregation.complete_ranking?(ranking, user)
+  end
+
+  # メンバー一覧の CSV / JSON をダウンロードできるか
+  def member_list_downloadable?(registering_rankings = nil)
+    RankingSubmission.member_list_downloadable?(current_user, registering_rankings)
   end
 
   def current_user
@@ -28,15 +32,12 @@ class ApplicationController < ActionController::Base
   # alias_method_chain :render, :encoding
 
   def registerable_rankings
-    Ranking.where(is_registerable: true)
+    Ranking.registerable
   end
 
   def registering_rankings
-    if registerable_rankings.empty?
-      []
-    else
-      Ranking.where(['name LIKE ?',
-                     "#{registerable_rankings.last.name[0...4]}%"]).order(:id)
-    end
+    return [] if registerable_rankings.empty?
+
+    Ranking.same_year_as(registerable_rankings.last).order(:id)
   end
 end

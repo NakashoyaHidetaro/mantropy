@@ -1,7 +1,7 @@
 class SeriesController < ApplicationController
   @title = 'シリーズ'
 
-  def index # rubocop:disable Metrics/AbcSize,Metrics/MethodLength,Metrics/PerceivedComplexity
+  def index
     @str = params[:str]
     @title = "#{@str} の検索結果"
     if @str.blank?
@@ -18,37 +18,7 @@ class SeriesController < ApplicationController
       end
     end
 
-    # サーチワードを空白で分割してor検索
-    search_strs = @str.strip.split(/[\s　]/).compact_blank
-
-    # シリーズで名前検索
-    series = Serie.none
-    search_strs.each.with_index do |s, i|
-      series = if i.zero?
-                 Serie.where('name LIKE ?', "%#{s}%")
-               else
-                 series.or(series.where('name_kana LIKE ?', "%#{s}%"))
-               end
-    end
-
-    # 著者で名前検索
-    authors = Author.none
-    search_strs.each.with_index do |s, i|
-      authors = if i.zero?
-                  Author.where('name LIKE ?', "%#{s}%")
-                else
-                  authors.or(series.where('name_kana LIKE ?', "%#{s}%"))
-                end
-    end
-
-    # 著者名で引っかかるときはその著者の持っているシリーズを含める
-    if authors.exists?
-      serie_ids = AuthorsSerie.where(author_id: authors.pluck(:id)).pluck(:serie_id)
-      series = series.or(Serie.where(id: serie_ids))
-    end
-
-    # ページネーション
-    @series = series.page(params[:page]).order(id: :desc)
+    @series = SerieSearch.search(@str, page: params[:page])
 
     if @series.one?
       # 結果が1件の場合はそのシリーズの詳細ページにリダイレクト
@@ -66,16 +36,8 @@ class SeriesController < ApplicationController
     # rubocop:disable Layout/LineLength
     # @similar_series = Serie.find_by_sql("SELECT s.* FROM series s INNER JOIN (SELECT r1.serie_id, COUNT(*) AS similarity FROM ranks r1 INNER JOIN ranks r2 ON r1.user_id=r2.user_id WHERE r2.serie_id=#{@serie.id} GROUP BY r1.serie_id ORDER BY similarity DESC, SUM(r1.score) DESC) r ON r.serie_id=s.id WHERE s.id!=#{@serie.id} LIMIT 4")
     # rubocop:enable Layout/LineLength
-    # @ranks = @serie.ranks.where(:ranking_id => [1, 2, 3, 4]).order("ranking_id DESC, rank")
-    ranking_ids = Ranking.where('is_registerable IS NULL OR is_registerable = FALSE')
-    @ranks = @serie.ranks.where(ranking_id: ranking_ids).order(ranking_id: :desc, rank: :asc)
-
-    unless @serie.topic
-      topic = Topic.new
-      topic.save!
-      @serie.topic = topic
-      @serie.save!
-    end
+    @ranks = @serie.finished_ranks
+    @serie.ensure_topic!
 
     respond_to do |format|
       format.html # show.html.erb

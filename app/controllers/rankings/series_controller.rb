@@ -1,14 +1,14 @@
 class Rankings::SeriesController < Rankings::Base
-  def index # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
+  def index # rubocop:disable Metrics/AbcSize,Metrics/MethodLength,Metrics/PerceivedComplexity
     @title = '全体ランキング'
 
     ranking_plus = ranking_minus = nil
     case @ranking.kind
     when 'kojin'
       ranking_plus = @ranking
-      ranking_minus = Ranking.where(['name LIKE ? AND kind = ?', "#{@ranking.name[0...4]}%", 'kuso']).last
+      ranking_minus = Ranking.same_year_as(@ranking, kind: 'kuso').last
     when 'kuso'
-      ranking_plus = Ranking.where(['name LIKE ? AND kind = ?', "#{@ranking.name[0...4]}%", 'kojin']).last
+      ranking_plus = Ranking.same_year_as(@ranking, kind: 'kojin').last
       ranking_minus = @ranking
     else
       return redirect_to(aggregated_ranking_series_path(@ranking.name))
@@ -54,37 +54,15 @@ class Rankings::SeriesController < Rankings::Base
       serie
     end
     if @ranking == ranking_plus
-      rank = rank_ = sum_of_mark = count_rank = min_rank = 0
-      @series.map! do |serie|
-        rank_ += 1
-        same = serie.rank_info[:sum_of_mark] == sum_of_mark &&
-               serie.rank_info[:count_rank] == count_rank &&
-               serie.rank_info[:min_rank] == min_rank
-        rank = rank_ unless same
-        sum_of_mark = serie.rank_info[:sum_of_mark]
-        count_rank = serie.rank_info[:count_rank]
-        min_rank = serie.rank_info[:min_rank]
-        serie.rank_info[:rank] = rank
-        serie
-      end
+      RankAggregation.assign_ranks(@series, keys: %i[sum_of_mark count_rank min_rank])
     elsif @ranking == ranking_minus
-      rank = rank_ = sum_of_mark_with_kuso = count_kuso = min_rank = 0
-      @series.map! do |serie|
-        rank_ += 1
-        same = serie.rank_info[:sum_of_mark_with_kuso] == sum_of_mark_with_kuso &&
-               serie.rank_info[:count_kuso] == count_kuso &&
-               serie.rank_info[:min_rank] == min_rank
-        rank = rank_ unless same
-        sum_of_mark_with_kuso = serie.rank_info[:sum_of_mark_with_kuso]
-        count_kuso = serie.rank_info[:count_kuso]
-        min_rank = serie.rank_info[:min_rank]
-        serie.rank_info[:rank] = rank
-        serie
-      end
+      RankAggregation.assign_ranks(@series, keys: %i[sum_of_mark_with_kuso count_kuso min_rank])
     end
     @is_should_comment_term = !ranking_plus.is_registerable && !ranking_minus.is_registerable
 
     @series = Kaminari.paginate_array(@series).page(params[:page]).per(64)
+    # 同じ年度の集計済みランキング(個人・糞以外)。集計ページへの導線として表示する。
+    @aggregated_rankings = Ranking.same_year_as(@ranking).aggregated
 
     respond_to do |format|
       format.html # { render html: (@series = Kaminari.paginate_array(@series).page(params[:page]).per(64)) }

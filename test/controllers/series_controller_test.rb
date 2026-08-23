@@ -46,6 +46,40 @@ class SeriesControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test '複数語で検索しても例外にならずAND条件で絞り込まれる' do
+    # 1件だけだと詳細画面へリダイレクトされてしまうので、一致するシリーズは2件用意する
+    Serie.create!(name: '複数語ヒット作品A')
+    Serie.create!(name: '複数語ヒット作品B')
+    Serie.create!(name: '複数語だけの作品')
+    get series_path, params: { str: '複数語 ヒット' }
+    assert_response :success
+    assert_select 'a', text: '複数語ヒット作品A'
+    assert_select 'a', text: '複数語だけの作品', count: 0
+  end
+
+  test '集計中のランキングの順位は詳細画面の@ranksに含まれない' do
+    serie = series(:one)
+    registerable = Ranking.create!(name: '集計中ランキング', is_registerable: true)
+    Rank.create!(ranking: registerable, serie:, user: users(:one), rank: 1, score: 1)
+    finished = Ranking.create!(name: '集計済みランキング', is_registerable: false)
+    Rank.create!(ranking: finished, serie:, user: users(:one), rank: 1, score: 1)
+
+    get serie_path(serie)
+    assert_response :success
+    assert_select 'td', text: '集計中ランキング', count: 0
+    assert_select 'td', text: '集計済みランキング'
+  end
+
+  test 'トピック未設定のシリーズを表示するとトピックが作成される' do
+    serie = Serie.create!(name: 'トピック未設定シリーズ')
+    assert_nil serie.topic
+    assert_difference 'Topic.count', 1 do
+      get serie_path(serie)
+    end
+    assert_response :success
+    assert_not_nil serie.reload.topic
+  end
+
   test 'ゲストのシリーズ詳細画面にはmember専用リンクが表示されない' do
     get serie_path(series(:one))
     assert_response :success

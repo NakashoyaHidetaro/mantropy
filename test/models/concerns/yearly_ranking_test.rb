@@ -20,4 +20,40 @@ class YearlyRankingTest < ActiveSupport::TestCase
   test 'name が空文字の場合は空文字を返す' do
     assert_equal '', Ranking.new(name: '').year
   end
+
+  test 'of_year は指定年度のランキングのみを返す' do
+    assert_equal [rankings(:kojin2015)], Ranking.of_year('2015').to_a
+  end
+
+  test 'of_year は kind で絞り込める' do
+    kuso2015 = Ranking.create!(name: '2015年糞ランキング', kind: 'kuso', scope_min: 1, scope_max: 2)
+
+    assert_equal [kuso2015], Ranking.of_year('2015', kind: 'kuso').to_a
+    assert_equal [rankings(:kojin2015)], Ranking.of_year('2015', kind: 'kojin').to_a
+  end
+
+  test 'of_year は kind に配列を渡すと複数種別を返す' do
+    kuso2015 = Ranking.create!(name: '2015年糞ランキング', kind: 'kuso', scope_min: 1, scope_max: 2)
+    sonota2015 = Ranking.create!(name: '2015年その他ランキング', kind: 'sonota', scope_min: 1, scope_max: 2)
+
+    result = Ranking.of_year('2015', kind: %w[kojin kuso]).to_a
+    assert_includes result, kuso2015
+    assert_includes result, rankings(:kojin2015)
+    assert_not_includes result, sonota2015
+  end
+
+  test 'same_year_as は基準ランキングと同じ年度のランキングを返す' do
+    kuso2015 = Ranking.create!(name: '2015年糞ランキング', kind: 'kuso', scope_min: 1, scope_max: 2)
+
+    result = Ranking.same_year_as(rankings(:kojin2015)).to_a
+    assert_includes result, kuso2015
+    assert_includes result, rankings(:kojin2015)
+    assert_not_includes result, rankings(:kojin2016)
+  end
+
+  test 'same_year_as も kind で絞り込める' do
+    kuso2015 = Ranking.create!(name: '2015年糞ランキング', kind: 'kuso', scope_min: 1, scope_max: 2)
+
+    assert_equal [kuso2015], Ranking.same_year_as(rankings(:kojin2015), kind: 'kuso').to_a
+  end
 end

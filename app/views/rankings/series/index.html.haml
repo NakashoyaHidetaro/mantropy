@@ -1,7 +1,20 @@
-.my-3
-  = link_to "#{request.url}.xml", download: true, class: 'btn btn-outline-secondary btn-sm' do
+.my-3.d-flex.flex-wrap.gap-2
+  = link_to ranking_series_path(@ranking.name, format: :xml), download: true, class: 'btn btn-outline-secondary btn-sm' do
     %i.bi.bi-download.me-1
     会誌編集用にランキングとコメント一覧をXMLでダウンロードする
+  = link_to ranking_series_path(@ranking.name, format: :csv), download: true, class: 'btn btn-outline-secondary btn-sm' do
+    %i.bi.bi-download.me-1
+    CSVでダウンロードする
+  = link_to ranking_series_path(@ranking.name, format: :json), download: true, class: 'btn btn-outline-secondary btn-sm' do
+    %i.bi.bi-download.me-1
+    JSONでダウンロードする
+
+- if @aggregated_rankings.present?
+  .my-3.d-flex.flex-wrap.gap-2
+    - @aggregated_rankings.each do |aggregated_ranking|
+      = link_to aggregated_ranking_series_path(aggregated_ranking.name), class: 'btn btn-outline-primary btn-sm' do
+        %i.bi.bi-bar-chart-line.me-1
+        = "#{aggregated_ranking.name}の集計結果を見る"
 
 = paginate @series
 
@@ -39,7 +52,7 @@
                   %span.mx-1 /
                   = serie.magazines.select("DISTINCT *").map { |m| m.name }.join('、')
               .d-flex.flex-wrap.gap-2
-                - serie.ranks.where(:ranking_id => @ranking_ids).sort { |a, b| (a.ranking_id <=> b.ranking_id).nonzero? || a.rank <=> b.rank }.each do |r|
+                - RankAggregation.sort_ranks(serie.ranks.where(:ranking_id => @ranking_ids)).each do |r|
                   - user = r.user
                   %span.d-inline-flex.align-items-center.gap-1
                     - if @is_should_comment_term && current_user && serie.rank_info[:rank] <= 50 && serie.posts.where(:user_id => user.id).count == 0

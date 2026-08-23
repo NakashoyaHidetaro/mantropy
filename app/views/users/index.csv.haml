@@ -1,5 +1,5 @@
 - @users.each do |user|
   アカウント名,順位,serie_id,タイトル,漫画家,雑誌
-  - user.ranks.where(ranking_id: @display_rankings).sort{|a, b| (a.ranking_id <=> b.ranking_id).nonzero? or a.rank <=> b.rank}.each do |rank|
+  - RankAggregation.sort_ranks(user.ranks.where(ranking_id: @display_rankings)).each do |rank|
     = raw "#{user.name},#{rank.ranking_id == @display_rankings.last.id ? "糞" : nil}#{rank.rank},#{rank.serie.id},#{rank.serie.name},#{rank.serie.authors.map{|a| a.name}.uniq.join("　") if rank.serie.authors},#{rank.serie.magazines_series.map{|ms| ms.magazine ? (ms.magazine.name + (ms.placed ? (ms.placed != "" ? "（#{ms.placed}）" : "") : "")) : nil}.compact.uniq.join("　")}"
   ,
