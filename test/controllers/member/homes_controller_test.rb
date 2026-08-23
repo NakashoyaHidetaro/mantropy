@@ -12,16 +12,15 @@ class Member::HomesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test '集計データ欄に全てのランキングのダウンロードリンクが列挙される' do
-    ranking = Ranking.create!(name: '2099年個人ランキング', kind: 'kojin',
-                              is_registerable: false, scope_min: 1, scope_max: 2)
+    ranking = rankings(:kojin2015)
 
     get member_root_path
 
     assert_response :success
-    assert_select 'a[href=?]', aggregated_ranking_series_path(ranking.name)
-    assert_select 'a[href=?]', ranking_series_path(ranking.name, format: :csv)
-    assert_select 'a[href=?]', ranking_series_path(ranking.name, format: :json)
-    assert_select 'a[href=?]', ranking_series_path(ranking.name, format: :xml)
+    assert_select 'a[href=?]', aggregated_ranking_series_path(ranking)
+    assert_select 'a[href=?]', ranking_series_path(ranking, format: :csv)
+    assert_select 'a[href=?]', ranking_series_path(ranking, format: :json)
+    assert_select 'a[href=?]', ranking_series_path(ranking, format: :xml)
     assert_select 'a[href=?]', users_path(format: :csv)
     assert_select 'a[href=?]', users_path(format: :json)
   end

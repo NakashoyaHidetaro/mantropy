@@ -26,7 +26,7 @@ class Member::RanksController < Member::Base
       end
     end
 
-    unless Ranking.find(rank_params[:ranking_id]).is_registerable
+    unless Ranking.find(rank_params[:ranking_id]).registerable?
       redirect_to(user_path(current_user.name), notice: 'ランキングの変更はできません')
       return
     end
@@ -49,7 +49,7 @@ class Member::RanksController < Member::Base
   end
 
   def destroy
-    if @rank.user_id == current_user.id && @rank.ranking.is_registerable
+    if @rank.user_id == current_user.id && @rank.ranking.registerable?
       @rank.destroy
       redirect_to(user_path(current_user.name))
     else

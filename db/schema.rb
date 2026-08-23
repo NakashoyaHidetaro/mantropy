@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_23_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_23_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -130,16 +130,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_23_000000) do
     t.integer "topic_id"
     t.datetime "updated_at"
     t.integer "user_id"
+    t.index ["topic_id"], name: "index_posts_on_topic_id"
   end
 
   create_table "rankings", id: :serial, force: :cascade do |t|
+    t.date "aggregation_ends_on", null: false
     t.datetime "created_at"
-    t.boolean "is_registerable"
-    t.string "kind"
-    t.string "name"
+    t.integer "kind", null: false
+    t.date "published_on", null: false
     t.integer "scope_max"
     t.integer "scope_min"
     t.datetime "updated_at"
+    t.integer "year", null: false
+    t.index ["year", "kind"], name: "index_rankings_on_year_and_kind", unique: true
   end
 
   create_table "ranks", id: :serial, force: :cascade do |t|
@@ -150,6 +153,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_23_000000) do
     t.integer "serie_id"
     t.datetime "updated_at"
     t.integer "user_id"
+    t.index ["ranking_id", "serie_id"], name: "index_ranks_on_ranking_id_and_serie_id"
+    t.index ["serie_id"], name: "index_ranks_on_serie_id"
+    t.index ["user_id"], name: "index_ranks_on_user_id"
   end
 
   create_table "replies", id: :serial, force: :cascade do |t|
@@ -173,15 +179,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_23_000000) do
   create_table "series_tags", id: false, force: :cascade do |t|
     t.integer "serie_id"
     t.integer "tag_id"
-  end
-
-  create_table "site_configs", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "name", null: false
-    t.string "path", null: false
-    t.datetime "updated_at", null: false
-    t.string "value", null: false
-    t.index ["path"], name: "index_site_configs_on_path"
   end
 
   create_table "tags", id: :serial, force: :cascade do |t|

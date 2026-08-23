@@ -1,12 +1,20 @@
 - content_for :title, '全体ランキング'
 
+-# 同年度の各 kind のランキング。該当 kind が無い年度でも nil 安全に扱う
+- kojin_ranking = @rankings_by_kind['kojin']
+- kuso_ranking = @rankings_by_kind['kuso']
+- zentai_ranking = @rankings_by_kind['zentai']
+- zentaikuso_ranking = @rankings_by_kind['zentaikuso']
+-# 投票者リストに出す元票のランキング（個人・糞）
+- vote_ranking_ids = [kojin_ranking&.id, kuso_ranking&.id].compact
 - count = 0
 - if @series
   .vstack.gap-3.my-3
     - @series.each do |serie|
-      - is_mine = current_user && serie.ranks.where(:ranking_id => 1).map { |r| r.user_id }.include?(current_user.id)
-      - r3 = serie.ranks.where(:ranking_id => 3).first
-      - r4 = serie.ranks.where(:ranking_id => 4).first
+      - kojin_ranks = kojin_ranking ? serie.ranks.where(:ranking_id => kojin_ranking.id).to_a : []
+      - is_mine = current_user && kojin_ranks.map { |r| r.user_id }.include?(current_user.id)
+      - zentai_rank = zentai_ranking && serie.ranks.where(:ranking_id => zentai_ranking.id).first
+      - zentaikuso_rank = zentaikuso_ranking && serie.ranks.where(:ranking_id => zentaikuso_ranking.id).first
       .card.shadow-sm
         - if is_mine
           .card-header.bg-info-subtle.text-info-emphasis.fw-bold
@@ -14,13 +22,13 @@
             ランキングへ入れています
         .card-body
           .d-flex.flex-wrap.gap-2.mb-3.small
-            %span.badge.text-bg-primary 順位: #{r3&.rank}
-            %span.badge.text-bg-secondary 得点（重複修正）: #{r3&.score}
-            %span.badge.text-bg-secondary 重複数: #{serie.ranks.where(:ranking_id => 1).count}
-            %span.badge.text-bg-secondary 糞修正順位: #{r4&.rank}
-            %span.badge.text-bg-secondary 糞修正得点: #{r4&.score}
+            %span.badge.text-bg-primary 順位: #{zentai_rank&.rank}
+            %span.badge.text-bg-secondary 得点（重複修正）: #{zentai_rank&.score}
+            %span.badge.text-bg-secondary 重複数: #{kojin_ranks.size}
+            %span.badge.text-bg-secondary 糞修正順位: #{zentaikuso_rank&.rank}
+            %span.badge.text-bg-secondary 糞修正得点: #{zentaikuso_rank&.score}
           .d-flex.gap-3
-            - if (count += 1) <= 30
+            - if (count += 1) <= SerieRanking::IMAGE_RANK_LIMIT
               .flex-shrink-0
                 = link_to serie, { target: "_blank" } do
                   = image_tag serie_image_path(serie), alt: serie.name, class: 'img-fluid rounded'
@@ -32,7 +40,8 @@
                   %span.mx-1 /
                   = serie.magazines.select("DISTINCT *").map { |m| m.name }.join('、')
               .d-flex.flex-wrap.gap-2
-                - serie.ranks.where(:ranking_id => [1, 2]).sort { |a, b| (a.ranking_id <=> b.ranking_id).nonzero? || a.rank <=> b.rank }.each do |r|
-                  = link_to "#{r.user.name} (#{r.ranking_id == 2 ? '糞' : nil}#{r.rank}位)", user_path(r.user.name), class: 'link-secondary small'
+                -# 個人票を先に、次に糞票を並べ、それぞれの中では順位順
+                - serie.ranks.where(:ranking_id => vote_ranking_ids).sort_by { |r| [r.ranking_id == kuso_ranking&.id ? 1 : 0, r.rank] }.each do |r|
+                  = link_to "#{r.user.name} (#{r.ranking_id == kuso_ranking&.id ? '糞' : nil}#{r.rank}位)", user_path(r.user.name), class: 'link-secondary small'
 
 = paginate @series

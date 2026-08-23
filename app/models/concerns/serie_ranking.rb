@@ -16,13 +16,6 @@ module SerieRanking # rubocop:disable Metrics/ModuleLength
   # この順位以内は書影画像を表示する
   IMAGE_RANK_LIMIT = 30
 
-  # 集計中ランキングの公開範囲を保持する SiteConfig のパス
-  SHARE_WITH_CONFIG_PATH = 'ranking_now_share_with'.freeze
-  # 公開範囲: 誰にも見せない
-  SHARE_WITH_NO_ONE = 'no_one'.freeze
-  # 公開範囲: ログイン済みメンバーのみ
-  SHARE_WITH_MEMBERS = 'members'.freeze
-
   # 一覧表示で参照する関連。N+1 を避けるためまとめて preload する。
   PRELOAD_ASSOCIATIONS = [
     :authors,
@@ -50,13 +43,13 @@ module SerieRanking # rubocop:disable Metrics/ModuleLength
       end
     end
 
-    # 集計中ランキングを閲覧できない場合のメッセージを返す（閲覧できるなら nil）。
-    def restriction_notice(user)
-      case SiteConfig.config(SHARE_WITH_CONFIG_PATH)
-      when SHARE_WITH_NO_ONE
+    # ランキングを閲覧できない場合のメッセージを返す（閲覧できるなら nil）。
+    # 集計中（投票受付中）は誰にも見せず、集計終了後・一般公開日前はメンバーのみに見せる。
+    def restriction_notice(ranking, user)
+      if ranking.registerable?
         'ランキングは集計中なので誰も見れないよ'
-      when SHARE_WITH_MEMBERS
-        'ランキングは集計中なのでメンバーだけが見れるよ' if user.blank?
+      elsif !ranking.published? && user.blank?
+        'ランキングは集計中なのでメンバーだけが見れるよ'
       end
     end
 
@@ -70,6 +63,14 @@ module SerieRanking # rubocop:disable Metrics/ModuleLength
       series = series_in_order(rows)
       keys = sort_by_kuso ? %i[sum_of_mark_with_kuso count_kuso min_rank] : %i[sum_of_mark count_rank min_rank]
       RankAggregation.assign_ranks(series, keys:)
+    end
+
+    # 指定ランキングと同年度のランキングを kind（文字列）をキーにした Hash で返す。
+    # 全体集計ページで kojin / kuso / zentai / zentaikuso の各ランキングを引くのに使う。
+    def same_year_rankings_by_kind(ranking)
+      return {} if ranking.blank?
+
+      Ranking.same_year_as(ranking).index_by(&:kind)
     end
 
     # aggregated アクション用: ranking の rank 順の Serie 一覧。

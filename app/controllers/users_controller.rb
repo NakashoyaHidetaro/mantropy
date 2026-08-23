@@ -46,7 +46,7 @@ class UsersController < ApplicationController
     return false if @registering_rankings.empty?
     return true if current_user == @user
 
-    kojin = @registering_rankings.select { |r| r.kind == 'kojin' }.min_by(&:id) ||
+    kojin = @registering_rankings.select(&:kojin?).min_by(&:id) ||
             @registering_rankings.min_by(&:id)
     current_user.present? && complete_ranking(kojin)
   end

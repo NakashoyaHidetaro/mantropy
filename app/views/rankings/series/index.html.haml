@@ -1,20 +1,20 @@
 - content_for :title, '全体ランキング'
 
 .my-3.d-flex.flex-wrap.gap-2
-  = link_to ranking_series_path(@ranking.name, format: :xml), download: true, class: 'btn btn-outline-secondary btn-sm' do
+  = link_to ranking_series_path(@ranking, format: :xml), download: true, class: 'btn btn-outline-secondary btn-sm' do
     %i.bi.bi-download.me-1
     会誌編集用にランキングとコメント一覧をXMLでダウンロードする
-  = link_to ranking_series_path(@ranking.name, format: :csv), download: true, class: 'btn btn-outline-secondary btn-sm' do
+  = link_to ranking_series_path(@ranking, format: :csv), download: true, class: 'btn btn-outline-secondary btn-sm' do
     %i.bi.bi-download.me-1
     CSVでダウンロードする
-  = link_to ranking_series_path(@ranking.name, format: :json), download: true, class: 'btn btn-outline-secondary btn-sm' do
+  = link_to ranking_series_path(@ranking, format: :json), download: true, class: 'btn btn-outline-secondary btn-sm' do
     %i.bi.bi-download.me-1
     JSONでダウンロードする
 
 - if @aggregated_rankings.present?
   .my-3.d-flex.flex-wrap.gap-2
     - @aggregated_rankings.each do |aggregated_ranking|
-      = link_to aggregated_ranking_series_path(aggregated_ranking.name), class: 'btn btn-outline-primary btn-sm' do
+      = link_to aggregated_ranking_series_path(aggregated_ranking), class: 'btn btn-outline-primary btn-sm' do
         %i.bi.bi-bar-chart-line.me-1
         = "#{aggregated_ranking.name}の集計結果を見る"
 

@@ -7,7 +7,7 @@ class Member::SeriesController < Member::Base
   end
 
   def edit
-    @rankings = Ranking.where(is_registerable: true)
+    @rankings = Ranking.registerable
   end
 
   def create # rubocop:disable Metrics/AbcSize

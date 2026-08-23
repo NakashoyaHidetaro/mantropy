@@ -5,36 +5,33 @@
     %thead.table-light
       %tr
         %th リンク
-        %th 名前
-        %th 登録可
+        %th 年度
+        %th 種別
         %th 位最小値
         %th 位最大値
-        %th 種別
+        %th 集計終了日
+        %th 一般公開日
         %th
     - @rankings.each do |ranking|
       %tr
         %td
-          = link_to ranking_series_path(ranking.name), class: 'btn btn-outline-info' do
+          = link_to ranking_series_path(ranking), class: 'btn btn-outline-info' do
             %i.bi.bi-link-45deg
         = form_for([:member, ranking]) do |f|
-          %td= f.text_field :name, class: 'form-control'
-          %td
-            %label
-              = f.check_box :is_registerable, class: 'form-check-input'
-              登録可
+          %td= f.number_field :year, class: 'form-control'
+          %td= f.select :kind, Ranking.kinds.keys, {}, class: 'form-select'
           %td= f.text_field :scope_min, size: 2, class: 'form-control'
           %td= f.text_field :scope_max, size: 2, class: 'form-control'
-          %td= f.text_field :kind, size: 5, class: 'form-control'
+          %td= f.date_field :aggregation_ends_on, class: 'form-control'
+          %td= f.date_field :published_on, class: 'form-control'
           %td= f.submit "変更", class: 'btn btn-info'
     %tr
       %td
       = form_for([:member, @new_ranking]) do |f|
-        %td= f.text_field :name, class: 'form-control'
-        %td
-          %label
-            = f.check_box :is_registerable, class: 'form-check-input'
-            登録可
+        %td= f.number_field :year, class: 'form-control'
+        %td= f.select :kind, Ranking.kinds.keys, {}, class: 'form-select'
         %td= f.text_field :scope_min, size: 2, class: 'form-control'
         %td= f.text_field :scope_max, size: 2, class: 'form-control'
-        %td= f.text_field :kind, size: 5, class: 'form-control'
+        %td= f.date_field :aggregation_ends_on, class: 'form-control'
+        %td= f.date_field :published_on, class: 'form-control'
         %td= f.submit "追加", class: 'btn btn-primary'

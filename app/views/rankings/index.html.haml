@@ -5,8 +5,8 @@
 .card.shadow-sm.mb-4
   .list-group.list-group-flush
     - @rankings.each do |ranking|
-      - if !ranking.is_registerable? || current_user.present?
-        = link_to ranking_series_path(ranking.name), class: 'list-group-item list-group-item-action d-flex align-items-center gap-2' do
+      - if !ranking.registerable? || current_user.present?
+        = link_to ranking_series_path(ranking), class: 'list-group-item list-group-item-action d-flex align-items-center gap-2' do
           %i.bi.bi-globe2.text-primary
           = ranking.name
       - else

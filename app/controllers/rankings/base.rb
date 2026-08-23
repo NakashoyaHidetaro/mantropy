@@ -3,8 +3,9 @@ class Rankings::Base < ApplicationController
 
   private
 
+  # URL の :ranking_id は "2024-all" 形式の slug
   def set_ranking
-    @ranking = Ranking.find_by(id: params[:ranking_id]) || Ranking.find_by(name: params[:ranking_id])
+    @ranking = Ranking.find_by_slug(params[:ranking_id])
 
     redirect_to(rankings_path, notice: 'ランキングが存在しません') if @ranking.nil?
   end

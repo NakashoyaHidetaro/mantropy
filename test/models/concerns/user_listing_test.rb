@@ -31,12 +31,12 @@ class UserListingTest < ActiveSupport::TestCase
 
   test '登録が6ヶ月より前でも1年以内にrankを提出していればactive_usersに含まれる' do
     users(:old_member).update!(created_at: 2.years.ago)
-    Rank.create!(rank: 1, score: 1, ranking: rankings(:one), user: users(:old_member), serie: series(:one))
+    Rank.create!(rank: 1, score: 1, ranking: rankings(:kojin2014), user: users(:old_member), serie: series(:one))
     assert_includes UserListing.active_users, users(:old_member)
   end
 
   test '1年より前のrankしか持たないユーザーはactive_usersに含まれない' do
-    rank = Rank.create!(rank: 1, score: 1, ranking: rankings(:one), user: users(:old_member), serie: series(:one))
+    rank = Rank.create!(rank: 1, score: 1, ranking: rankings(:kojin2014), user: users(:old_member), serie: series(:one))
     rank.update_column(:created_at, 2.years.ago) # rubocop:disable Rails/SkipsModelValidations
     assert_not_includes UserListing.active_users, users(:old_member)
   end

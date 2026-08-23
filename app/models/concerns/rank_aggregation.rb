@@ -26,13 +26,13 @@ module RankAggregation
       end
     end
 
-    # ユーザーの ranks を年度（降順）ごとにまとめて返す。
+    # ユーザーの ranks を年度（西暦の降順）ごとにまとめて返す。
     # excluded_years に含まれる年度（集計中で閲覧権限が無い年度など）は除外する。
     def ranks_by_year(user, excluded_years: [])
       ranks = user.ranks.includes(:ranking, serie: [:authors, { magazines_series: :magazine }]).to_a
       grouped = ranks.group_by { |rank| rank.ranking.year }
-      grouped = grouped.except(*excluded_years) if excluded_years.present?
-      grouped.sort_by { |year, _| year.to_s }.reverse.to_h.transform_values { |list| sort_ranks(list) }
+      grouped = grouped.except(*excluded_years.map(&:to_i)) if excluded_years.present?
+      grouped.sort_by { |year, _| -year.to_i }.to_h.transform_values { |list| sort_ranks(list) }
     end
 
     # そのランキングへユーザーが規定の順位をすべて提出し終えているか。

@@ -34,14 +34,14 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     start_registering_year2016
     get user_path(users(:one).name)
     assert_response :success
-    assert_match '2015年個人ランキング', response.body
+    assert_match rankings(:kojin2015).name, response.body
   end
 
   test '集計中年度のランキングはゲストには表示されない' do
     start_registering_year2016
     get user_path(users(:one).name)
     assert_response :success
-    assert_no_match '2016年個人ランキング', response.body
+    assert_no_match rankings(:kojin2016).name, response.body
   end
 
   test 'ログイン済みでも今年の個人ランキング未提出なら集計中年度は表示されない' do
@@ -49,7 +49,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     sign_in userauths(:two)
     get user_path(users(:one).name)
     assert_response :success
-    assert_no_match '2016年個人ランキング', response.body
+    assert_no_match rankings(:kojin2016).name, response.body
   end
 
   test '今年の個人ランキングを提出完了したユーザーには集計中年度が表示される' do
@@ -58,7 +58,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     sign_in userauths(:two)
     get user_path(users(:one).name)
     assert_response :success
-    assert_match '2016年個人ランキング', response.body
+    assert_match rankings(:kojin2016).name, response.body
   end
 
   test '本人には集計中年度が表示される' do
@@ -66,7 +66,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     sign_in userauths(:one)
     get user_path(users(:one).name)
     assert_response :success
-    assert_match '2016年個人ランキング', response.body
+    assert_match rankings(:kojin2016).name, response.body
   end
 
   test '年度ごとの折りたたみUIが出力される' do
@@ -121,7 +121,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test '集計中に未提出のログインユーザーにはダウンロードリンクが表示されない' do
-    rankings(:kojin2016).update!(is_registerable: true)
+    start_aggregating_year2016
     sign_in userauths(:two)
     get users_path
     assert_response :success
@@ -129,14 +129,14 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test '集計中に未提出のログインユーザーはCSVを取得できない' do
-    rankings(:kojin2016).update!(is_registerable: true)
+    start_aggregating_year2016
     sign_in userauths(:two)
     get users_path(format: :csv)
     assert_response :not_acceptable
   end
 
   test '提出完了したログインユーザーにはダウンロードリンクが表示される' do
-    rankings(:kojin2016).update!(is_registerable: true)
+    start_aggregating_year2016
     create_kojin_ranks_of_year2016(users(:two))
     sign_in userauths(:two)
     get users_path
@@ -146,7 +146,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test '提出完了したログインユーザーはCSV/JSONを取得できる' do
-    rankings(:kojin2016).update!(is_registerable: true)
+    start_aggregating_year2016
     create_kojin_ranks_of_year2016(users(:two))
     sign_in userauths(:two)
     get users_path(format: :csv)
@@ -179,8 +179,14 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
 
   # 2016年を集計中（登録受付中）にし、ページ主のユーザーにも2016年の順位を持たせる
   def start_registering_year2016
-    rankings(:kojin2016).update!(is_registerable: true)
+    start_aggregating_year2016
     create_kojin_ranks_of_year2016(users(:one))
+  end
+
+  # 2016年の個人ランキングを集計中（集計終了日が未来）の状態にする
+  def start_aggregating_year2016
+    rankings(:kojin2016).update!(aggregation_ends_on: Date.current + 1.month,
+                                 published_on: Date.current + 2.months)
   end
 
   def create_kojin_ranks_of_year2016(user)

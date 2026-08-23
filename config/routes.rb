@@ -50,7 +50,6 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
 
     resources :wikis, only: %i[index new create edit update destroy]
     resources :users, only: %i[new create edit update], param: :name
-    resources :site_configs, only: %i[index create update destroy]
 
     resources :series, only: %i[new create edit update], param: :public_id do
       scope module: :series do

@@ -53,7 +53,8 @@ class RankAggregationTest < ActiveSupport::TestCase
 
   test 'sort_ranks はランキングID順・同一ランキング内は順位順に並べ替える' do
     kojin = rankings(:kojin2015)
-    kuso = Ranking.create!(name: '2015年糞ランキング', kind: 'kuso', scope_min: 1, scope_max: 2)
+    kuso = Ranking.create!(year: 2054, kind: :kuso, scope_min: 1, scope_max: 2,
+                           aggregation_ends_on: Date.new(2054, 11, 20), published_on: Date.new(2054, 12, 31))
     r1 = Rank.create!(rank: 2, ranking: kojin, user: users(:two), serie: series(:one))
     r2 = Rank.create!(rank: 1, ranking: kojin, user: users(:two), serie: series(:two))
     r3 = Rank.create!(rank: 1, ranking: kuso, user: users(:two), serie: series(:one))
@@ -65,23 +66,23 @@ class RankAggregationTest < ActiveSupport::TestCase
     Rank.create!(rank: 1, ranking: rankings(:kojin2016), user: users(:one), serie: series(:one))
     grouped = RankAggregation.ranks_by_year(users(:one))
 
-    years = grouped.keys.select { |y| %w[2015 2016].include?(y) }
-    assert_equal %w[2016 2015], years
-    assert_equal 2, grouped['2015'].size
-    assert_equal 1, grouped['2016'].size
+    years = grouped.keys.select { |y| [2015, 2016].include?(y) }
+    assert_equal [2016, 2015], years
+    assert_equal 2, grouped[2015].size
+    assert_equal 1, grouped[2016].size
   end
 
   test 'ranks_by_year は excluded_years で指定した年度を除外する' do
     Rank.create!(rank: 1, ranking: rankings(:kojin2016), user: users(:one), serie: series(:one))
-    grouped = RankAggregation.ranks_by_year(users(:one), excluded_years: ['2016'])
+    grouped = RankAggregation.ranks_by_year(users(:one), excluded_years: [2016])
 
-    assert_not_includes grouped.keys, '2016'
-    assert_includes grouped.keys, '2015'
+    assert_not_includes grouped.keys, 2016
+    assert_includes grouped.keys, 2015
   end
 
   test 'ranks_by_year は年度内の ranks をランキングID順・順位順に並べる' do
     grouped = RankAggregation.ranks_by_year(users(:one))
-    assert_equal [1, 2], grouped['2015'].map(&:rank)
+    assert_equal [1, 2], grouped[2015].map(&:rank)
   end
 
   test 'complete_ranking? は規定順位をすべて提出済みなら true を返す' do
@@ -97,7 +98,8 @@ class RankAggregationTest < ActiveSupport::TestCase
   end
 
   test 'complete_ranking? は漫画が紐付かない rank を 0 として扱い未完了とみなす' do
-    ranking = Ranking.create!(name: '2017年個人ランキング', kind: 'kojin', scope_min: 1, scope_max: 1)
+    ranking = Ranking.create!(year: 2017, kind: :kojin, scope_min: 1, scope_max: 1,
+                              aggregation_ends_on: Date.new(2017, 11, 20), published_on: Date.new(2017, 12, 31))
     rank = Rank.create!(rank: 1, ranking: ranking, user: users(:two), serie: series(:one))
     rank.update_columns(serie_id: nil) # rubocop:disable Rails/SkipsModelValidations
 

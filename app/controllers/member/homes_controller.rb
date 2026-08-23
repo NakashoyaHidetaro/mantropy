@@ -3,6 +3,6 @@ class Member::HomesController < Member::Base
     @wiki = Wiki.where(name: 'logged_in').order(created_at: :desc).limit(1).first
     @wikis = Wiki.where(name: @wiki&.name).order(created_at: :desc)
     # 集計データへの導線として全ランキングを新しい順に列挙する
-    @rankings = Ranking.order(id: :desc)
+    @rankings = Ranking.order(year: :desc, kind: :asc)
   end
 end

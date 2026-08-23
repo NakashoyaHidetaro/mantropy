@@ -38,23 +38,50 @@ class SerieRankingTest < ActiveSupport::TestCase
     assert_equal [kojin, kuso], SerieRanking.ranking_pair(kuso)
   end
 
-  test 'ranking_pair はkindが未設定のランキングでは nil を返す' do
-    assert_nil SerieRanking.ranking_pair(rankings(:one))
+  test 'ranking_pair はランキングが nil なら nil を返す' do
+    assert_nil SerieRanking.ranking_pair(nil)
   end
 
-  test 'ranking_pair は個人・糞以外のkindでは nil を返す' do
-    total = Ranking.create!(name: '2015年総合ランキング', kind: 'total', scope_min: 1, scope_max: 2)
-    assert_nil SerieRanking.ranking_pair(total)
+  test 'ranking_pair は個人・クソ以外のkindでは nil を返す' do
+    assert_nil SerieRanking.ranking_pair(create_ranking(2015, :zentai))
+    assert_nil SerieRanking.ranking_pair(create_ranking(2015, :zentaikuso))
   end
 
   test 'ranking_pair は同年度に対となるランキングが無ければ相方が nil になる' do
-    # kojin2016 と同年度の糞ランキングは存在しない
+    # kojin2016 と同年度のクソランキングは存在しない
     assert_equal [rankings(:kojin2016), nil], SerieRanking.ranking_pair(rankings(:kojin2016))
   end
 
-  test 'ranking_pair は糞ランキングだけの年度ならプラス側が nil になる' do
-    lonely_kuso = Ranking.create!(name: '2020年糞ランキング', kind: 'kuso', scope_min: 1, scope_max: 2)
+  test 'ranking_pair はクソランキングだけの年度ならプラス側が nil になる' do
+    lonely_kuso = create_ranking(2020, :kuso)
     assert_equal [nil, lonely_kuso], SerieRanking.ranking_pair(lonely_kuso)
+  end
+
+  # --- restriction_notice ---
+
+  test 'restriction_notice は集計中なら誰も閲覧できない' do
+    travel_to Date.new(2015, 11, 20) do
+      assert_equal 'ランキングは集計中なので誰も見れないよ', SerieRanking.restriction_notice(kojin, nil)
+      assert_equal 'ランキングは集計中なので誰も見れないよ', SerieRanking.restriction_notice(kojin, users(:one))
+    end
+  end
+
+  test 'restriction_notice は集計終了後から一般公開日前はメンバーだけ閲覧できる' do
+    travel_to Date.new(2015, 11, 21) do
+      assert_equal 'ランキングは集計中なのでメンバーだけが見れるよ', SerieRanking.restriction_notice(kojin, nil)
+      assert_nil SerieRanking.restriction_notice(kojin, users(:one))
+    end
+  end
+
+  test 'restriction_notice は一般公開日当日から誰でも閲覧できる' do
+    travel_to Date.new(2015, 12, 31) do
+      assert_nil SerieRanking.restriction_notice(kojin, nil)
+      assert_nil SerieRanking.restriction_notice(kojin, users(:one))
+    end
+  end
+
+  test 'restriction_notice は一般公開日を過ぎていれば誰でも閲覧できる' do
+    assert_nil SerieRanking.restriction_notice(kojin, nil)
   end
 
   # --- aggregate: プラス点の計算 ---
@@ -83,7 +110,7 @@ class SerieRankingTest < ActiveSupport::TestCase
   end
 
   test 'aggregate は単独投票なら重複ボーナスが付かない' do
-    ranking = Ranking.create!(name: '2050年個人ランキング', kind: 'kojin', scope_min: 1, scope_max: 3)
+    ranking = create_ranking(2050, :kojin, scope_max: 3)
     serie = create_serie('単独投票漫画')
     Rank.create!(rank: 2, ranking:, user: users(:one), serie:)
 
@@ -174,7 +201,7 @@ class SerieRankingTest < ActiveSupport::TestCase
   end
 
   test 'aggregate は合計得点が同点なら得票数の多い順・最高順位の高い順に並ぶ' do
-    ranking = Ranking.create!(name: '2051年個人ランキング', kind: 'kojin', scope_min: 1, scope_max: 5)
+    ranking = create_ranking(2051, :kojin, scope_max: 5)
     # 9点・2票・最高2位
     high = create_serie('同点漫画_最高2位')
     Rank.create!(rank: 2, ranking:, user: users(:one), serie: high)
@@ -218,7 +245,7 @@ class SerieRankingTest < ActiveSupport::TestCase
   end
 
   test 'aggregate は集計値がすべて等しい漫画に同じ順位を付ける' do
-    ranking = Ranking.create!(name: '2052年個人ランキング', kind: 'kojin', scope_min: 1, scope_max: 2)
+    ranking = create_ranking(2052, :kojin)
     first = create_serie('完全同点漫画1')
     second = create_serie('完全同点漫画2')
     behind = create_serie('下位漫画')
@@ -234,7 +261,7 @@ class SerieRankingTest < ActiveSupport::TestCase
   # --- aggregated_series ---
 
   test 'aggregated_series はランキングの順位順に漫画を返す' do
-    ranking = Ranking.create!(name: '2053年総合ランキング', kind: 'total', scope_min: 1, scope_max: 3)
+    ranking = create_ranking(2053, :zentai, scope_max: 3)
     third = create_serie('集計済み3位')
     first = create_serie('集計済み1位')
     second = create_serie('集計済み2位')
@@ -251,9 +278,33 @@ class SerieRankingTest < ActiveSupport::TestCase
     assert_empty series.to_a
   end
 
+  # --- same_year_rankings_by_kind ---
+
+  test 'same_year_rankings_by_kind は同年度のランキングを kind をキーにした Hash で返す' do
+    zentai = create_ranking(2015, :zentai)
+    result = SerieRanking.same_year_rankings_by_kind(kojin)
+
+    assert_equal({ 'kojin' => kojin, 'kuso' => kuso, 'zentai' => zentai }, result)
+  end
+
+  test 'same_year_rankings_by_kind は他の年度のランキングを含めない' do
+    result = SerieRanking.same_year_rankings_by_kind(rankings(:kojin2016))
+
+    assert_equal({ 'kojin' => rankings(:kojin2016) }, result)
+  end
+
+  test 'same_year_rankings_by_kind はランキングが nil なら空の Hash を返す' do
+    assert_empty SerieRanking.same_year_rankings_by_kind(nil)
+  end
+
   private
 
   def create_serie(name)
     Serie.create!(name:)
+  end
+
+  def create_ranking(year, kind, scope_max: 2)
+    Ranking.create!(year:, kind:, scope_min: 1, scope_max:,
+                    aggregation_ends_on: Date.new(year, 11, 20), published_on: Date.new(year, 12, 31))
   end
 end

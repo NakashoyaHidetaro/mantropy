@@ -1,34 +1,45 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
-one:
-  name: MyString
-
-two:
-  name: MyString
-
-kojin2015:
-  name: 2015年個人ランキング
+# ranks の one / two が紐付く土台のランキング。
+# kojin2015 / kuso2015 / kojin2016 の集計テストを汚さないため年度を分けている
+kojin2014:
+  year: 2014
   kind: kojin
-  is_registerable: false
   scope_min: 1
   scope_max: 2
+  aggregation_ends_on: 2014-11-20
+  published_on: 2014-12-31
+  created_at: <%= 30.days.ago %>
+  updated_at: <%= 30.days.ago %>
+
+kojin2015:
+  year: 2015
+  kind: kojin
+  scope_min: 1
+  scope_max: 2
+  aggregation_ends_on: 2015-11-20
+  published_on: 2015-12-31
   # コメント数（count_post）の集計基準日時。この日時より後の post だけが数えられる
   created_at: <%= 30.days.ago %>
   updated_at: <%= 30.days.ago %>
 
-# 2015年度の糞ランキング。kojin2015 と対になる
+# 2015年度のクソランキング。kojin2015 と対になる
 kuso2015:
-  name: 2015年糞ランキング
+  year: 2015
   kind: kuso
-  is_registerable: false
   scope_min: 1
   scope_max: 2
+  aggregation_ends_on: 2015-11-20
+  published_on: 2015-12-31
   created_at: <%= 30.days.ago %>
   updated_at: <%= 30.days.ago %>
 
 kojin2016:
-  name: 2016年個人ランキング
+  year: 2016
   kind: kojin
-  is_registerable: false
   scope_min: 1
   scope_max: 2
+  aggregation_ends_on: 2016-11-20
+  published_on: 2016-12-31
+  created_at: <%= 30.days.ago %>
+  updated_at: <%= 30.days.ago %>

@@ -10,18 +10,18 @@ class RankingSubmissionTest < ActiveSupport::TestCase
   end
 
   test '集計中でも未提出のユーザーはダウンロードできない' do
-    rankings(:kojin2016).update!(is_registerable: true)
+    rankings(:kojin2016).update!(aggregation_ends_on: Date.current)
     assert_not RankingSubmission.member_list_downloadable?(users(:one))
   end
 
   test '集計中でも提出完了したユーザーはダウンロードできる' do
-    rankings(:kojin2016).update!(is_registerable: true)
+    rankings(:kojin2016).update!(aggregation_ends_on: Date.current)
     create_kojin_ranks_of_year2016(users(:one))
     assert RankingSubmission.member_list_downloadable?(users(:one))
   end
 
   test '集計中の年度に属するランキング群を取得できる' do
-    rankings(:kojin2016).update!(is_registerable: true)
+    rankings(:kojin2016).update!(aggregation_ends_on: Date.current)
     assert_includes RankingSubmission.registering_rankings, rankings(:kojin2016)
     assert_not_includes RankingSubmission.registering_rankings, rankings(:kojin2015)
   end

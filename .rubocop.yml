@@ -37,3 +37,7 @@ Metrics/PerceivedComplexity:
   Max: 12
 Rails/UniqueValidationWithoutIndex:
   Enabled: false
+# Ranking.find_by_slug は動的ファインダではなく自前で定義したクラスメソッド
+Rails/DynamicFindBy:
+  AllowedMethods:
+    - find_by_slug

@@ -59,15 +59,17 @@ class SeriesControllerTest < ActionDispatch::IntegrationTest
 
   test '集計中のランキングの順位は詳細画面の@ranksに含まれない' do
     serie = series(:one)
-    registerable = Ranking.create!(name: '集計中ランキング', is_registerable: true)
-    Rank.create!(ranking: registerable, serie:, user: users(:one), rank: 1, score: 1)
-    finished = Ranking.create!(name: '集計済みランキング', is_registerable: false)
+    registering = Ranking.create!(year: Date.current.year, kind: :kojin, scope_min: 1, scope_max: 2,
+                                  aggregation_ends_on: Date.current + 1, published_on: Date.current + 2)
+    Rank.create!(ranking: registering, serie:, user: users(:one), rank: 1, score: 1)
+    finished = Ranking.create!(year: Date.current.year - 1, kind: :kojin, scope_min: 1, scope_max: 2,
+                               aggregation_ends_on: Date.current - 2, published_on: Date.current - 1)
     Rank.create!(ranking: finished, serie:, user: users(:one), rank: 1, score: 1)
 
     get serie_path(serie)
     assert_response :success
-    assert_select 'td', text: '集計中ランキング', count: 0
-    assert_select 'td', text: '集計済みランキング'
+    assert_select 'td', text: registering.name, count: 0
+    assert_select 'td', text: finished.name
   end
 
   test 'トピック未設定のシリーズを表示するとトピックが作成される' do
