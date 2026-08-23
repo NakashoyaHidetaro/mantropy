@@ -103,6 +103,16 @@
   background-color: #fce4ec;
 }
 
+.markdown-body h1 {
+  font-size: 24px;
+  border-left: 8px solid #c2185b;
+  border-bottom: 2px solid #ccc;
+  padding-left: 12px;
+  padding-bottom: 8px;
+  margin-top: 40px;
+  margin-bottom: 24px;
+}
+
 .markdown-body h2 {
   font-size: 20px;
   border-left: 6px solid #c2185b;
