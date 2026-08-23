@@ -1,9 +1,6 @@
 class SeriesController < ApplicationController
-  @title = 'シリーズ'
-
   def index
     @str = params[:str]
-    @title = "#{@str} の検索結果"
     if @str.blank?
       redirect_to root_path, notice: '検索ワードを指定してください'
       return
@@ -32,7 +29,6 @@ class SeriesController < ApplicationController
     @serie = Serie.find_by(public_id: params.expect(:public_id))
     raise ActiveRecord::RecordNotFound if @serie.blank?
 
-    @title = "#{@serie.name} のシリーズ情報"
     @ranks = @serie.finished_ranks
     @serie.ensure_topic!
 

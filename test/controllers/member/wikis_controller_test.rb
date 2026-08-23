@@ -29,6 +29,14 @@ class Member::WikisControllerTest < ActionDispatch::IntegrationTest
     assert_select 'label[for=?] span.text-danger', 'wiki_is_private', false
   end
 
+  test 'ビューでページタイトルがcontent_forに設定される' do
+    get edit_member_wiki_path(@wiki)
+    assert_response :success
+    # コントローラの @title ではなくビュー側の content_for :title でタイトルを渡すため、
+    # 対象レコード名を含んだタイトルが <title> に反映される
+    assert_select 'head title', text: /#{Regexp.escape(@wiki.name)} の編集/
+  end
+
   test 'ログインしていない場合はログイン画面にリダイレクトされる' do
     sign_out @userauth
     get member_wikis_path

@@ -1,3 +1,5 @@
+- content_for :title, "#{@serie.name} のシリーズ情報"
+
 .row.g-4.my-1
   .col-12.col-md-4
     = link_to serie_to_amazon_url(@serie), { target: "_blank", title: "Amazonで購入" } do

@@ -12,6 +12,12 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'ユーザー詳細画面のcontent_forで設定したタイトルがtitle要素に反映される' do
+    user = users(:one)
+    get user_path(user.name)
+    assert_select 'title', text: "#{user.name} - 漫トロピーWeb"
+  end
+
   test '存在しないユーザーの場合はリダイレクトされる' do
     get user_path('nonexistent_user')
     assert_redirected_to users_path

@@ -1,6 +1,5 @@
 class UsersController < ApplicationController
   def index
-    @title = 'メンバー一覧'
     @users = UserListing.active_users
     @old_users = UserListing.old_users(@users)
     @registering_rankings = registering_rankings
@@ -22,7 +21,6 @@ class UsersController < ApplicationController
     @user = User.find_by(name: params.expect(:name))
     return redirect_to users_path, notice: '存在しないユーザーです' if @user.blank?
 
-    @title = @user.name.to_s
     @registerable_rankings = registerable_rankings
     @registering_rankings = registering_rankings
     @registering_years = @registering_rankings.map(&:year).uniq

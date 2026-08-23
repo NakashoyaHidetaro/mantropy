@@ -1,7 +1,5 @@
 class Rankings::SeriesController < Rankings::Base
   def index # rubocop:disable Metrics/AbcSize,Metrics/MethodLength,Metrics/PerceivedComplexity
-    @title = '全体ランキング'
-
     ranking_plus = ranking_minus = nil
     case @ranking.kind
     when 'kojin'
@@ -73,7 +71,6 @@ class Rankings::SeriesController < Rankings::Base
   end
 
   def aggregated
-    @title = '全体ランキング'
     sql = 'SELECT s.* FROM series s INNER JOIN ranks r ON s.id=r.serie_id ' \
           "WHERE r.ranking_id=#{@ranking.id} ORDER BY r.rank"
     @series = Kaminari.paginate_array(Serie.find_by_sql(sql)).page(params[:page])

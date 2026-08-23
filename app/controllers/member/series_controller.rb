@@ -1,8 +1,6 @@
 class Member::SeriesController < Member::Base
   before_action :set_serie, only: %i[edit update]
 
-  @title = 'シリーズ'
-
   def new
     @serie = (params[:id] ? Serie.find(params[:id]) : Serie.new)
     @serie_new = params[:id] || true

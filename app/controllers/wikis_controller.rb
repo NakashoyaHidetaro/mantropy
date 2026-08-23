@@ -14,7 +14,6 @@ class WikisController < ApplicationController
       redirect_to root_path, alert: 'このWikiページはプライベートモードです。'
     else
       @wikis = Wiki.where(name: @wiki.name).order(created_at: :desc)
-      @title = @wiki.title
     end
   end
 end

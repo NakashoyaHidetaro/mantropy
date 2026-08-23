@@ -1,6 +1,6 @@
 module ApplicationHelper
   def title
-    @title # rubocop:disable Rails/HelperInstanceVariable
+    content_for(:title)
   end
 
   def login(param = nil)

@@ -1,3 +1,5 @@
+- content_for :title, 'メンバー一覧'
+
 - if @downloadable
   .my-3.d-flex.flex-wrap.gap-2
     = link_to users_path(format: :csv), download: true, class: 'btn btn-outline-secondary btn-sm' do
