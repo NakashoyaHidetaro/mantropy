@@ -1,6 +1,6 @@
 module ApplicationHelper
   def title
-    "#{@title} #{'！！！！開発環境モード！！！！' if Rails.env.development?}" # rubocop:disable Rails/HelperInstanceVariable
+    @title # rubocop:disable Rails/HelperInstanceVariable
   end
 
   def login(param = nil)

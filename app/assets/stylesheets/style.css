@@ -27,7 +27,71 @@
   color: var(--bs-danger);
 }
 
-/* 開発環境であることが一目で分かるようにする(body に付与) */
-body.env-development {
-  background-color: #fff7e6;
+/* ============================================================
+ * トップページの意図的なカオス演出
+ * 旧サイト(黒背景テーブル / marquee / logo.gif 5連発 / 隠し文字)の
+ * 雰囲気を、Bootstrap のレスポンシブ構造を壊さずに再現するためのもの。
+ * ここのスタイルは app/views/homes/index.html.haml 専用。
+ * ============================================================ */
+
+#home-chaos {
+  background-color: #000;
+  color: #fff;
+}
+
+#home-chaos a {
+  color: cyan;
+}
+
+#home-chaos a:hover,
+#home-chaos a:focus {
+  color: #7fffff;
+}
+
+/* 旧 <marquee scrollamount="3" scrolldelay="48"> 相当(およそ 62px/秒)の横スクロール */
+.chaos-marquee {
+  overflow: hidden;
+}
+
+.chaos-marquee__text {
+  display: inline-block;
+  white-space: nowrap;
+  color: skyblue;
+  padding-left: 100%; /* 右端の外から流し始める */
+  animation: chaos-marquee-scroll 42s linear infinite;
+}
+
+@keyframes chaos-marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+/* 動きが苦手な利用者にはスクロールを止めて全文を折り返し表示する */
+@media (prefers-reduced-motion: reduce) {
+  .chaos-marquee__text {
+    animation: none;
+    padding-left: 0;
+    white-space: normal;
+  }
+}
+
+/* 黒背景に黒文字。反転選択すると読める隠し叫び */
+.chaos-hidden-scream {
+  color: #000;
+  font-weight: bold;
+}
+
+/* まんとろちゃん: 背景画像をタイル状に繰り返し、中身は下寄せ */
+.mantro-chan-bg {
+  background-repeat: repeat;
+  min-height: 302px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* キャプションも原作どおり黒文字で背景に溶ける */
+.mantro-chan-bg__caption {
+  color: #000;
 }

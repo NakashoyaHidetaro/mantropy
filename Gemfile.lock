@@ -208,6 +208,8 @@ GEM
     rack (3.2.5)
     rack-attack (6.8.0)
       rack (>= 1.0, < 4)
+    rack-dev-mark (0.8.2)
+      rack (>= 1.1, < 4.0)
     rack-session (2.1.1)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
@@ -340,6 +342,7 @@ DEPENDENCIES
   propshaft
   puma
   rack-attack
+  rack-dev-mark
   rails (~> 8.1.2)
   rails_autolink
   rexml

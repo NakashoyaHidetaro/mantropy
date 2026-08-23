@@ -32,6 +32,9 @@ gem 'pg'
 # 不正リクエストの遮断・レートリミット
 gem 'rack-attack'
 
+# 開発環境であることを示すリボン表示
+gem 'rack-dev-mark'
+
 # Web server
 gem 'puma'
 

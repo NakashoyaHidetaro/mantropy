@@ -16,14 +16,12 @@
     = stylesheet_link_tag 'application', 'style', media: 'all'
     = javascript_importmap_tags
     = yield :header
-  %body{ class: ('env-development' if Rails.env.development?) }
+  %body
     / グローバルナビゲーション
     %nav.navbar.navbar-expand-lg.bg-body-tertiary.border-bottom.shadow-sm
       .container
         = link_to root_path, class: 'navbar-brand d-flex align-items-center gap-2' do
           = image_tag 'logo.png', width: 164, alt: '漫トロピーWebロゴ', class: 'img-fluid'
-        - if Rails.env.development?
-          %span.badge.text-bg-danger.me-2 開発環境
         %button.navbar-toggler{ type: 'button', data: { 'bs-toggle' => 'collapse', 'bs-target' => '#globalNav' }, aria: { controls: 'globalNav', expanded: 'false', label: 'ナビゲーションを開閉' } }
           %span.navbar-toggler-icon
         #globalNav.collapse.navbar-collapse
@@ -55,8 +53,6 @@
               .input-group
                 = text_field_tag :str, @str, class: 'form-control', title: '漫トロピーWeb検索', placeholder: '漫トロピーWeb検索'
                 = submit_tag '検索', class: 'btn btn-primary', name: nil
-            .col-12.col-lg-4.text-lg-end
-              %a.small.link-secondary{ href: '' } 検索オプション
           .row
             .col-12.mt-1
               - if current_user

@@ -1,6 +1,6 @@
 require 'active_support/core_ext/integer/time'
 
-Rails.application.configure do
+Rails.application.configure do # rubocop:disable Metrics/BlockLength
   # Settings specified here will take precedence over those in config/application.rb.
 
   # In the development environment your application's code is reloaded any time
@@ -73,6 +73,9 @@ Rails.application.configure do
 
   # Allow all hosts in development
   config.hosts.clear
+
+  # 開発環境であることを示すリボンを表示する(rack-dev-mark)
+  config.rack_dev_mark.enable = true
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true

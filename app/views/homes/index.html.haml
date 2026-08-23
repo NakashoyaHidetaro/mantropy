@@ -1,25 +1,40 @@
-.py-3
-  .row.align-items-center.g-4
+-# トップページ: 旧サイトの「カオス」な雰囲気を Bootstrap のレスポンシブ構造の上で再現している
+#home-chaos.rounded.p-3.p-md-4.my-4
+  -# 旧 <marquee scrollamount="3" scrolldelay="48"> 相当。CSS アニメーションで右から左へ無限ループ
+  .chaos-marquee.mb-4
+    %p.chaos-marquee__text.mb-0
+      マンガ読みたちが集うサークル、漫トロピーへよおこそ。
+      漫トロピーは漫画好きな人たちが集まって漫画の貸し借りをしたり、
+      年二回(08年度の場合)漫画についての冊子作成をしたりするサークルです。
+      詳細な活動内容は
+      = succeed 'をご覧ください。' do
+        = link_to '活動内容', wiki_path('about')
+
+  .row.align-items-start.g-4
     .col-12.col-md-5.text-center
       = image_tag "top.gif", alt: "愛生会病院風漫トロピーロゴ", class: "img-fluid"
     .col-12.col-md-7
+      -# logo.gif 5連発。1枚目は見出し扱いで大きく、残り4枚はテキストと市松模様に交互配置
       = image_tag "logo.gif", alt: "京大漫トロピー", class: "img-fluid mb-3"
-      %p.lead.mb-2 マンガ読みたちが集うサークル、漫トロピーへよおこそ。
-      %p.mb-3
-        漫トロピーは漫画好きな人たちが集まって漫画の貸し借りをしたり、
-        年二回(08年度の場合)漫画についての冊子作成をしたりするサークルです。
-      %p.mb-0
-        詳細な活動内容は上メニューより
-        = link_to '活動内容', wiki_path('about')
-        をご覧ください。
+      .row.row-cols-2.g-2.align-items-center
+        .col マンガ読みたちが集うサークル、漫トロピーへよおこそ。
+        .col= image_tag "logo.gif", alt: "京大漫トロピー", class: "img-fluid"
+        .col= image_tag "logo.gif", alt: "京大漫トロピー", class: "img-fluid"
+        .col 漫トロピーは漫画好きな人たちが集まって漫画の貸し借りをしたり、
+        .col 年二回(08年度の場合)漫画についての冊子作成をしたりするサークルです。
+        .col= image_tag "logo.gif", alt: "京大漫トロピー", class: "img-fluid"
+        .col= image_tag "logo.gif", alt: "京大漫トロピー", class: "img-fluid"
+        .col
+          詳細な活動内容は上メニューより
+          = succeed 'をご覧ください。' do
+            = link_to '活動内容', wiki_path('about')
 
-.card.shadow-sm.my-4
-  .card-body
+  .mt-4
     = raw @content
-    %p.mb-0.fw-bold キェェェェエエエエ！！！
+    -# 黒背景に黒文字の隠し叫び。反転選択しないと読めない
+    %p.chaos-hidden-scream.mb-0 キェェェェエエエエ！！！
 
-.card.shadow-sm.my-4.text-center.overflow-hidden
-  = image_tag "mantro_chan.jpg", alt: "まんとろちゃん", class: "card-img-top img-fluid"
-  .card-body
-    = image_tag "logo_m.gif", alt: "まんとろちゃん", class: "img-fluid mb-3"
-    %p.text-body-secondary.mb-0 漫トロのイメージキャラクター、「まんとろちゃん」
+  -# まんとろちゃん: 背景タイル繰り返し。Propshaft のダイジェスト付き URL が必要なためここだけ style 属性を許可
+  .mantro-chan-bg.text-center.mt-4{ style: "background-image: url(#{image_url('mantro_chan.jpg')})" }
+    = image_tag "logo_m.gif", alt: "まんとろちゃん", class: "img-fluid"
+    %p.mantro-chan-bg__caption.mb-0 漫トロのイメージキャラクター、「まんとろちゃん」
