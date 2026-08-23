@@ -1,5 +1,6 @@
 - if @wiki.present?
-  = raw(HikiDoc.to_html(@wiki.content, :use_wiki_name=>false))
+  .markdown-body
+    = raw(HikiDoc.to_html(@wiki.content, :use_wiki_name=>false))
   - if current_user
     .card.mt-4
       .card-body

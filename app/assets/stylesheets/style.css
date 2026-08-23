@@ -81,6 +81,55 @@
   font-weight: bold;
 }
 
+/* ============================================================
+ * Wiki 本文(HikiDoc レンダリング結果)のデザイン
+ * mediment の docs ページのスタイルを、色だけブランドカラーに
+ * 置き換えて移植したもの。app/views/wikis/_show.html.haml 専用。
+ * ============================================================ */
+
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+
+.markdown-body th,
+.markdown-body td {
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+}
+
+.markdown-body th {
+  background-color: #fce4ec;
+}
+
+.markdown-body h2 {
+  font-size: 20px;
+  border-left: 6px solid #c2185b;
+  border-bottom: 2px solid #ccc;
+  padding-left: 12px;
+  padding-bottom: 8px;
+  margin-top: 40px;
+  margin-bottom: 24px;
+}
+
+.markdown-body h3 {
+  font-size: 16px;
+  border-left: 4px solid #c2185b;
+  padding-left: 12px;
+  margin-top: 32px;
+  margin-bottom: 20px;
+}
+
+.markdown-body h4,
+.markdown-body h5 {
+  font-size: 14px;
+  border-left: 3px solid #ccc;
+  padding-left: 8px;
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+
 /* まんとろちゃん: 背景画像をタイル状に繰り返し、中身は下寄せ */
 .mantro-chan-bg {
   background-repeat: repeat;
