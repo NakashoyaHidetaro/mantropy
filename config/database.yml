@@ -24,3 +24,4 @@ test:
 production:
   <<: *default
   database: mantropy_production
+  url: <%= ENV.fetch("DATABASE_URL", nil) %>

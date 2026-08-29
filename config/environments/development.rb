@@ -76,7 +76,4 @@ Rails.application.configure do # rubocop:disable Metrics/BlockLength
 
   # 開発環境であることを示すリボンを表示する(rack-dev-mark)
   config.rack_dev_mark.enable = true
-
-  # Uncomment if you wish to allow Action Cable access from any origin.
-  # config.action_cable.disable_request_forgery_protection = true
 end

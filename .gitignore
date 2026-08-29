@@ -6,3 +6,7 @@ vendor/bundle
 public/assets/*
 *_exec_log.txt
 .env.development
+
+# Railway IaC (.railway/railway.ts) の評価に必要な npm パッケージ。
+# `cd .railway && npm install` で復元できるのでコミットしない。
+/.railway/node_modules

@@ -11,11 +11,19 @@ max_threads_count = ENV.fetch('RAILS_MAX_THREADS', 5)
 min_threads_count = ENV.fetch('RAILS_MIN_THREADS') { max_threads_count }
 threads min_threads_count, max_threads_count
 
-# Specifies that the worker count should equal the number of processors in production.
+# 本番のワーカー数。Railway のコンテナはホストの CPU 数を報告するため、CPU 数からの
+# 自動算出はせず WEB_CONCURRENCY(既定 1)で明示的に決める。
 if ENV['RAILS_ENV'] == 'production'
-  require 'concurrent-ruby'
-  worker_count = Integer(ENV.fetch('WEB_CONCURRENCY') { Concurrent.physical_processor_count })
-  workers worker_count if worker_count > 1
+  worker_count = Integer(ENV.fetch('WEB_CONCURRENCY', 1))
+  if worker_count > 1
+    workers worker_count
+    # cluster mode では master にもアプリを読み込ませる。
+    preload_app!
+  else
+    # Puma 自身が WEB_CONCURRENCY を読んで cluster mode になるのを防ぎ single mode を強制
+    # (cluster mode + worker 1 はメモリの無駄)。
+    workers 0
+  end
 end
 
 # Specifies the `worker_timeout` threshold that Puma will use to wait before
@@ -29,7 +37,9 @@ port ENV.fetch('PORT', 3000)
 environment ENV.fetch('RAILS_ENV') { 'development' }
 
 # Specifies the `pidfile` that Puma will use.
-pidfile ENV.fetch('PIDFILE') { 'tmp/pids/server.pid' }
+# PIDFILE 未設定なら書かない(Railway の Railpack イメージには空の tmp/pids/ が
+# 含まれず、無条件に書くと起動時 Errno::ENOENT でクラッシュするため)。
+pidfile ENV['PIDFILE'] if ENV['PIDFILE']
 
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart
