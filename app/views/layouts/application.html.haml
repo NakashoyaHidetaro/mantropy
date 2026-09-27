@@ -26,7 +26,9 @@
           %ul.navbar-nav.me-auto.mb-2.mb-lg-0
             %li.nav-item
               - if current_user
-                = link_to 'メンバートップ', member_root_path, class: 'nav-link'
+                = link_to  member_root_path, class: 'nav-link fw-bold' do
+                  %i.bi.bi-house-fill
+                  メンバートップ
               - else
                 = link_to 'トップ', root_path, class: 'nav-link'
             %li.nav-item= link_to '漫トロピーについて', wiki_path('about'), class: 'nav-link'
