@@ -29,7 +29,7 @@ class Member::WikisController < Member::Base # rubocop:disable Metrics/ClassLeng
     @notation = NOTATION
 
     if @wiki.save
-      redirect_to(wiki_path(name: @wiki.name, id: @wiki.id), notice: 'Wiki was successfully created.')
+      redirect_to(wiki_path(name: @wiki.name, id: @wiki.id), notice: 'Wiki を作成しました。')
     else
       render action: 'new'
     end
@@ -37,7 +37,7 @@ class Member::WikisController < Member::Base # rubocop:disable Metrics/ClassLeng
 
   def update
     if @wiki.update(wiki_params)
-      redirect_to(@wiki, notice: 'Wiki was successfully updated.')
+      redirect_to(@wiki, notice: 'Wiki を更新しました。')
     else
       render action: 'edit'
     end

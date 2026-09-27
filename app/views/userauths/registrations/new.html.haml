@@ -11,13 +11,13 @@
           = render "devise/shared/devise_error_messages"
           = required_legend
           .mb-3
-            = required_label f, :email, "Email"
+            = required_label f, :email, "メールアドレス"
             = f.email_field :email, class: "form-control", autocomplete: "email"
           .mb-3
-            = required_label f, :password, "Password"
+            = required_label f, :password, "パスワード"
             = f.password_field :password, class: "form-control", autocomplete: "new-password"
           .mb-3
-            = required_label f, :password_confirmation, "Password confirmation"
+            = required_label f, :password_confirmation, "パスワード(確認)"
             = f.password_field :password_confirmation, class: "form-control", autocomplete: "new-password"
           .d-grid
             = f.submit "登録", class: "btn btn-primary w-100"

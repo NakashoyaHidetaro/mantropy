@@ -8,11 +8,11 @@
   %table.table.table-hover.table-sm.align-middle
     %thead.table-light
       %tr
-        %th Name
-        %th Title
-        %th Content
-        %th Is private
-        %th User
+        %th ページ名
+        %th タイトル
+        %th 内容
+        %th 内部のみ
+        %th 作成者
         %th
     %tbody
       - @wikis.each do |wiki|
@@ -22,4 +22,4 @@
           %td.text-break= link_to wiki.content[0..100], wiki_path(name: wiki.name)
           %td= wiki.is_private
           %td= link_to wiki.user.name, user_path(wiki.user.name)
-          %td.text-end= link_to 'Show', wiki, class: 'btn btn-sm btn-outline-secondary'
+          %td.text-end= link_to '表示', wiki, class: 'btn btn-sm btn-outline-secondary'

@@ -1,10 +1,7 @@
 - if resource.errors.any?
-  #error_explanation.alert.alert-danger
-    %h2.h6.alert-heading
-      = pluralize(resource.errors.count, "error")
-      prohibited this
-      = resource_name.to_s.humanize.downcase
-      from being saved:
+  #error_explanation.alert.alert-danger{ role: 'alert' }
+    %h2.h6.alert-heading= "#{resource.errors.count}件のエラーがあります"
+    %p.mb-1 次の項目を確認してください
     %ul.mb-0.ps-3
       - resource.errors.full_messages.each do |message|
         %li= message

@@ -8,6 +8,6 @@ class Wiki < ApplicationRecord
   private
 
   def name_valid?
-    errors.add(:name, 'ページ名には、小文字半角英数字とアンダーバーのみ使えます') unless name =~ /^[0-9a-z_]+$/
+    errors.add(:name, 'には、小文字半角英数字とアンダーバーのみ使えます') unless name =~ /^[0-9a-z_]+$/
   end
 end

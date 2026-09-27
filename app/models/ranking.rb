@@ -93,6 +93,6 @@ class Ranking < ApplicationRecord
     return if scope_min.blank? || scope_max.blank?
     return if scope_min <= scope_max
 
-    errors.add(:scope_min, 'は位最大値以下にしてください')
+    errors.add(:scope_min, 'は最大値以下にしてください')
   end
 end

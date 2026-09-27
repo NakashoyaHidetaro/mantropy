@@ -24,6 +24,6 @@ class User < ApplicationRecord
   private
 
   def name_valid?
-    errors.add(:name, '. # % : \ / を含む文字列は、ユーザー名には使えません') if name =~ %r{[.\#%:/\\]}
+    errors.add(:name, 'には . # % : \ / を含む文字列は使えません') if name =~ %r{[.\#%:/\\]}
   end
 end

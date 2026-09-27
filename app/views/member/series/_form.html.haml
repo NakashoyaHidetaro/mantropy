@@ -42,7 +42,7 @@
       .mb-3
         %label.form-label 次の書籍情報を含める
         = select_tag :book_ids, options_from_collection_for_select(@serie.books, :id, :name), {:multiple => true, :class => 'form-select'}
-        .form-text CtrlかShiftキーを押下しながらで複数選択(Editing Serieの時は関係ないです)
+        .form-text CtrlかShiftキーを押下しながらで複数選択(編集時は関係ないです)
   .mt-2
     = hidden_field_tag :serie_id, @serie.id
     = f.submit class: 'btn btn-primary'

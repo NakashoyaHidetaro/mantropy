@@ -38,7 +38,7 @@ class Member::TopicsController < Member::Base
 
   def update
     if @topic.update(topic_params)
-      redirect_to(member_topic_show_path(@topic), notice: 'Topic was successfully updated.')
+      redirect_to(member_topic_show_path(@topic), notice: 'トピックを更新しました。')
     else
       render action: 'edit'
     end

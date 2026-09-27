@@ -1,0 +1,236 @@
+ja:
+  activerecord:
+    models:
+      author: 著者・漫画家
+      authoridea: 著者識別情報
+      authors_book: 著者と書籍の関連
+      authors_serie: 著者とシリーズの関連
+      book: 書籍
+      bookaffair: 書籍イベント
+      bookreal: 所蔵書籍
+      books_browsenodeid: 書籍とブラウズノードの関連
+      browsenodeid: ブラウズノード
+      magazine: 雑誌
+      magazines_serie: 雑誌掲載情報
+      post: 投稿
+      postfav: 投稿へのいいね
+      rank: 順位
+      ranking: ランキング
+      reply: 返信
+      serie: シリーズ
+      tag: タグ
+      topic: トピック
+      transfer: 貸し借り
+      user: ユーザー
+      userauth: ログインアカウント
+      wiki: Wiki
+    attributes:
+      author:
+        name: 著者名
+        authorideas: 著者識別情報
+        books: 書籍
+        series: シリーズ
+        created_at: 作成日時
+        updated_at: 更新日時
+      authoridea:
+        author: 著者
+        author_id: 著者
+        idea: 識別値
+        identify: 識別種別
+        created_at: 作成日時
+        updated_at: 更新日時
+      authors_book:
+        author: 著者
+        author_id: 著者
+        book: 書籍
+        book_id: 書籍
+        role: 役割
+        created_at: 作成日時
+        updated_at: 更新日時
+      authors_serie:
+        author: 著者
+        author_id: 著者
+        serie: シリーズ
+        serie_id: シリーズ
+        role: 役割
+        created_at: 作成日時
+        updated_at: 更新日時
+      book:
+        asin: ASIN
+        detailurl: 詳細ページURL
+        isbn: ISBN
+        iscomic: 漫画フラグ
+        kind: 種別
+        label: レーベル
+        largeimgurl: 画像URL(大)
+        mediumimgurl: 画像URL(中)
+        name: 書籍名
+        publicationdate: 発売日
+        publisher: 出版社
+        smallimgurl: 画像URL(小)
+        authors: 著者
+        series: シリーズ
+        created_at: 作成日時
+        updated_at: 更新日時
+      bookaffair:
+        book: 書籍
+        book_id: 書籍
+        event: イベント
+        created_at: 作成日時
+        updated_at: 更新日時
+      bookreal:
+        book: 書籍
+        book_id: 書籍
+        memo: メモ
+        user: ユーザー
+        user_id: ユーザー
+        created_at: 作成日時
+        updated_at: 更新日時
+      books_browsenodeid:
+        book: 書籍
+        book_id: 書籍
+        browsenodeid: ブラウズノード
+        browsenodeid_id: ブラウズノード
+      browsenodeid:
+        ancestor: 親ノード
+        name: ノード名
+        node: ノードID
+        created_at: 作成日時
+        updated_at: 更新日時
+      magazine:
+        appear: 表示
+        book: 書籍
+        book_id: 書籍
+        name: 雑誌名
+        publisher: 雑誌出版社
+        url: URL
+        created_at: 作成日時
+        updated_at: 更新日時
+      magazines_serie:
+        magazine: 雑誌
+        magazine_id: 雑誌
+        placed: 雑誌掲載情報
+        serie: シリーズ
+        serie_id: シリーズ
+      post:
+        content: 本文
+        email: メールアドレス
+        name: 名前
+        order: 表示順
+        topic: トピック
+        topic_id: トピック
+        user: ユーザー
+        user_id: ユーザー
+        created_at: 作成日時
+        updated_at: 更新日時
+      postfav:
+        post: 投稿
+        post_id: 投稿
+        score: 点数
+        user: ユーザー
+        user_id: ユーザー
+        created_at: 作成日時
+        updated_at: 更新日時
+      rank:
+        rank: 順位
+        ranking: ランキング
+        ranking_id: ランキング
+        score: 点数
+        serie: シリーズ
+        serie_id: シリーズ
+        user: ユーザー
+        user_id: ユーザー
+        created_at: 作成日時
+        updated_at: 更新日時
+      ranking:
+        aggregation_ends_on: 集計終了日
+        kind: 種別
+        published_on: 一般公開日
+        scope_max: 位最大値
+        scope_min: 位最小値
+        year: 年度
+        ranks: 順位
+        created_at: 作成日時
+        updated_at: 更新日時
+      reply:
+        post: 投稿
+        post_id: 投稿
+        user: ユーザー
+        user_id: ユーザー
+        created_at: 作成日時
+        updated_at: 更新日時
+      serie:
+        name: シリーズ名・タイトル
+        post: 投稿
+        post_id: 投稿
+        public_id: 公開ID
+        topic: トピック
+        topic_id: トピック
+        url: URL
+        authors: 著者・漫画家
+        books: 書籍
+        magazines: 掲載誌
+        tags: タグ
+        created_at: 作成日時
+        updated_at: 更新日時
+      tag:
+        name: タグ名
+        created_at: 作成日時
+        updated_at: 更新日時
+      topic:
+        appear: 表示
+        title: タイトル
+        created_at: 作成日時
+        updated_at: 更新日時
+      transfer:
+        bookreal: 所蔵書籍
+        bookreal_id: 所蔵書籍
+        from: 貸し手
+        to: 借り手
+        user: ユーザー
+        user_id: ユーザー
+        when: 日付
+        created_at: 作成日時
+        updated_at: 更新日時
+      user:
+        entered: 入学年度
+        joined: 入トロ年度
+        mbmail: 携帯メール
+        name: ペンネーム
+        pcmail: パソコンメール
+        privateabout: 内部向けAbout
+        publicabout: 外部向けAbout
+        realname: 本名
+        twitter: Twitterアカウント
+        url: 外部Webサイト
+        created_at: 作成日時
+        updated_at: 更新日時
+      userauth:
+        current_password: 現在のパスワード
+        current_sign_in_at: 現在のログイン日時
+        current_sign_in_ip: 現在のログインIPアドレス
+        email: メールアドレス
+        encrypted_password: 暗号化パスワード
+        last_sign_in_at: 最終ログイン日時
+        last_sign_in_ip: 最終ログインIPアドレス
+        password: パスワード
+        password_confirmation: パスワード(確認用)
+        password_salt: パスワードソルト
+        remember_created_at: ログイン記憶日時
+        remember_me: ログイン状態を保持する
+        reset_password_sent_at: パスワードリセット送信日時
+        reset_password_token: パスワードリセット用トークン
+        sign_in_count: ログイン回数
+        user: ユーザー
+        user_id: ユーザー
+        created_at: 作成日時
+        updated_at: 更新日時
+      wiki:
+        content: 内容
+        is_private: 公開は内部のみ
+        name: ページ名
+        title: タイトル
+        user: ユーザー
+        user_id: ユーザー
+        created_at: 作成日時
+        updated_at: 更新日時

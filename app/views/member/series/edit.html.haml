@@ -32,7 +32,7 @@
                     %span= a.name
                     = hidden_field_tag :mode, :remove
                     = hidden_field_tag :author_id, a.id
-                    = submit_tag "取り除く", :confirm => "#{a.name} を #{@serie.name} から取り除いてよろしいですか？", :class => 'btn btn-outline-danger btn-sm'
+                    = submit_tag "取り除く", data: { confirm: "#{a.name} を #{@serie.name} から取り除いてよろしいですか？" }, :class => 'btn btn-outline-danger btn-sm'
           = form_tag member_serie_author_path(@serie), :method => :patch, remote: false do
             = hidden_field_tag :mode, "add"
             .row.g-2.align-items-end
@@ -63,7 +63,7 @@
                       = form_tag member_serie_magazine_serie_path(@serie), :method => :patch, remote: false do
                         = hidden_field_tag :mode, :remove
                         = hidden_field_tag :magazines_serie_id, ms.id
-                        = submit_tag "取り除く", :confirm => "#{ms.magazine && ms.magazine.name}, #{ms.placed}を #{@serie.name} から取り除いてよろしいですか？", :class => 'btn btn-outline-danger btn-sm'
+                        = submit_tag "取り除く", data: { confirm: "#{ms.magazine && ms.magazine.name}, #{ms.placed}を #{@serie.name} から取り除いてよろしいですか？" }, :class => 'btn btn-outline-danger btn-sm'
           %h3.h6 掲載誌情報の追加
           = form_tag member_serie_magazine_serie_path(@serie), :method => :patch, remote: false do
             = hidden_field_tag :mode, :add
@@ -97,8 +97,8 @@
 
 %hr.my-4
 .d-flex.flex-wrap.gap-2
-  = link_to 'Show', @serie, class: 'btn btn-outline-secondary'
-  = link_to 'Back', series_path, class: 'btn btn-outline-secondary'
+  = link_to '表示', @serie, class: 'btn btn-outline-secondary'
+  = link_to '戻る', series_path, class: 'btn btn-outline-secondary'
 
 .serie_ranks.mt-4
   %h2.h4.mb-3 ランキング登録
@@ -134,7 +134,7 @@
               どのランキング
             .col-sm
               = f.collection_select :ranking_id, @rankings, :id, :name, {:selected => @rankings.map{|r| complete_ranking(r) ? nil : r.id}.compact.min}, {:class => 'form-select'}
-        = f.submit "登録", :confirm => "ランキング登録してよろしいですか？", :class => 'btn btn-primary'
+        = f.submit "登録", data: { confirm: "ランキング登録してよろしいですか？" }, :class => 'btn btn-primary'
   %p.mt-3
     %em.text-danger 雑誌一覧に掲載誌がない！？
     = succeed "1." do

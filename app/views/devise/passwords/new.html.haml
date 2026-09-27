@@ -13,5 +13,5 @@
             = required_label f, :email, "メールアドレス"
             = f.email_field :email, class: "form-control", autocomplete: "email"
           .d-grid
-            = f.submit "私にパスワードをリセットするための手順をメールで送ってよ", class: "btn btn-primary w-100"
+            = f.submit "パスワード再設定の手順をメールで送信する", class: "btn btn-primary w-100"
         = render :partial => "devise/shared/links"

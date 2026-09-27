@@ -5,32 +5,32 @@
       .card-body.p-4
         %h2.h4.card-title.mb-4
           %i.bi.bi-person-gear.me-2
-          Edit #{resource_name.to_s.humanize}
+          アカウント情報の編集
         = form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f|
           = render "devise/shared/devise_error_messages"
           = required_legend
           .mb-3
-            = required_label f, :email, "Email"
+            = required_label f, :email, "メールアドレス"
             = f.email_field :email, class: "form-control", autocomplete: "email"
           .mb-3
-            = f.label :password, class: "form-label"
+            = f.label :password, "新しいパスワード", class: "form-label"
             %span.form-text.ms-1
-              %i (leave blank if you don't want to change it)
+              %i (変更しない場合は空欄のままにしてください)
             = f.password_field :password, class: "form-control", autocomplete: "new-password"
           .mb-3
-            = f.label :password_confirmation, class: "form-label"
+            = f.label :password_confirmation, "新しいパスワード(確認)", class: "form-label"
             = f.password_field :password_confirmation, class: "form-control", autocomplete: "new-password"
           .mb-3
-            = required_label f, :current_password, "Current password"
+            = required_label f, :current_password, "現在のパスワード"
             %span.form-text.ms-1
-              %i (we need your current password to confirm your changes)
+              %i (変更を確定するために現在のパスワードを入力してください)
             = f.password_field :current_password, class: "form-control", autocomplete: "current-password"
           .d-grid
-            = f.submit "Update", class: "btn btn-primary w-100"
+            = f.submit "更新する", class: "btn btn-primary w-100"
     .card.shadow-sm.border-danger-subtle.mb-4
       .card-body.p-4
-        %h3.h6.card-title.text-danger Cancel my account
-        %p.small.text-body-secondary.mb-3 Unhappy?
-        = link_to "Cancel my account", registration_path(resource_name), :confirm => "Are you sure?", :method => :delete, class: "btn btn-outline-danger btn-sm"
+        %h3.h6.card-title.text-danger 退会
+        %p.small.text-body-secondary.mb-3 アカウントを削除します。この操作は取り消せません。
+        = link_to "退会する", registration_path(resource_name), data: { confirm: "本当に退会しますか?" }, method: :delete, class: "btn btn-outline-danger btn-sm"
     .mb-4
-      = link_to "Back", :back, class: "btn btn-link btn-sm px-0"
+      = link_to "戻る", :back, class: "btn btn-link btn-sm px-0"

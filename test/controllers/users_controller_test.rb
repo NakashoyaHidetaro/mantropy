@@ -155,7 +155,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test 'ゲストにも旧メンバーがMoreの折りたたみ内に表示される' do
+  test 'ゲストにも旧メンバーが「もっと見る」の折りたたみ内に表示される' do
     get users_path
     assert_response :success
     assert_match users(:old_member).name, response.body

@@ -1,6 +1,6 @@
 - content_for :title, "#{@wiki.name} の編集"
-%h1.h3.mt-4.mb-3 Editing wiki
+%h1.h3.mt-4.mb-3 Wiki の編集
 = render 'form'
 .d-flex.flex-wrap.gap-2.mt-3
-  = link_to 'Show', @wiki, class: 'btn btn-outline-secondary'
-  = link_to 'Back', member_wikis_path, class: 'btn btn-outline-secondary'
+  = link_to '表示', @wiki, class: 'btn btn-outline-secondary'
+  = link_to '戻る', member_wikis_path, class: 'btn btn-outline-secondary'

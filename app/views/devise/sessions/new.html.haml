@@ -9,15 +9,15 @@
         = form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f|
           = required_legend
           .mb-3
-            = required_label f, :email, "Email"
+            = required_label f, :email, "メールアドレス"
             = f.email_field :email, class: "form-control", autocomplete: "email"
           .mb-3
-            = required_label f, :password, "Password"
+            = required_label f, :password, "パスワード"
             = f.password_field :password, class: "form-control", autocomplete: "current-password"
           - if devise_mapping.rememberable?
             .form-check.mb-3
               = f.check_box :remember_me, class: "form-check-input"
-              = f.label :remember_me, class: "form-check-label"
+              = f.label :remember_me, "ログイン状態を保持する", class: "form-check-label"
           .d-grid
             = f.submit "ログイン", class: "btn btn-primary w-100"
         = render :partial => "devise/shared/links"

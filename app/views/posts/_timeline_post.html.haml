@@ -8,7 +8,7 @@
         = link_to PostTimeline.author_name_for(post), user_path(post.user.name)
       - else
         = PostTimeline.author_name_for(post)
-    = post.created_at.localtime.strftime("%Y/%m/%d (%A) %H:%M:%S")
+    = l(post.created_at.localtime, format: "%Y/%m/%d (%a) %H:%M:%S")
     - if post_title.present?
       - if board_post
         -# member側のスレッドURLには内部IDが出るためゲストにはリンクを見せない

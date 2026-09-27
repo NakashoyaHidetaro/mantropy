@@ -6,10 +6,10 @@
     %dl.row.mb-0
       %dt.col-sm-3 アカウント名
       %dd.col-sm-9= @user.name
-      %dt.col-sm-3 twitter screen name
+      %dt.col-sm-3 Twitter
       %dd.col-sm-9
         = link_to @user.twitter, "http://twitter.com/#{@user.twitter}", :target => "_blank"
-      %dt.col-sm-3 url
+      %dt.col-sm-3 URL
       %dd.col-sm-9
         = link_to @user.url, @user.url, :target => "_blank"
       %dt.col-sm-3 外部向け自己紹介
@@ -34,7 +34,7 @@
         %dd.col-sm-9= @user.entered
         %dt.col-sm-3 内部向け自己紹介
         %dd.col-sm-9= @user.privateabout
-        %dt.col-sm-3 .userauths.email
+        %dt.col-sm-3 ログイン用メールアドレス
         %dd.col-sm-9.mb-0= @user.userauths.map{|a| a.email }
 
 %h2.h4.mb-1 コメント
@@ -78,7 +78,7 @@
               %span.text-muted.small= magazine_names
             - if @user == current_user && @registerable_rankings.map{|r| r.id}.include?(rank.ranking_id)
               .ms-auto
-                = link_to member_rank_path(rank), :confirm => "#{rank.serie.name} を #{rank.rank} 位から削除していいですか？", :method => :delete, :controller => :ranks, :class => 'btn btn-sm btn-outline-danger' do
+                = link_to member_rank_path(rank), data: { confirm: "#{rank.serie.name} を #{rank.rank} 位から削除していいですか？" }, :method => :delete, :controller => :ranks, :class => 'btn btn-sm btn-outline-danger' do
                   %i.bi.bi-trash
                   削除
 - @registering_rankings.each do |ranking|
@@ -87,4 +87,4 @@
 .mt-4.d-flex.flex-wrap.gap-2
   = x_share_button("#{@user.name} - 漫トロピーWeb", user_url(@user.name))
   = link_to 'ユーザー情報を編集する', edit_member_user_path(@user), class: 'btn btn-outline-primary' if @user == current_user
-  = link_to 'Back', users_path, class: 'btn btn-outline-secondary'
+  = link_to '戻る', users_path, class: 'btn btn-outline-secondary'
