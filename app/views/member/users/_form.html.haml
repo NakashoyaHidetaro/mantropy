@@ -1,12 +1,5 @@
 = form_for([:member, @user]) do |f|
-  - if @user.errors.any?
-    #error_explanation.alert.alert-danger
-      %h2.h6
-        = pluralize(@user.errors.count, "error")
-        prohibited this post from being saved:
-      %ul.mb-0
-        - @user.errors.full_messages.each do |msg|
-          %li= msg
+  = render 'shared/error_messages', record: @user
   = required_legend
   .row
     .col-md-6.mb-3

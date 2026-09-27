@@ -2,10 +2,10 @@
 
 one:
   role: MyString
-  author: 
-  book: 
+  author: one
+  book: one
 
 two:
   role: MyString
-  author: 
-  book: 
+  author: two
+  book: two

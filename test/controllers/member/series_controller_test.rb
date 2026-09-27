@@ -37,4 +37,24 @@ class Member::SeriesControllerTest < ActionDispatch::IntegrationTest
     get "/member/series/#{@serie.id}/edit"
     assert_response :not_found
   end
+
+  test '作者名が空の場合は500にならず422でnewが再表示される' do
+    assert_no_difference 'Serie.count' do
+      post member_series_path,
+           params: { serie: { name: '新シリーズ' },
+                     author_name: '', author_id: '',
+                     magazine_name: 'MyString', magazine_id: '', magazine_publisher: '' }
+    end
+    assert_response :unprocessable_content
+  end
+
+  test 'シリーズ名が空の場合は500にならず422でnewが再表示される' do
+    assert_no_difference 'Serie.count' do
+      post member_series_path,
+           params: { serie: { name: '' },
+                     author_name: 'MyString', author_id: '',
+                     magazine_name: 'MyString', magazine_id: '', magazine_publisher: '' }
+    end
+    assert_response :unprocessable_content
+  end
 end

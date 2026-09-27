@@ -17,11 +17,12 @@ class Member::UsersController < Member::Base
     @user = User.new(user_params)
     current_userauth.user = @user
 
-    if @user.save
-      current_userauth.save!
-      redirect_to(user_path(@user.name), notice: 'User was successfully created.')
+    if @user.save && current_userauth.save
+      redirect_to(user_path(@user.name), notice: 'ユーザー情報を登録しました')
     else
-      render action: 'new'
+      # ログイン情報側の保存に失敗した場合も、フォームにエラーを出すため @user へ転記する
+      current_userauth.errors.full_messages.each { |message| @user.errors.add(:base, message) }
+      render action: 'new', status: :unprocessable_content
     end
   end
 
@@ -35,9 +36,9 @@ class Member::UsersController < Member::Base
     # params[:user].each{|k,v| params[:user][k].gsub!(/\/\./, "") if k == :name}
 
     if @user.update(user_params)
-      redirect_to(user_path(@user.name), notice: 'User was successfully updated.')
+      redirect_to(user_path(@user.name), notice: 'ユーザー情報を更新しました')
     else
-      render action: 'edit'
+      render action: 'edit', status: :unprocessable_content
     end
   end
 

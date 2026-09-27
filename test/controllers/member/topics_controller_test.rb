@@ -35,4 +35,22 @@ class Member::TopicsControllerTest < ActionDispatch::IntegrationTest
     get member_topics_path
     assert_redirected_to new_userauth_session_path
   end
+
+  test '題名が空のスレッドは作成できずエラーが表示される' do
+    assert_no_difference('Topic.count') do
+      post member_topics_path, params: { topic: { title: '' }, content: 'てすと', email: '' }
+    end
+    assert_redirected_to member_topics_path
+    assert flash[:alert].present?
+  end
+
+  test '本文が空の場合はスレッドごと作成されずエラー内容が表示される' do
+    assert_no_difference('Topic.count') do
+      assert_no_difference('Post.count') do
+        post member_topics_path, params: { topic: { title: '新スレッド' }, content: '', email: '' }
+      end
+    end
+    assert_redirected_to member_topics_path
+    assert_match(/本文|Content/, flash[:alert])
+  end
 end

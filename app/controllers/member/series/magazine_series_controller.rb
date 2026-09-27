@@ -1,26 +1,17 @@
 class Member::Series::MagazineSeriesController < Member::Series::Base
-  def update # rubocop:disable Metrics/AbcSize
+  def update
     case params[:mode]
     when 'remove'
       @serie.magazines_series.delete(MagazinesSerie.find(params[:magazines_serie_id]))
     when 'add'
-      magazine_name = params[:magazine_name].strip
-      if !magazine_name.empty? && Magazine.find_by(name: magazine_name).nil?
-        magazine = Magazine.new
-        magazine.name = magazine_name
-        magazine.publisher = @serie.books.first && @serie.books.first.publisher
-      else
-        magazine = Magazine.find_by(name: magazine_name) || Magazine.find_by(id: params[:magazine_id])
-      end
-      placed = params[:magazine_placed].strip
-      if @serie.magazines_series.where(magazine_id: magazine.id, placed:).empty?
-        ms = MagazinesSerie.new
-        ms.magazine = magazine
-        ms.placed = placed
-        ms.serie = @serie
-        ms.save!
-      end
+      # バリデーション失敗時は Member::Base の rescue_from が元の画面へエラーを表示して差し戻す。
+      MagazinePlacement.add!(@serie,
+                             magazine_name: params[:magazine_name],
+                             magazine_id: params[:magazine_id],
+                             placed: params[:magazine_placed])
     end
     redirect_to edit_member_serie_path(@serie)
+  rescue MagazinePlacement::MagazineNotFound
+    redirect_to edit_member_serie_path(@serie), alert: '雑誌を選択するか、雑誌名を入力してください'
   end
 end

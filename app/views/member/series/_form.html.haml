@@ -1,12 +1,5 @@
 = form_for([:member, (@serie_new ? Serie.new : @serie)]) do |f|
-  - if @serie.errors.any?
-    #error_explanation.alert.alert-danger
-      %h2.h6
-        = pluralize(@serie.errors.count, "error")
-        prohibited this series from being saved:
-      %ul.mb-0
-        - @serie.errors.full_messages.each do |msg|
-          %li= msg
+  = render 'shared/error_messages', record: @serie
   .alert.alert-info
     %div
       Tips シリーズ情報とは？

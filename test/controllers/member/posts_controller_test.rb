@@ -33,4 +33,12 @@ class Member::PostsControllerTest < ActionDispatch::IntegrationTest
     post member_posts_path, params: { topic_id: @topic.id, post: { content: 'テスト書き込み', email: '' } }
     assert_redirected_to new_userauth_session_path
   end
+
+  test '本文が空の書き込みは500にならずエラー内容つきでリダイレクトされる' do
+    assert_no_difference('Post.count') do
+      post member_posts_path, params: { topic_id: @topic.id, post: { content: '', email: '' } }
+    end
+    assert_redirected_to member_topic_show_path(@topic)
+    assert_match(/本文|Content/, flash[:alert])
+  end
 end

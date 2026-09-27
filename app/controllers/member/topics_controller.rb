@@ -16,26 +16,23 @@ class Member::TopicsController < Member::Base
   def edit; end
 
   def create
-    post = Post.new
+    @topic = Topic.new(topic_params)
+    @topic.appear = 1
+    if @topic.title.blank?
+      # Topic モデル自体は題名なしも許す(シリーズ掲示板用)ため、ここで入力を確認する
+      redirect_to(member_topics_path, alert: 'スレッドの題名を入力してください')
+      return
+    end
+
     begin
       Topic.transaction do
-        @topic = Topic.new(topic_params)
-        @topic.appear = 1
-        raise if @topic.title == '' || @topic.title.nil?
-
         @topic.save!
-
-        post = Post.new
-        post.content = params[:content]
-        post.email = params[:email]
-        post.user = current_user
-        post.order = 1
-        post.topic = @topic
-        post.save!
+        Post.create!(content: params[:content], email: params[:email],
+                     user: current_user, order: 1, topic: @topic)
       end
       redirect_to(member_topics_path, notice: 'スレッド作成と書き込みに成功しました。')
-    rescue StandardError
-      redirect_to(member_topics_path, alert: '何かおかしいで。')
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to(member_topics_path, alert: "スレッドを作成できませんでした: #{e.record.errors.full_messages.join('、')}")
     end
   end
 

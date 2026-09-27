@@ -7,6 +7,8 @@ one:
   mbmail: MyString
   twitter: MyString
   url: MyString
+  joined: '2014'
+  entered: '2014'
 
 two:
   name: MyString
@@ -15,6 +17,8 @@ two:
   mbmail: MyString
   twitter: MyString
   url: MyString
+  joined: '2014'
+  entered: '2014'
 
 # 旧メンバー: 2年前に登録し、ランキング提出実績が無いユーザー
 old_member:

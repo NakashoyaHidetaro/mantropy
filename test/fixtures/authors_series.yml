@@ -2,10 +2,10 @@
 
 one:
   role: MyString
-  author: 
-  serie: 
+  author: one
+  serie: one
 
 two:
   role: MyString
-  author: 
-  serie: 
+  author: two
+  serie: two

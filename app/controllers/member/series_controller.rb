@@ -10,46 +10,65 @@ class Member::SeriesController < Member::Base
     @rankings = Ranking.registerable
   end
 
-  def create # rubocop:disable Metrics/AbcSize
+  def create
     @serie = Serie.new(serie_params)
 
-    a = Author.find_by(id: params[:author_id]) || Author.find_by(name: params[:author_name].strip)
-    unless a
-      a = Author.new
-      a.name = params[:author_name].strip
-      a.save!
-    end
-    @serie.authors << a
+    author = find_or_create_author
+    return render_new_with_errors(author, :author_name) if author.errors.any?
 
-    m = Magazine.find_by(id: params[:magazine_id]) || Magazine.find_by(name: params[:magazine_name].strip)
-    unless m
-      m = Magazine.new
-      m.name = params[:magazine_name].strip
-      m.publisher = params[:magazine_publisher].strip
-      m.save!
-    end
-    @serie.magazines << m if m
+    magazine = find_or_create_magazine
+    return render_new_with_errors(magazine, :magazine_name) if magazine.errors.any?
 
-    params[:book_ids]&.each do |bid|
-      @serie.books << Book.find(bid)
-    end
+    @serie.authors << author
+    @serie.magazines << magazine
+    params[:book_ids]&.each { |bid| @serie.books << Book.find(bid) }
 
     if @serie.save
-      redirect_to(serie_path(@serie), notice: 'Serie was successfully created.')
+      redirect_to(serie_path(@serie), notice: 'シリーズを登録しました')
     else
-      render action: 'new'
+      render_new
     end
   end
 
   def update
     if @serie.update(serie_params)
-      redirect_to(@serie, notice: 'Serie was successfully updated.')
+      redirect_to(@serie, notice: 'シリーズを更新しました')
     else
-      render action: 'edit'
+      render action: 'edit', status: :unprocessable_content
     end
   end
 
   private
+
+  # 作者名(またはID)から作者を探し、無ければ作成する。
+  # 作成に失敗した場合はエラーを持ったままの未保存レコードを返す。
+  def find_or_create_author
+    name = params[:author_name].to_s.strip
+    author = Author.find_by(id: params[:author_id]) || Author.find_by(name:)
+    return author if author
+
+    Author.new(name:).tap(&:save)
+  end
+
+  # 雑誌名(またはID)から雑誌を探し、無ければ作成する。
+  def find_or_create_magazine
+    name = params[:magazine_name].to_s.strip
+    magazine = Magazine.find_by(id: params[:magazine_id]) || Magazine.find_by(name:)
+    return magazine if magazine
+
+    Magazine.new(name:, publisher: params[:magazine_publisher].to_s.strip).tap(&:save)
+  end
+
+  # 作者・雑誌の作成に失敗した場合、そのエラーをシリーズ側に転記して new を再表示する。
+  def render_new_with_errors(record, attribute)
+    record.errors.full_messages.each { |message| @serie.errors.add(attribute, message) }
+    render_new
+  end
+
+  def render_new
+    @serie_new = true
+    render action: 'new', status: :unprocessable_content
+  end
 
   def set_serie
     # member側もURLには内部IDではなく public_id を使う

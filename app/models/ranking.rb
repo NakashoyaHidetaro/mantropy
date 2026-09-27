@@ -17,6 +17,11 @@ class Ranking < ApplicationRecord
 
   validates :year, :aggregation_ends_on, :published_on, presence: true
   validates :year, uniqueness: { scope: :kind }
+  # DB は null: false だが enum は nil を弾かないため明示的に検証する
+  validates :kind, presence: true
+  # 集計処理が scope_max + 1 を無条件に使うため、順位範囲は必須
+  validates :scope_min, :scope_max, presence: true
+  validate :scope_min_must_not_exceed_scope_max
 
   # 投票受付中(集計中)のランキング。集計終了日当日はまだ受付中とみなす。
   scope :registerable, -> { where(aggregation_ends_on: Date.current..) }
@@ -61,6 +66,12 @@ class Ranking < ApplicationRecord
     "#{year}-#{KIND_SLUGS[kind]}"
   end
 
+  # DB に保存済みの値から組み立てた to_param。
+  # 編集中で year / kind が書き換わっていても URL は元のスラッグのままになる
+  def persisted_param
+    "#{year_was}-#{KIND_SLUGS[kind_was]}"
+  end
+
   # 投票受付中(集計中)か。集計終了日当日はまだ受付中。
   def registerable?
     Date.current <= aggregation_ends_on
@@ -73,5 +84,15 @@ class Ranking < ApplicationRecord
   # 一般公開済みか。公開日当日から公開扱い。
   def published?
     Date.current >= published_on
+  end
+
+  private
+
+  # 位最小値が位最大値を超えていないか検証する
+  def scope_min_must_not_exceed_scope_max
+    return if scope_min.blank? || scope_max.blank?
+    return if scope_min <= scope_max
+
+    errors.add(:scope_min, 'は位最大値以下にしてください')
   end
 end

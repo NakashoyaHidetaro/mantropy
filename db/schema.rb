@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_23_010000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_28_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -24,23 +24,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_23_010000) do
 
   create_table "authors", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
-    t.string "name"
+    t.string "name", null: false
     t.datetime "updated_at"
   end
 
   create_table "authors_books", id: :serial, force: :cascade do |t|
-    t.integer "author_id"
-    t.integer "book_id"
+    t.integer "author_id", null: false
+    t.integer "book_id", null: false
     t.datetime "created_at"
     t.string "role"
     t.datetime "updated_at"
   end
 
   create_table "authors_series", id: :serial, force: :cascade do |t|
-    t.integer "author_id"
+    t.integer "author_id", null: false
     t.datetime "created_at"
     t.string "role"
-    t.integer "serie_id"
+    t.integer "serie_id", null: false
     t.datetime "updated_at"
   end
 
@@ -69,7 +69,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_23_010000) do
     t.string "label"
     t.string "largeimgurl"
     t.string "mediumimgurl"
-    t.string "name"
+    t.string "name", null: false
     t.date "publicationdate"
     t.string "publisher"
     t.string "smallimgurl"
@@ -85,8 +85,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_23_010000) do
   end
 
   create_table "books_series", id: false, force: :cascade do |t|
-    t.integer "book_id"
-    t.integer "serie_id"
+    t.integer "book_id", null: false
+    t.integer "serie_id", null: false
   end
 
   create_table "browsenodeids", id: :serial, force: :cascade do |t|
@@ -101,7 +101,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_23_010000) do
     t.integer "appear"
     t.integer "book_id"
     t.datetime "created_at"
-    t.string "name"
+    t.string "name", null: false
     t.string "publisher"
     t.datetime "updated_at"
     t.string "url"
@@ -122,12 +122,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_23_010000) do
   end
 
   create_table "posts", id: :serial, force: :cascade do |t|
-    t.text "content"
+    t.text "content", null: false
     t.datetime "created_at"
     t.string "email"
     t.string "name"
     t.integer "order"
-    t.integer "topic_id"
+    t.integer "topic_id", null: false
     t.datetime "updated_at"
     t.integer "user_id"
     t.index ["topic_id"], name: "index_posts_on_topic_id"
@@ -135,12 +135,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_23_010000) do
 
   create_table "rankings", id: :serial, force: :cascade do |t|
     t.date "aggregation_ends_on", null: false
-    t.datetime "created_at"
+    t.datetime "created_at", null: false
     t.integer "kind", null: false
     t.date "published_on", null: false
-    t.integer "scope_max"
-    t.integer "scope_min"
-    t.datetime "updated_at"
+    t.integer "scope_max", null: false
+    t.integer "scope_min", null: false
+    t.datetime "updated_at", null: false
     t.integer "year", null: false
     t.index ["year", "kind"], name: "index_rankings_on_year_and_kind", unique: true
   end
@@ -148,11 +148,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_23_010000) do
   create_table "ranks", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.integer "rank"
-    t.integer "ranking_id"
+    t.integer "ranking_id", null: false
     t.integer "score"
-    t.integer "serie_id"
+    t.integer "serie_id", null: false
     t.datetime "updated_at"
-    t.integer "user_id"
+    t.integer "user_id", null: false
     t.index ["ranking_id", "serie_id"], name: "index_ranks_on_ranking_id_and_serie_id"
     t.index ["serie_id"], name: "index_ranks_on_serie_id"
     t.index ["user_id"], name: "index_ranks_on_user_id"
@@ -167,7 +167,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_23_010000) do
 
   create_table "series", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
-    t.string "name"
+    t.string "name", null: false
     t.integer "post_id"
     t.string "public_id", null: false
     t.integer "topic_id"
@@ -177,13 +177,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_23_010000) do
   end
 
   create_table "series_tags", id: false, force: :cascade do |t|
-    t.integer "serie_id"
-    t.integer "tag_id"
+    t.integer "serie_id", null: false
+    t.integer "tag_id", null: false
   end
 
   create_table "tags", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
-    t.string "name"
+    t.string "name", null: false
     t.datetime "updated_at"
   end
 
@@ -225,26 +225,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_23_010000) do
 
   create_table "users", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
-    t.string "entered"
-    t.string "joined"
-    t.string "mbmail"
-    t.string "name"
+    t.string "entered", null: false
+    t.string "joined", null: false
+    t.string "mbmail", null: false
+    t.string "name", null: false
     t.string "pcmail"
     t.string "privateabout"
     t.string "publicabout"
-    t.string "realname"
+    t.string "realname", null: false
     t.string "twitter"
     t.datetime "updated_at"
     t.string "url"
   end
 
   create_table "wikis", id: :serial, force: :cascade do |t|
-    t.string "content"
+    t.string "content", null: false
     t.datetime "created_at"
     t.integer "is_private"
-    t.string "name"
-    t.string "title"
+    t.string "name", null: false
+    t.string "title", null: false
     t.datetime "updated_at"
-    t.integer "user_id"
+    t.integer "user_id", null: false
   end
 end

@@ -63,4 +63,17 @@ class Member::RanksControllerTest < ActionDispatch::IntegrationTest
     { rank: { rank: rank.to_s, score: 1, ranking_id: ranking.id, serie_id: serie.id },
       magazine_name: '', magazine_placed: '', magazine_id: '' }
   end
+
+  test '順位も点数も空の場合は500にならずエラー内容つきでシリーズ画面へ戻される' do
+    travel_to Date.new(2015, 11, 1) do
+      assert_no_difference 'Rank.count' do
+        post member_ranks_path,
+             params: { rank: { rank: '', score: '', ranking_id: rankings(:kojin2015).id,
+                               serie_id: series(:voted_a).id },
+                       magazine_name: '', magazine_placed: '', magazine_id: '' }
+      end
+      assert_redirected_to serie_path(series(:voted_a))
+      assert flash[:alert].present?
+    end
+  end
 end

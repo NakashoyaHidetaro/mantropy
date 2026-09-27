@@ -66,4 +66,18 @@ class Member::UsersControllerTest < ActionDispatch::IntegrationTest
     get '/member/users/nonexistent_user/edit'
     assert_response :not_found
   end
+
+  test 'ユーザー名に使えない文字が含まれる場合は500にならず422でnewが再表示される' do
+    sign_out @userauth
+    userauth_without_user = userauths(:two)
+    userauth_without_user.update!(user: nil)
+    sign_in userauth_without_user
+    assert_no_difference 'User.count' do
+      post member_users_path,
+           params: { user: { name: 'bad/name', realname: '本名', pcmail: '', mbmail: 'a@example.com',
+                             twitter: '', url: '', publicabout: '', privateabout: '',
+                             joined: '2020', entered: '2020' } }
+    end
+    assert_response :unprocessable_content
+  end
 end

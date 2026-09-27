@@ -42,6 +42,33 @@ class Member::RankingsControllerTest < ActionDispatch::IntegrationTest
     assert_equal Date.new(2020, 11, 20), @ranking.reload.aggregation_ends_on
   end
 
+  test '不正なパラメータでの作成は422を返しエラーが表示される' do
+    assert_no_difference 'Ranking.count' do
+      post member_rankings_path, headers: basic_auth_header,
+                                 params: { ranking: new_ranking_params.merge(scope_min: '', scope_max: '') }
+    end
+    assert_response :unprocessable_entity
+    assert_match 'alert-danger', response.body
+  end
+
+  test '不正なパラメータでの更新は422を返し既存データは変更されない' do
+    patch member_ranking_path(@ranking), headers: basic_auth_header,
+                                         params: { ranking: new_ranking_params.merge(year: @ranking.year,
+                                                                                     kind: @ranking.kind,
+                                                                                     scope_min: '') }
+    assert_response :unprocessable_entity
+    assert_match 'alert-danger', response.body
+    assert_equal Date.new(2015, 11, 20), @ranking.reload.aggregation_ends_on
+  end
+
+  test '位最小値が位最大値より大きい場合は作成できない' do
+    assert_no_difference 'Ranking.count' do
+      post member_rankings_path, headers: basic_auth_header,
+                                 params: { ranking: new_ranking_params.merge(scope_min: 10, scope_max: 1) }
+    end
+    assert_response :unprocessable_entity
+  end
+
   private
 
   def new_ranking_params

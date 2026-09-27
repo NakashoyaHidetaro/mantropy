@@ -19,6 +19,11 @@ module ApplicationHelper
     tag.p(safe_join([tag.span('*', class: 'text-danger'), ' は必須項目です']), class: 'form-text')
   end
 
+  # 入力欄の class。該当属性にエラーがあれば Bootstrap の is-invalid を足す
+  def field_class(record, attribute, base: 'form-control')
+    record.errors.include?(attribute) ? "#{base} is-invalid" : base
+  end
+
   # X(旧Twitter)へページを共有するボタン
   def x_share_button(text, url)
     intent_url = "https://x.com/intent/post?#{{ text: text, url: url }.to_query}"

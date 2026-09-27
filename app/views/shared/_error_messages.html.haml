@@ -1,0 +1,8 @@
+-# フォーム共通のエラー表示。ローカル変数 record に ActiveModel を渡す
+- if record.errors.any?
+  .alert.alert-danger{ role: 'alert' }
+    %h2.h6= t('errors.template.header', model: record.class.model_name.human, count: record.errors.count)
+    %p.mb-1= t('errors.template.body')
+    %ul.mb-0
+      - record.errors.each do |error|
+        %li= error.full_message

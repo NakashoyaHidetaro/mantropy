@@ -97,11 +97,12 @@ class RankAggregationTest < ActiveSupport::TestCase
     assert_not RankAggregation.complete_ranking?(rankings(:kojin2015), nil)
   end
 
-  test 'complete_ranking? は漫画が紐付かない rank を 0 として扱い未完了とみなす' do
+  test 'complete_ranking? は漫画が削除済みの rank を 0 として扱い未完了とみなす' do
     ranking = Ranking.create!(year: 2017, kind: :kojin, scope_min: 1, scope_max: 1,
                               aggregation_ends_on: Date.new(2017, 11, 20), published_on: Date.new(2017, 12, 31))
     rank = Rank.create!(rank: 1, ranking: ranking, user: users(:two), serie: series(:one))
-    rank.update_columns(serie_id: nil) # rubocop:disable Rails/SkipsModelValidations
+    # serie_id は NOT NULL なので、存在しない id を指す(削除済み漫画)状態を再現する
+    rank.update_columns(serie_id: Serie.maximum(:id) + 1) # rubocop:disable Rails/SkipsModelValidations
 
     assert_not RankAggregation.complete_ranking?(ranking, users(:two))
   end

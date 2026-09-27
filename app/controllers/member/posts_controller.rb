@@ -19,8 +19,8 @@ class Member::PostsController < Member::Base
         end
       end
       redirect_to(redirect_path, notice: '書き込みに成功しました')
-    rescue StandardError
-      redirect_to(redirect_path, notice: '何かがおかしい。')
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to(redirect_path, alert: "書き込みできませんでした: #{e.record.errors.full_messages.join('、')}")
     end
   end
 

@@ -144,6 +144,51 @@ class RankingTest < ActiveSupport::TestCase
     assert_predicate build_ranking(2015, :zentai), :valid?
   end
 
+  test '種別は必須' do
+    ranking = build_ranking(2020, :kojin)
+    ranking.kind = nil
+
+    assert_not ranking.valid?
+    assert_includes ranking.errors.attribute_names, :kind
+  end
+
+  test '位最小値・位最大値は必須' do
+    ranking = build_ranking(2020, :kojin)
+    ranking.scope_min = nil
+    ranking.scope_max = nil
+
+    assert_not ranking.valid?
+    assert_includes ranking.errors.attribute_names, :scope_min
+    assert_includes ranking.errors.attribute_names, :scope_max
+  end
+
+  test '位最小値が位最大値より大きい場合は invalid になる' do
+    ranking = build_ranking(2020, :kojin)
+    ranking.scope_min = 5
+    ranking.scope_max = 3
+
+    assert_not ranking.valid?
+    assert_includes ranking.errors.attribute_names, :scope_min
+  end
+
+  test '位最小値と位最大値が同じ値なら valid になる' do
+    ranking = build_ranking(2020, :kojin)
+    ranking.scope_min = 3
+    ranking.scope_max = 3
+
+    assert_predicate ranking, :valid?
+  end
+
+  # --- persisted_param ---
+
+  test 'persisted_param は編集中でも保存済みの値からスラッグを組み立てる' do
+    ranking = rankings(:kojin2015)
+    ranking.year = 2099
+    ranking.kind = :kuso
+
+    assert_equal '2015-all', ranking.persisted_param
+  end
+
   private
 
   def build_ranking(year, kind)

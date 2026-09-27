@@ -1,5 +1,8 @@
 - content_for :title, 'ランキングカテゴリ一覧'
 %h1.h3.mt-4.mb-3 ランキングカテゴリ一覧
+- error_ranking = [@new_ranking, *@rankings].find { |r| r.errors.any? }
+- if error_ranking
+  = render 'shared/error_messages', record: error_ranking
 .table-responsive
   %table.table.align-middle
     %thead.table-light
@@ -15,23 +18,23 @@
     - @rankings.each do |ranking|
       %tr
         %td
-          = link_to ranking_series_path(ranking), class: 'btn btn-outline-info' do
+          = link_to ranking_series_path(ranking_id: ranking.persisted_param), class: 'btn btn-outline-info' do
             %i.bi.bi-link-45deg
-        = form_for([:member, ranking]) do |f|
-          %td= f.number_field :year, class: 'form-control'
-          %td= f.select :kind, Ranking.kinds.keys, {}, class: 'form-select'
-          %td= f.text_field :scope_min, size: 2, class: 'form-control'
-          %td= f.text_field :scope_max, size: 2, class: 'form-control'
-          %td= f.date_field :aggregation_ends_on, class: 'form-control'
-          %td= f.date_field :published_on, class: 'form-control'
-          %td= f.submit "変更", class: 'btn btn-info'
+        = form_for([:member, ranking], url: member_ranking_path(id: ranking.persisted_param)) do |f|
+          %td= f.number_field :year, class: field_class(ranking, :year)
+          %td= f.select :kind, Ranking.kinds.keys, {}, class: field_class(ranking, :kind, base: 'form-select')
+          %td= f.text_field :scope_min, size: 2, class: field_class(ranking, :scope_min)
+          %td= f.text_field :scope_max, size: 2, class: field_class(ranking, :scope_max)
+          %td= f.date_field :aggregation_ends_on, class: field_class(ranking, :aggregation_ends_on)
+          %td= f.date_field :published_on, class: field_class(ranking, :published_on)
+          %td= f.submit '変更', class: 'btn btn-info'
     %tr
       %td
       = form_for([:member, @new_ranking]) do |f|
-        %td= f.number_field :year, class: 'form-control'
-        %td= f.select :kind, Ranking.kinds.keys, {}, class: 'form-select'
-        %td= f.text_field :scope_min, size: 2, class: 'form-control'
-        %td= f.text_field :scope_max, size: 2, class: 'form-control'
-        %td= f.date_field :aggregation_ends_on, class: 'form-control'
-        %td= f.date_field :published_on, class: 'form-control'
-        %td= f.submit "追加", class: 'btn btn-primary'
+        %td= f.number_field :year, class: field_class(@new_ranking, :year)
+        %td= f.select :kind, Ranking.kinds.keys, {}, class: field_class(@new_ranking, :kind, base: 'form-select')
+        %td= f.text_field :scope_min, size: 2, class: field_class(@new_ranking, :scope_min)
+        %td= f.text_field :scope_max, size: 2, class: field_class(@new_ranking, :scope_max)
+        %td= f.date_field :aggregation_ends_on, class: field_class(@new_ranking, :aggregation_ends_on)
+        %td= f.date_field :published_on, class: field_class(@new_ranking, :published_on)
+        %td= f.submit '追加', class: 'btn btn-primary'

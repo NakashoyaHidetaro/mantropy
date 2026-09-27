@@ -1,51 +1,19 @@
 class Member::RanksController < Member::Base
   before_action :set_rank, only: %i[destroy]
 
-  def create # rubocop:disable Metrics/AbcSize,Metrics/MethodLength,Metrics/PerceivedComplexity
+  def create
     params[:rank][:rank].tr!('０-９', '0-9')
     @rank = Rank.new(rank_params)
     @rank.user_id = current_user.id
-    s = Serie.find(@rank.serie_id)
 
-    magazine_name = params[:magazine_name].strip
-    if !magazine_name.empty? && Magazine.find_by(name: magazine_name).nil?
-      magazine = Magazine.new
-      magazine.name = magazine_name
-      magazine.publisher = s.books.first && s.books.first.publisher
-    else
-      magazine = Magazine.find_by(name: magazine_name) || Magazine.find_by(id: params[:magazine_id])
-    end
-    if magazine
-      placed = params[:magazine_placed].strip
-      if s.magazines_series.where(magazine_id: magazine.id, placed:).empty?
-        ms = MagazinesSerie.new
-        ms.magazine = magazine
-        ms.placed = placed
-        ms.serie = s
-        ms.save!
-      end
-    end
+    add_magazine_placement
 
     unless Ranking.find(rank_params[:ranking_id]).registerable?
       redirect_to(user_path(current_user.name), notice: 'ランキングの変更はできません')
       return
     end
 
-    msg = nil
-    unless (r = Rank.where(user_id: current_user.id, rank: rank_params[:rank],
-                           ranking_id: rank_params[:ranking_id])).empty?
-      msg = '上書きしました。'
-      @rank = r[0]
-      @rank.serie_id = rank_params[:serie_id]
-    end
-    Rails.logger.debug @rank
-
-    if @rank.save
-      redirect_to(user_path(current_user.name),
-                  notice: "#{@rank.serie.name} に #{@rank.rank} 位を#{msg || '登録しました。'}")
-    else
-      redirect_to(@rank.serie, notice: '失敗。ランク登録に合わない情報が混じった気がする')
-    end
+    save_rank
   end
 
   def destroy
@@ -58,6 +26,34 @@ class Member::RanksController < Member::Base
   end
 
   private
+
+  # 順位登録と同時に、指定されていれば掲載誌もシリーズへ追加する。
+  # 雑誌が特定できなかった場合は掲載誌の追加だけを見送り、順位の登録は続行する。
+  def add_magazine_placement
+    MagazinePlacement.add!(Serie.find(@rank.serie_id),
+                           magazine_name: params[:magazine_name],
+                           magazine_id: params[:magazine_id],
+                           placed: params[:magazine_placed])
+  rescue MagazinePlacement::MagazineNotFound
+    nil
+  end
+
+  # すでに同じランキング・同じ順位の登録があれば上書きする。
+  def save_rank
+    msg = '登録しました。'
+    if (existing = Rank.find_by(user_id: current_user.id, rank: rank_params[:rank],
+                                ranking_id: rank_params[:ranking_id]))
+      msg = '上書きしました。'
+      @rank = existing
+      @rank.serie_id = rank_params[:serie_id]
+    end
+
+    if @rank.save
+      redirect_to(user_path(current_user.name), notice: "#{@rank.serie.name} に #{@rank.rank} 位を#{msg}")
+    else
+      redirect_to(@rank.serie, alert: "順位を登録できませんでした: #{@rank.errors.full_messages.join('、')}")
+    end
+  end
 
   def set_rank
     @rank = Rank.find(params[:id])

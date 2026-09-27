@@ -1,12 +1,5 @@
 = form_for([:member, @wiki]) do |f|
-  - if @wiki.errors.any?
-    #error_explanation.alert.alert-danger
-      %h2.h6
-        = pluralize(@wiki.errors.count, "error")
-        prohibited this wiki from being saved:
-      %ul.mb-0
-        - @wiki.errors.full_messages.each do |msg|
-          %li= msg
+  = render 'shared/error_messages', record: @wiki
   = required_legend
   .mb-3
     = required_label(f, :name, 'ページ名')
