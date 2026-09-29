@@ -87,4 +87,14 @@ class SeriesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "a[href^='/member/']", false
   end
+
+  test '楽天検索でAPIエラーが起きてもテスト環境では200を返しflashにエラーメッセージが入る' do
+    sign_in userauths(:one)
+    raise_error = ->(_str) { raise RakutenSearchService::ApiError, '楽天API エラー: メンテナンス中' }
+    stub_singleton_method(RakutenSearchService, :search_and_store, raise_error) do
+      get series_path, params: { str: 'test', scope: 'rakuten' }
+    end
+    assert_response :success
+    assert_equal '楽天API エラー: メンテナンス中', flash[:alert]
+  end
 end

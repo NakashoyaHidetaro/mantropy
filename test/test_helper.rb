@@ -26,3 +26,28 @@ class ActiveSupport::TestCase
     Rails.application.load_tasks
   end
 end
+
+# minitest 6 では minitest/mock(Object#stub)が同梱されないため、
+# クラスメソッド(特異メソッド)を一時的に差し替える簡易ヘルパを用意する。
+# value_or_callable に Proc を渡すと呼び出し時の引数をそのまま渡して実行し、それ以外は値をそのまま返す。
+module SingletonMethodStubHelper
+  def stub_singleton_method(obj, name, value_or_callable)
+    singleton = obj.singleton_class
+    own_method = singleton.method_defined?(name, false) || singleton.private_method_defined?(name, false)
+    original = singleton.instance_method(name) if own_method
+    singleton.send(:define_method, name) do |*args, **kwargs, &block|
+      value_or_callable.respond_to?(:call) ? value_or_callable.call(*args, **kwargs, &block) : value_or_callable
+    end
+    yield
+  ensure
+    if own_method
+      singleton.send(:define_method, name, original)
+    else
+      singleton.send(:remove_method, name)
+    end
+  end
+end
+
+class ActiveSupport::TestCase
+  include SingletonMethodStubHelper
+end

@@ -1,7 +1,10 @@
 require 'nkf'
 
 class RakutenSearchService # rubocop:disable Metrics/ClassLength
-  API_POINT = 'https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404'.freeze
+  API_POINT = 'https://openapi.rakuten.co.jp/services/api/BooksBook/Search/20170404'.freeze
+
+  # 楽天APIがエラー応答(Itemsを含まない応答)を返した場合に発生させる例外
+  class ApiError < StandardError; end
 
   def self.search_and_store(str)
     items = search(str)
@@ -9,12 +12,27 @@ class RakutenSearchService # rubocop:disable Metrics/ClassLength
   end
 
   def self.search(str)
-    query(str)['Items'].pluck('Item')
+    body = query(str)
+    raise ApiError, "楽天API エラー: #{api_error_detail(body)}" if body['Items'].nil?
+
+    body['Items'].pluck('Item')
   end
 
+  # 楽天APIのエラー応答から詳細メッセージを取り出す(旧形式 → 新形式 → 既定文言の順)
+  def self.api_error_detail(body)
+    body['error_description'].presence ||
+      body.dig('errors', 'errorMessage').presence ||
+      '楽天APIから不正な応答が返されました'
+  end
+
+  # 楽天ブックス書籍検索APIを呼び出す。accessKey はリクエストヘッダで送る
   def self.query(str)
     http = HTTPClient.new
-    response = http.get API_POINT, { applicationId: ENV.fetch('RAKUTEN_APP_ID', nil), title: str }
+    response = http.get(
+      API_POINT,
+      { applicationId: ENV.fetch('RAKUTEN_APP_ID', nil), title: str, format: 'json' },
+      { 'accessKey' => ENV.fetch('RAKUTEN_ACCESS_KEY', nil) }
+    )
     JSON.parse(response.body)
   end
 

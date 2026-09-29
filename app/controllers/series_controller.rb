@@ -10,7 +10,7 @@ class SeriesController < ApplicationController
       begin
         RakutenSearchService.search_and_store(@str)
       rescue StandardError => e
-        flash.now[:alert] = e
+        flash.now[:alert] = e.message
         raise e if Rails.env.development?
       end
     end
