@@ -41,6 +41,8 @@ gem 'puma'
 group :development do
   # コードをキレイに
   gem 'dotenv-rails', require: 'dotenv/load'
+  # 開発環境ではメールをブラウザで確認
+  gem 'letter_opener'
   gem 'rubocop-rails'
 end
 

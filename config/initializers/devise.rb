@@ -4,7 +4,8 @@ Devise.setup do |config|
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class with default "from" parameter.
-  config.mailer_sender = 'no-replay@mail.mantropy.com'
+  # 初期化時に ApplicationMailer を autoload しないよう Proc で遅延評価する
+  config.mailer_sender = ->(_mapping) { ApplicationMailer::EMAIL_FROM }
   # config.secret_key = ENV['DEVISE_MAILER_SECRET']
 
   # Configure the class responsible to send e-mails.

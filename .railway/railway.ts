@@ -26,7 +26,7 @@ const webEnv = {
   DEVISE_MAILER_SECRET: preserve(),
   DIGEST_USER: preserve(),
   DIGEST_PASS: preserve(),
-  SMTP_PASSWORD: preserve(),
+  SENDGRID_API_KEY: preserve(),
   SLACK_OAUTH_TOKEN: preserve(),
   RAKUTEN_APP_ID: preserve(),
   RAILS_HOST: preserve(),

@@ -1,10 +1,11 @@
-ActionMailer::Base.delivery_method = :smtp
+# SendGrid の SMTP リレー経由で送信する(本番のみ。開発は letter_opener、テストは :test)
+ActionMailer::Base.delivery_method = :smtp if Rails.env.production?
 ActionMailer::Base.smtp_settings = {
-  address: 'hidesys-service.sakura.ne.jp',
-  domain: 'mail.mantropy.com',
+  user_name: 'apikey',
+  password: ENV.fetch('SENDGRID_API_KEY', nil),
+  domain: 'mail.mantropy.net',
+  address: 'smtp.sendgrid.net',
   port: 587,
-  user_name: 'no-replay@mail.mantropy.com',
-  password: ENV.fetch('SMTP_PASSWORD', nil),
-  authentication: 'plain',
+  authentication: :plain,
   enable_starttls_auto: true
 }
