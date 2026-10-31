@@ -24,6 +24,11 @@ module SerieRankingExport
       }
     end
 
+    # ダウンロード時のファイル名。例: 20261031_2025年漫トロ個人ランキング.xml
+    def filename(ranking, format)
+      "#{Time.zone.today.strftime('%Y%m%d')}_#{ranking.name}.#{format}"
+    end
+
     # 全作品を CSV 文字列にする
     def csv(series, ranking_ids)
       CSV.generate do |csv|

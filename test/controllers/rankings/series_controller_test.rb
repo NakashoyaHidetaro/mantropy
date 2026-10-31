@@ -85,6 +85,17 @@ class Rankings::SeriesControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'CSV・JSON・XMLは日付とランキング名のファイル名でダウンロードされる' do
+    sign_in @userauth
+    travel_to Time.zone.local(2026, 10, 31, 12) do
+      %i[csv json xml].each do |format|
+        get ranking_series_path(@kojin, format:)
+        filename = CGI.unescape(response.headers['Content-Disposition'][/filename\*=UTF-8''(.+)/, 1])
+        assert_equal("20261031_2013年漫トロ個人ランキング.#{format}", filename)
+      end
+    end
+  end
+
   test 'ゲストはランキング別シリーズ一覧のCSV・JSON・XMLを取得できない' do
     %i[csv json xml].each do |format|
       get ranking_series_path(@kojin, format:)

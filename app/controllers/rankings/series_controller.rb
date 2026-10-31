@@ -18,9 +18,11 @@ class Rankings::SeriesController < Rankings::Base
 
     respond_to do |format|
       format.html
-      format.csv if @downloadable
-      format.xml { @series = @series[0...SerieRanking::EXPORT_LIMIT] } if @downloadable
-      format.json { @series = @series[0...SerieRanking::EXPORT_LIMIT] } if @downloadable
+      next unless @downloadable
+
+      format.csv { attach_export_filename(:csv) }
+      format.xml { prepare_export(:xml) }
+      format.json { prepare_export(:json) }
     end
   end
 
@@ -28,5 +30,20 @@ class Rankings::SeriesController < Rankings::Base
     # 同年度の各 kind のランキング。順位・得点・投票者リストをどの ranking から引くかに使う
     @rankings_by_kind = SerieRanking.same_year_rankings_by_kind(@ranking)
     @series = Kaminari.paginate_array(SerieRanking.aggregated_series(@ranking).to_a).page(params[:page])
+  end
+
+  private
+
+  # XML / JSON は件数を絞ってからダウンロードさせる
+  def prepare_export(format)
+    @series = @series[0...SerieRanking::EXPORT_LIMIT]
+    attach_export_filename(format)
+  end
+
+  # ダウンロード時のファイル名を「日付_ランキング名.拡張子」にする
+  def attach_export_filename(format)
+    filename = SerieRankingExport.filename(@ranking, format)
+    response.headers['Content-Disposition'] =
+      ActionDispatch::Http::ContentDisposition.format(disposition: 'attachment', filename:)
   end
 end

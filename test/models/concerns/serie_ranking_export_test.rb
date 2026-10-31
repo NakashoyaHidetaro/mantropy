@@ -51,6 +51,12 @@ class SerieRankingExportTest < ActiveSupport::TestCase
                   "#{users(:one).name} (1位)　#{users(:two).name} (2位)　#{users(:three).name} (糞1位)"], rows[1])
   end
 
+  test 'filename は今日の日付とランキング名と拡張子からファイル名を作る' do
+    travel_to Time.zone.local(2026, 10, 31, 12) do
+      assert_equal('20261031_2013年漫トロ個人ランキング.xml', SerieRankingExport.filename(@kojin, :xml))
+    end
+  end
+
   private
 
   def create_ranking(year, kind)
