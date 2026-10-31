@@ -204,6 +204,46 @@ class Rankings::SeriesControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'コメントに & や < や制御文字が含まれていても正しい XML としてダウンロードできる' do
+    create_votes_of_year2013
+    serie = series(:one)
+    topic = Topic.create!(title: nil)
+    review = Post.create!(content: "レビュー&<b>本文</b>\u0008", topic:, user: users(:one))
+    Post.create!(content: "トム&ジェリー <最高>\r\n2行目", topic:, user: users(:two))
+    serie.update!(topic:, post: review)
+    sign_in @userauth
+
+    get ranking_series_path(@kojin, format: :xml)
+    assert_response :success
+    doc = REXML::Document.new(response.body)
+    node = REXML::XPath.first(doc, "//serie[name='#{serie.name}']")
+    assert_equal('レビュー&<b>本文</b>', node.elements['detail/content'].text)
+    assert_match('トム&ジェリー <最高>2行目', node.elements['comments'].text)
+  end
+
+  test 'JSON には集計対象の全作品が順位順に入る' do
+    create_votes_of_year2013
+    sign_in @userauth
+
+    get ranking_series_path(@kojin, format: :json)
+    assert_response :success
+    series = response.parsed_body['series']
+    assert_equal(%w[MySerieOne MySerieTwo], series.pluck('name'))
+    assert_equal(%w[1位 2位], series.pluck('rank'))
+    assert_equal('（7点： 得票数2, クソ修正後得点-2点, クソ得票数2）', series[0]['ranking'])
+  end
+
+  test 'XML には集計対象の全作品が順位順に入る' do
+    create_votes_of_year2013
+    sign_in @userauth
+
+    get ranking_series_path(@kojin, format: :xml)
+    assert_response :success
+    doc = REXML::Document.new(response.body)
+    assert_equal(%w[MySerieOne MySerieTwo], REXML::XPath.match(doc, '//serie/name').map(&:text))
+    assert_equal(%w[1位 2位], REXML::XPath.match(doc, '//serie/rank').map(&:text))
+  end
+
   test '同年度に糞ランキングが無くても個人ランキングの一覧を取得できる' do
     kojin_only = create_kojin_only_ranking
     get ranking_series_path(kojin_only)
@@ -269,6 +309,6 @@ class Rankings::SeriesControllerTest < ActionDispatch::IntegrationTest
 
   # CSV のヘッダ行と空行を除いたデータ行を配列で返す
   def csv_rows(body)
-    body.lines.map(&:chomp).reject(&:empty?).drop(1).map { |line| line.split(',') }
+    CSV.parse(body).drop(1)
   end
 end

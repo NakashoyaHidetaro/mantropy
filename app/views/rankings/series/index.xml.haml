@@ -1,14 +1,15 @@
 !!! XML
 %series
   - @series.each do |serie|
+    - entry = SerieRankingExport.entry(serie, @ranking_ids, comment_brackets: SerieRankingExport::XML_COMMENT_BRACKETS)
     %serie
-      %rank= "#{serie.rank_info[:rank]}位"
-      %name= serie.name
-      %authors= serie.authors.map{|a| a.name}.join("・")
-      %ranking= "（#{serie.rank_info[:sum_of_mark]}点： 得票数#{serie.rank_info[:count_rank]}, クソ修正後得点#{serie.rank_info[:sum_of_mark_with_kuso]}点, クソ得票数#{serie.rank_info[:count_kuso]}）"
-      %magazine= serie.magazines_series.map{|ms| ms.magazine ? (ms.magazine.name + (ms.placed ? (ms.placed != "" ? "（#{ms.placed}）" : "") : "")) : nil}.compact.uniq.join("　")
+      %rank= entry[:rank]
+      %name= entry[:name]
+      %authors= entry[:authors]
+      %ranking= entry[:ranking]
+      %magazine= entry[:magazine]
       %detail
-        %content= raw serie.post.content.gsub(/[\r\n]/, "") if serie.post
-        %by= serie.post.user.name if serie.post
-      - if serie.topic
-        %comments= raw (serie.topic.posts - [serie.post]).map{|post| "#{post.content.gsub(/[\r\n]/, "")}【#{post.user.name}#{(rank = serie.ranks.find{|r| @ranking_ids.include?(r.ranking_id) && r.user_id == post.user.id}) ? ":#{rank.ranking_id == @ranking_ids[0] ? nil : "糞"}#{rank.rank}位" : nil}】"}.join("\n")
+        %content= entry[:detail][:content]
+        %by= entry[:detail][:by]
+      - if entry[:comments]
+        %comments= entry[:comments]

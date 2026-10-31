@@ -55,6 +55,7 @@ gem 'exception_notification-rake'
 # Ruby 3.4.8 対応
 gem 'base64'
 gem 'bigdecimal'
+gem 'csv'
 gem 'drb'
 gem 'mutex_m'
 gem 'nkf'
